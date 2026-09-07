@@ -228,6 +228,8 @@ The system is flat. Depth comes from tonal layering of paper surfaces (Paper, Su
 ### Named Rules
 **The One Glow Rule.** If something other than the scrubber thumb has a glow, it is wrong. Cards, pills, legends and blocks sit flat on their surface with a hairline.
 
+**The Furniture Holds Rule.** Zoom scales the geography, never the chart's furniture. `--mz` carries the live zoom factor; type, haloes, node dots and study blur divide by it, and strokes use `vector-effect: non-scaling-stroke`. The influence blooms are the one deliberate exception, because their extent is a claim about the world rather than a drawing convention.
+
 ## 5. Components
 
 Quiet instruments. Flat, hairline-bordered, ink-coloured controls that stay out of the map's way. Nothing on the chrome is louder than the map.
@@ -257,6 +259,9 @@ Quiet instruments. Flat, hairline-bordered, ink-coloured controls that stay out 
 - **Header:** Paper Surface with a bottom hairline; eyebrow label in Ink 3, Fraunces title, Inter subtitle in Ink 2 at 54ch. Controls right-aligned in two rows, stacking left-aligned below 900px and full-width below 560px.
 - **Rail:** 336px, Paper Surface, left hairline, scrolls internally above 900px; becomes a stacked section with a top hairline below.
 
+### Zoom Controls
+Bottom-right of the plate, three stacked 30px keys on the legend panel treatment (translucent Paper Surface, 1px Paper Line, 6px radius): a plus, a minus, and a mono readout of the current factor that doubles as the way back to the whole map. Ink, never gold, under the Ink Controls Rule. Disabled at the ends of the range at 38% opacity. The map answers wheel, drag and pinch as well, and holds `touch-action: pan-y` at the default frame so a phone still scrolls the page, taking the gesture only once zoomed.
+
 ### The Influence Bloom
 The signature mark. A radial gradient from each capital or port node, radius set by reach, confidence tier and view scale, filled with Sienna Wash on paper (multiply) or Tribute Gold on night (screen). Three gradient definitions, one per tier, differ only in stop opacities so that lower confidence is visibly more diffuse. Nodes are 3px Tribute Gold Warm dots with haloed mono captions. Blooms fade in and out over 300ms; region hover shows a dashed 0.8px gold outline at 7% fill, selection a solid one at 10%.
 
@@ -274,6 +279,7 @@ The signature mark. A radial gradient from each capital or port node, radius set
 - **Do** separate surfaces with 1px Paper Line hairlines and tonal steps, never with shadows.
 - **Do** define every token in bare `:root` first, then redefine in the dark media block and in `[data-theme="dark"]`, keeping all three in sync.
 - **Do** use OKLCH for any new colour, with chroma reduced near the lightness extremes.
+- **Do** divide any new fixed-size mark by `var(--mz)`, or give it `vector-effect: non-scaling-stroke`, so zoom cannot inflate it.
 
 ### Don't:
 - **Don't** build dashboard chrome: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes.
@@ -287,3 +293,5 @@ The signature mark. A radial gradient from each capital or port node, radius set
 - **Don't** set Fraunces in italic, at body size, or as a label.
 - **Don't** style text for one language: both Bahasa Indonesia and English must fit every label and caption.
 - **Don't** replace inline SVG with canvas; text must stay selectable and translatable.
+- **Don't** crop the archipelago to fill a box. The plate fits, and letterboxes onto the ocean gradient.
+- **Don't** move the frame on the reader's behalf. Zoom and pan are theirs to drive; a camera that moves while they aim makes them miss.

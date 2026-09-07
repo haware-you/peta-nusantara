@@ -88,6 +88,18 @@ stays selectable and translatable, which matters more when the product is
 bilingual. No camera flythrough, terrain, or shader effects — decided out of
 scope, not deferred.
 
+**The frame.** The plate fits the whole archipelago rather than filling the
+window, so nothing is cropped out of reach; the bands this leaves fall on the
+ocean gradient and read as sea. From there the viewBox pans and zooms to 8x,
+by wheel, drag, pinch, the on-map keys, or `+` / `-` / `0` and the arrows.
+Only the geography scales: labels, hairlines and node dots counter-scale so
+they hold their size on screen, and the influence blooms deliberately do not,
+because a sphere of influence has real extent.
+
+This is zoom the reader drives, not a camera that moves on its own, so the
+objection to scroll narrative below still stands. A drag that travelled is
+never read as a click, so panning never selects the region you were aiming at.
+
 **Time scale.** The scrubber reuses the chart's three segments (300–1500,
 1500–1945, 1945–now) rather than a linear scale, which would put 60% of the
 track before the first entity. Segment boundaries render as a visible

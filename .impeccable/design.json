@@ -4,54 +4,384 @@
   "title": "Design System: Peta Nusantara",
   "extensions": {
     "colorMeta": {
-      "tribute-gold": { "role": "primary", "displayName": "Tribute Gold", "canonical": "#96691a", "night": "#d9ab55", "tonalRamp": ["oklch(20% 0.05 75)", "oklch(30% 0.08 75)", "oklch(40% 0.10 75)", "oklch(50% 0.11 75)", "oklch(60% 0.11 75)", "oklch(72% 0.10 78)", "oklch(84% 0.07 82)", "oklch(94% 0.03 85)"] },
-      "sienna-wash": { "role": "primary", "displayName": "Sienna Wash", "canonical": "oklch(56% 0.13 55)", "tonalRamp": ["oklch(18% 0.05 55)", "oklch(28% 0.08 55)", "oklch(38% 0.11 55)", "oklch(48% 0.13 55)", "oklch(56% 0.13 55)", "oklch(68% 0.11 55)", "oklch(82% 0.07 55)", "oklch(94% 0.03 55)"] },
-      "survey-violet": { "role": "primary", "displayName": "Survey Violet", "canonical": "#4a3aa7", "night": "#9085e9", "tonalRamp": ["oklch(18% 0.08 285)", "oklch(28% 0.13 285)", "oklch(38% 0.16 285)", "oklch(48% 0.17 285)", "oklch(58% 0.16 285)", "oklch(70% 0.13 285)", "oklch(83% 0.08 285)", "oklch(94% 0.03 285)"] },
-      "sea-lane-teal": { "role": "secondary", "displayName": "Sea Lane Teal", "canonical": "#1f7a70", "night": "#3f9d92", "tonalRamp": ["oklch(18% 0.04 180)", "oklch(28% 0.06 180)", "oklch(38% 0.08 180)", "oklch(48% 0.09 180)", "oklch(58% 0.09 180)", "oklch(70% 0.08 180)", "oklch(84% 0.05 180)", "oklch(94% 0.02 180)"] },
-      "migration-blue": { "role": "secondary", "displayName": "Migration Blue", "canonical": "#2c7d93", "night": "#7fb6c9", "tonalRamp": ["oklch(18% 0.04 215)", "oklch(28% 0.06 215)", "oklch(38% 0.08 215)", "oklch(48% 0.09 215)", "oklch(58% 0.09 215)", "oklch(70% 0.08 215)", "oklch(84% 0.05 215)", "oklch(94% 0.02 215)"] },
-      "republic-red": { "role": "tertiary", "displayName": "Republic Red", "canonical": "#b8402f", "night": "#d0503f", "tonalRamp": ["oklch(18% 0.07 30)", "oklch(28% 0.11 30)", "oklch(38% 0.14 30)", "oklch(48% 0.16 30)", "oklch(56% 0.17 30)", "oklch(68% 0.14 30)", "oklch(82% 0.08 30)", "oklch(94% 0.03 30)"] },
-      "islamic-green": { "role": "tertiary", "displayName": "Islamic Green", "canonical": "#2f7d4f", "night": "#46a06a", "tonalRamp": ["oklch(18% 0.05 155)", "oklch(28% 0.08 155)", "oklch(38% 0.10 155)", "oklch(48% 0.11 155)", "oklch(58% 0.12 155)", "oklch(70% 0.11 155)", "oklch(84% 0.07 155)", "oklch(94% 0.03 155)"] },
-      "communist-plum": { "role": "tertiary", "displayName": "Communist Plum", "canonical": "#a8446f", "night": "#c9628f", "tonalRamp": ["oklch(18% 0.06 355)", "oklch(28% 0.10 355)", "oklch(38% 0.13 355)", "oklch(48% 0.15 355)", "oklch(58% 0.15 355)", "oklch(70% 0.12 355)", "oklch(84% 0.07 355)", "oklch(94% 0.03 355)"] },
-      "christian-blue": { "role": "tertiary", "displayName": "Christian Blue", "canonical": "#2f6fae", "night": "#5b9bd5", "tonalRamp": ["oklch(18% 0.05 250)", "oklch(28% 0.09 250)", "oklch(38% 0.12 250)", "oklch(48% 0.13 250)", "oklch(58% 0.13 250)", "oklch(70% 0.11 250)", "oklch(84% 0.06 250)", "oklch(94% 0.02 250)"] },
-      "violence-umber": { "role": "tertiary", "displayName": "Violence Umber", "canonical": "oklch(38% 0.08 35)", "night": "oklch(55% 0.09 35)", "nightText": "oklch(80% 0.06 35)", "tonalRamp": ["oklch(18% 0.05 35)", "oklch(28% 0.07 35)", "oklch(38% 0.08 35)", "oklch(48% 0.09 35)", "oklch(58% 0.09 35)", "oklch(70% 0.08 35)", "oklch(84% 0.05 35)", "oklch(94% 0.02 35)"] },
-      "category-modern": { "role": "tertiary", "displayName": "Modern Charcoal", "canonical": "oklch(40% 0.02 60)", "night": "oklch(78% 0.02 80)", "tonalRamp": ["oklch(16% 0.01 60)", "oklch(26% 0.015 60)", "oklch(36% 0.02 60)", "oklch(46% 0.02 60)", "oklch(56% 0.02 60)", "oklch(68% 0.02 70)", "oklch(80% 0.015 80)", "oklch(92% 0.01 80)"] },
-      "control-ink": { "role": "neutral", "displayName": "Control Ink", "canonical": "oklch(24% 0.012 70)", "night": "oklch(92% 0.012 80)", "tonalRamp": ["oklch(15% 0.01 70)", "oklch(24% 0.012 70)", "oklch(34% 0.012 70)", "oklch(46% 0.012 70)", "oklch(58% 0.012 75)", "oklch(70% 0.012 78)", "oklch(82% 0.012 80)", "oklch(92% 0.012 80)"] },
-      "paper": { "role": "neutral", "displayName": "Paper", "canonical": "#f3ede0", "night": "#0c0b09", "tonalRamp": ["#0c0b09", "#14120e", "#1c1913", "#231e16", "#e8dfcb", "#f1eadb", "#f3ede0", "#fbf8f1"] },
-      "chart-sea": { "role": "neutral", "displayName": "Chart Sea", "canonical": "oklch(92.5% 0.014 215)", "night": "#0f1115", "tonalRamp": ["oklch(12% 0.01 240)", "oklch(16% 0.01 240)", "oklch(20% 0.012 240)", "oklch(60% 0.02 215)", "oklch(80% 0.02 215)", "oklch(88.5% 0.018 215)", "oklch(92.5% 0.014 215)", "oklch(95% 0.010 215)"] },
-      "chart-land": { "role": "neutral", "displayName": "Chart Land", "canonical": "oklch(91.5% 0.026 88)", "night": "#272219", "tonalRamp": ["oklch(20% 0.015 80)", "oklch(26% 0.02 80)", "oklch(30% 0.02 80)", "oklch(60% 0.05 85)", "oklch(76% 0.055 85)", "oklch(85% 0.04 88)", "oklch(89% 0.03 88)", "oklch(91.5% 0.026 88)"] },
-      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#221c14", "night": "#f3ecdd", "tonalRamp": ["#221c14", "#3a3226", "#5b5347", "#746a5b", "#8c8371", "#a89b83", "#c9bfa9", "#f3ecdd"] }
+      "tribute-gold": {
+        "role": "primary",
+        "displayName": "Tribute Gold",
+        "canonical": "#96691a",
+        "night": "#d9ab55",
+        "tonalRamp": [
+          "oklch(20% 0.05 75)",
+          "oklch(30% 0.08 75)",
+          "oklch(40% 0.10 75)",
+          "oklch(50% 0.11 75)",
+          "oklch(60% 0.11 75)",
+          "oklch(72% 0.10 78)",
+          "oklch(84% 0.07 82)",
+          "oklch(94% 0.03 85)"
+        ]
+      },
+      "sienna-wash": {
+        "role": "primary",
+        "displayName": "Sienna Wash",
+        "canonical": "oklch(56% 0.13 55)",
+        "tonalRamp": [
+          "oklch(18% 0.05 55)",
+          "oklch(28% 0.08 55)",
+          "oklch(38% 0.11 55)",
+          "oklch(48% 0.13 55)",
+          "oklch(56% 0.13 55)",
+          "oklch(68% 0.11 55)",
+          "oklch(82% 0.07 55)",
+          "oklch(94% 0.03 55)"
+        ]
+      },
+      "survey-violet": {
+        "role": "primary",
+        "displayName": "Survey Violet",
+        "canonical": "#4a3aa7",
+        "night": "#9085e9",
+        "tonalRamp": [
+          "oklch(18% 0.08 285)",
+          "oklch(28% 0.13 285)",
+          "oklch(38% 0.16 285)",
+          "oklch(48% 0.17 285)",
+          "oklch(58% 0.16 285)",
+          "oklch(70% 0.13 285)",
+          "oklch(83% 0.08 285)",
+          "oklch(94% 0.03 285)"
+        ]
+      },
+      "sea-lane-teal": {
+        "role": "secondary",
+        "displayName": "Sea Lane Teal",
+        "canonical": "#1f7a70",
+        "night": "#3f9d92",
+        "tonalRamp": [
+          "oklch(18% 0.04 180)",
+          "oklch(28% 0.06 180)",
+          "oklch(38% 0.08 180)",
+          "oklch(48% 0.09 180)",
+          "oklch(58% 0.09 180)",
+          "oklch(70% 0.08 180)",
+          "oklch(84% 0.05 180)",
+          "oklch(94% 0.02 180)"
+        ]
+      },
+      "migration-blue": {
+        "role": "secondary",
+        "displayName": "Migration Blue",
+        "canonical": "#2c7d93",
+        "night": "#7fb6c9",
+        "tonalRamp": [
+          "oklch(18% 0.04 215)",
+          "oklch(28% 0.06 215)",
+          "oklch(38% 0.08 215)",
+          "oklch(48% 0.09 215)",
+          "oklch(58% 0.09 215)",
+          "oklch(70% 0.08 215)",
+          "oklch(84% 0.05 215)",
+          "oklch(94% 0.02 215)"
+        ]
+      },
+      "republic-red": {
+        "role": "tertiary",
+        "displayName": "Republic Red",
+        "canonical": "#b8402f",
+        "night": "#d0503f",
+        "tonalRamp": [
+          "oklch(18% 0.07 30)",
+          "oklch(28% 0.11 30)",
+          "oklch(38% 0.14 30)",
+          "oklch(48% 0.16 30)",
+          "oklch(56% 0.17 30)",
+          "oklch(68% 0.14 30)",
+          "oklch(82% 0.08 30)",
+          "oklch(94% 0.03 30)"
+        ]
+      },
+      "islamic-green": {
+        "role": "tertiary",
+        "displayName": "Islamic Green",
+        "canonical": "#2f7d4f",
+        "night": "#46a06a",
+        "tonalRamp": [
+          "oklch(18% 0.05 155)",
+          "oklch(28% 0.08 155)",
+          "oklch(38% 0.10 155)",
+          "oklch(48% 0.11 155)",
+          "oklch(58% 0.12 155)",
+          "oklch(70% 0.11 155)",
+          "oklch(84% 0.07 155)",
+          "oklch(94% 0.03 155)"
+        ]
+      },
+      "communist-plum": {
+        "role": "tertiary",
+        "displayName": "Communist Plum",
+        "canonical": "#a8446f",
+        "night": "#c9628f",
+        "tonalRamp": [
+          "oklch(18% 0.06 355)",
+          "oklch(28% 0.10 355)",
+          "oklch(38% 0.13 355)",
+          "oklch(48% 0.15 355)",
+          "oklch(58% 0.15 355)",
+          "oklch(70% 0.12 355)",
+          "oklch(84% 0.07 355)",
+          "oklch(94% 0.03 355)"
+        ]
+      },
+      "christian-blue": {
+        "role": "tertiary",
+        "displayName": "Christian Blue",
+        "canonical": "#2f6fae",
+        "night": "#5b9bd5",
+        "tonalRamp": [
+          "oklch(18% 0.05 250)",
+          "oklch(28% 0.09 250)",
+          "oklch(38% 0.12 250)",
+          "oklch(48% 0.13 250)",
+          "oklch(58% 0.13 250)",
+          "oklch(70% 0.11 250)",
+          "oklch(84% 0.06 250)",
+          "oklch(94% 0.02 250)"
+        ]
+      },
+      "violence-umber": {
+        "role": "tertiary",
+        "displayName": "Violence Umber",
+        "canonical": "oklch(38% 0.08 35)",
+        "night": "oklch(55% 0.09 35)",
+        "nightText": "oklch(80% 0.06 35)",
+        "tonalRamp": [
+          "oklch(18% 0.05 35)",
+          "oklch(28% 0.07 35)",
+          "oklch(38% 0.08 35)",
+          "oklch(48% 0.09 35)",
+          "oklch(58% 0.09 35)",
+          "oklch(70% 0.08 35)",
+          "oklch(84% 0.05 35)",
+          "oklch(94% 0.02 35)"
+        ]
+      },
+      "category-modern": {
+        "role": "tertiary",
+        "displayName": "Modern Charcoal",
+        "canonical": "oklch(40% 0.02 60)",
+        "night": "oklch(78% 0.02 80)",
+        "tonalRamp": [
+          "oklch(16% 0.01 60)",
+          "oklch(26% 0.015 60)",
+          "oklch(36% 0.02 60)",
+          "oklch(46% 0.02 60)",
+          "oklch(56% 0.02 60)",
+          "oklch(68% 0.02 70)",
+          "oklch(80% 0.015 80)",
+          "oklch(92% 0.01 80)"
+        ]
+      },
+      "control-ink": {
+        "role": "neutral",
+        "displayName": "Control Ink",
+        "canonical": "oklch(24% 0.012 70)",
+        "night": "oklch(92% 0.012 80)",
+        "tonalRamp": [
+          "oklch(15% 0.01 70)",
+          "oklch(24% 0.012 70)",
+          "oklch(34% 0.012 70)",
+          "oklch(46% 0.012 70)",
+          "oklch(58% 0.012 75)",
+          "oklch(70% 0.012 78)",
+          "oklch(82% 0.012 80)",
+          "oklch(92% 0.012 80)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f3ede0",
+        "night": "#0c0b09",
+        "tonalRamp": [
+          "#0c0b09",
+          "#14120e",
+          "#1c1913",
+          "#231e16",
+          "#e8dfcb",
+          "#f1eadb",
+          "#f3ede0",
+          "#fbf8f1"
+        ]
+      },
+      "chart-sea": {
+        "role": "neutral",
+        "displayName": "Chart Sea",
+        "canonical": "oklch(92.5% 0.014 215)",
+        "night": "#0f1115",
+        "tonalRamp": [
+          "oklch(12% 0.01 240)",
+          "oklch(16% 0.01 240)",
+          "oklch(20% 0.012 240)",
+          "oklch(60% 0.02 215)",
+          "oklch(80% 0.02 215)",
+          "oklch(88.5% 0.018 215)",
+          "oklch(92.5% 0.014 215)",
+          "oklch(95% 0.010 215)"
+        ]
+      },
+      "chart-land": {
+        "role": "neutral",
+        "displayName": "Chart Land",
+        "canonical": "oklch(91.5% 0.026 88)",
+        "night": "#272219",
+        "tonalRamp": [
+          "oklch(20% 0.015 80)",
+          "oklch(26% 0.02 80)",
+          "oklch(30% 0.02 80)",
+          "oklch(60% 0.05 85)",
+          "oklch(76% 0.055 85)",
+          "oklch(85% 0.04 88)",
+          "oklch(89% 0.03 88)",
+          "oklch(91.5% 0.026 88)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#221c14",
+        "night": "#f3ecdd",
+        "tonalRamp": [
+          "#221c14",
+          "#3a3226",
+          "#5b5347",
+          "#746a5b",
+          "#8c8371",
+          "#a89b83",
+          "#c9bfa9",
+          "#f3ecdd"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Page title only. Fraunces 700 as a plate title." },
-      "headline": { "displayName": "Headline", "purpose": "Rail headings: region name, overlay title." },
-      "numeral": { "displayName": "Numeral", "purpose": "The current year in the era badge, the largest thing on the map." },
-      "title": { "displayName": "Title", "purpose": "Entity names in the rail." },
-      "body": { "displayName": "Body", "purpose": "Explanations, lore answers, overlay prose." },
-      "label": { "displayName": "Label", "purpose": "Uppercase tracked mono: eyebrow, rail labels, era name, lore keys, kickers." },
-      "caption": { "displayName": "Caption", "purpose": "Map text: regions, routes, nodes, events. Always haloed." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page title only. Fraunces 700 as a plate title."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Rail headings: region name, overlay title."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "The current year in the era badge, the largest thing on the map."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Entity names in the rail."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanations, lore answers, overlay prose."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase tracked mono: eyebrow, rail labels, era name, lore keys, kickers."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Map text: regions, routes, nodes, events. Always haloed."
+      }
     },
     "shadows": [
-      { "name": "time-cursor-glow", "value": "0 0 0 4px rgba(150,105,26,0.22), 0 0 14px 4px rgba(150,105,26,0.30)", "purpose": "Scrubber thumb only. The one glow on the page, made of the same light as the bloom. Night: rgba(217,171,85,0.20) / 0.34." },
-      { "name": "focus-ring-thumb", "value": "0 0 0 3px var(--ground), 0 0 0 5px var(--ui-ring)", "purpose": "Keyboard focus on the scrubber thumb." }
+      {
+        "name": "time-cursor-glow",
+        "value": "0 0 0 4px rgba(150,105,26,0.22), 0 0 14px 4px rgba(150,105,26,0.30)",
+        "purpose": "Scrubber thumb only. The one glow on the page, made of the same light as the bloom. Night: rgba(217,171,85,0.20) / 0.34."
+      },
+      {
+        "name": "focus-ring-thumb",
+        "value": "0 0 0 3px var(--ground), 0 0 0 5px var(--ui-ring)",
+        "purpose": "Keyboard focus on the scrubber thumb."
+      }
     ],
     "motion": [
-      { "name": "ease-out", "value": "cubic-bezier(.22, 1, .36, 1)", "purpose": "The shared deceleration curve (--ease-out) for map fades and era dots." },
-      { "name": "control", "value": "140ms to 150ms", "purpose": "Colour and transform on segments, pills, region glow (160ms)." },
-      { "name": "bloom", "value": "300ms var(--ease-out), opacity only", "purpose": "Influence blooms, hard edges, routes and nodes fading between eras." },
-      { "name": "study-reveal", "value": "130ms filter", "purpose": "Blur lifting from names in study mode." },
-      { "name": "reduced-motion", "value": ".001ms", "purpose": "All transitions and animations collapse under prefers-reduced-motion." }
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.22, 1, .36, 1)",
+        "purpose": "The shared deceleration curve (--ease-out) for map fades and era dots."
+      },
+      {
+        "name": "control",
+        "value": "140ms to 150ms",
+        "purpose": "Colour and transform on segments, pills, region glow (160ms)."
+      },
+      {
+        "name": "bloom",
+        "value": "300ms var(--ease-out), opacity only",
+        "purpose": "Influence blooms, hard edges, routes and nodes fading between eras."
+      },
+      {
+        "name": "study-reveal",
+        "value": "130ms filter",
+        "purpose": "Blur lifting from names in study mode."
+      },
+      {
+        "name": "reduced-motion",
+        "value": ".001ms",
+        "purpose": "All transitions and animations collapse under prefers-reduced-motion."
+      }
     ],
     "breakpoints": [
-      { "name": "stacked", "value": "900px", "purpose": "Below: rail stacks under the map, map legend hidden, rail carries legend rows." },
-      { "name": "narrow", "value": "560px", "purpose": "Below: header controls go full-width and left-aligned." },
-      { "name": "bounded", "value": "901px", "purpose": "Above: app bounded to viewport height, rail scrolls internally." }
+      {
+        "name": "stacked",
+        "value": "900px",
+        "purpose": "Below: rail stacks under the map, map legend hidden, rail carries legend rows."
+      },
+      {
+        "name": "narrow",
+        "value": "560px",
+        "purpose": "Below: header controls go full-width and left-aligned."
+      },
+      {
+        "name": "bounded",
+        "value": "901px",
+        "purpose": "Above: app bounded to viewport height, rail scrolls internally."
+      }
     ],
-    "halo": { "paper": "rgba(251,248,241,0.92)", "night": "rgba(12,11,9,0.90)" },
+    "halo": {
+      "paper": "rgba(251,248,241,0.92)",
+      "night": "rgba(12,11,9,0.90)"
+    },
     "bloomTiers": {
-      "high": [0.62, 0.36, 0.13, 0],
-      "medium": [0.46, 0.28, 0.10, 0],
-      "low": [0.32, 0.21, 0.08, 0],
-      "blend": { "paper": "multiply", "night": "screen" }
+      "high": [
+        0.62,
+        0.36,
+        0.13,
+        0
+      ],
+      "medium": [
+        0.46,
+        0.28,
+        0.1,
+        0
+      ],
+      "low": [
+        0.32,
+        0.21,
+        0.08,
+        0
+      ],
+      "blend": {
+        "paper": "multiply",
+        "night": "screen"
+      }
+    },
+    "zoom": {
+      "range": "1x to 8x",
+      "step": 1.5,
+      "fit": "xMidYMid meet",
+      "counterScale": "--mz on svg.map; type, haloes, circle radii and study blur divide by it",
+      "input": "wheel, drag, pinch, +/- keys, arrow keys, and three on-map controls",
+      "touch": "pan-y at 1x so the page still scrolls; none once zoomed"
     }
   },
   "components": [
@@ -124,13 +454,46 @@
       "Bilingual by construction; nothing is styled for one language only."
     ],
     "rules": [
-      { "name": "The Legend Rule", "body": "A colour may appear on the page only if it corresponds to a legend entry. If you cannot name what a hue means, it is ink or it is gone.", "section": "colors" },
-      { "name": "The Ink Controls Rule", "body": "Interactive chrome is Control Ink. The single exception is a toggle that switches on a coloured layer, which wears that layer's colour when on. Gold on a button is forbidden.", "section": "colors" },
-      { "name": "The Surveyed Edge Rule", "body": "A hard stroke is permitted only on Survey Violet, the Van Mook Line and the Republic's negotiated zones. Every pre-colonial entity is a radial bloom whose diffusion is set by confidence tier: high (.62/.36/.13/0), medium (.46/.28/.10/0), low (.32/.21/.08/0).", "section": "colors" },
-      { "name": "The Not-Red Rule", "body": "Red is the Republic's. The PKI is plum; the killings are umber; the modern category is charcoal.", "section": "colors" },
-      { "name": "The Engraver's Hand Rule", "body": "Anything that names a thing on the map is monospace, uppercase, tracked and haloed. Anything that explains a thing is Inter, sentence case, 1.6 line-height.", "section": "typography" },
-      { "name": "The One Serif Rule", "body": "Fraunces appears at exactly two sizes: the masthead and rail headings. It is never body, never a label, never italic.", "section": "typography" },
-      { "name": "The One Glow Rule", "body": "If something other than the scrubber thumb has a glow, it is wrong. Cards, pills, legends and blocks sit flat on their surface with a hairline.", "section": "elevation" }
+      {
+        "name": "The Legend Rule",
+        "body": "A colour may appear on the page only if it corresponds to a legend entry. If you cannot name what a hue means, it is ink or it is gone.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Controls Rule",
+        "body": "Interactive chrome is Control Ink. The single exception is a toggle that switches on a coloured layer, which wears that layer's colour when on. Gold on a button is forbidden.",
+        "section": "colors"
+      },
+      {
+        "name": "The Surveyed Edge Rule",
+        "body": "A hard stroke is permitted only on Survey Violet, the Van Mook Line and the Republic's negotiated zones. Every pre-colonial entity is a radial bloom whose diffusion is set by confidence tier: high (.62/.36/.13/0), medium (.46/.28/.10/0), low (.32/.21/.08/0).",
+        "section": "colors"
+      },
+      {
+        "name": "The Not-Red Rule",
+        "body": "Red is the Republic's. The PKI is plum; the killings are umber; the modern category is charcoal.",
+        "section": "colors"
+      },
+      {
+        "name": "The Engraver's Hand Rule",
+        "body": "Anything that names a thing on the map is monospace, uppercase, tracked and haloed. Anything that explains a thing is Inter, sentence case, 1.6 line-height.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Serif Rule",
+        "body": "Fraunces appears at exactly two sizes: the masthead and rail headings. It is never body, never a label, never italic.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Glow Rule",
+        "body": "If something other than the scrubber thumb has a glow, it is wrong. Cards, pills, legends and blocks sit flat on their surface with a hairline.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Furniture Holds Rule",
+        "body": "Zoom scales the geography, never the chart's furniture. `--mz` carries the live zoom factor; type, haloes, node dots and study blur divide by it, and strokes use `vector-effect: non-scaling-stroke`. The influence blooms are the one deliberate exception, because their extent is a claim about the world rather than a drawing convention.",
+        "section": "elevation"
+      }
     ],
     "dos": [
       "Do render every pre-colonial entity as a radial bloom whose diffusion follows its confidence tier. Low confidence must look blurrier.",
@@ -140,7 +503,8 @@
       "Do halo every map caption: rgba(251,248,241,0.92) on paper, rgba(12,11,9,0.90) on night.",
       "Do separate surfaces with 1px Paper Line hairlines and tonal steps, never with shadows.",
       "Do define every token in bare :root first, then redefine in the dark media block and in [data-theme=\"dark\"], keeping all three in sync.",
-      "Do use OKLCH for any new colour, with chroma reduced near the lightness extremes."
+      "Do use OKLCH for any new colour, with chroma reduced near the lightness extremes.",
+      "Do divide any new fixed-size mark by var(--mz), or give it vector-effect: non-scaling-stroke, so zoom cannot inflate it."
     ],
     "donts": [
       "Don't build dashboard chrome: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes.",
@@ -153,7 +517,9 @@
       "Don't use pure #000 or #fff anywhere, or a shadow on anything but the scrubber thumb.",
       "Don't set Fraunces in italic, at body size, or as a label.",
       "Don't style text for one language: both Bahasa Indonesia and English must fit every label and caption.",
-      "Don't replace inline SVG with canvas; text must stay selectable and translatable."
+      "Don't replace inline SVG with canvas; text must stay selectable and translatable.",
+      "Don't crop the archipelago to fill a box. The plate fits, and letterboxes onto the ocean gradient.",
+      "Don't move the frame on the reader's behalf. Zoom and pan are theirs to drive; a camera that moves while they aim makes them miss."
     ]
   }
 }

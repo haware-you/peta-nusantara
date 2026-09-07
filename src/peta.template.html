@@ -231,7 +231,7 @@
   .rl-break{ stroke: var(--rl-break); stroke-width:1; stroke-dasharray:2 3; }
   .rl-lab{ fill: var(--rl-lab); font-size:9px; font-family:'IBM Plex Mono', monospace; }
   #thr{ stroke: var(--thr); stroke-width:1; stroke-opacity:.55; }
-  .dutch-dot{ fill: var(--colonial); fill-opacity:.30; stroke: var(--colonial); stroke-width:1.1; }
+  .dutch-dot{ fill: var(--colonial); fill-opacity:.30; stroke: var(--colonial); stroke-width:1.1; vector-effect: non-scaling-stroke; r: calc(4.5px / var(--mz)); }
 
   *{ box-sizing: border-box; }
 
@@ -326,7 +326,11 @@
     overflow: hidden;
     min-height: 340px;
   }
-  svg.map{ display:block; width:100%; height:100%; }
+  /* --mz is the live zoom factor. The map scales; the chart's furniture does
+     not, so anything that must hold its size on screen divides by it. Strokes
+     use non-scaling-stroke, which does the same job natively. */
+  svg.map{ display:block; width:100%; height:100%; --mz:1; touch-action:pan-y; }
+  svg.map.grabbing{ cursor:grabbing; }
 
   /* Standing caveat — PRD 08 binding rule 2. Present in every era view. */
   .caveat{
@@ -360,6 +364,23 @@
   .lg-bloom{ height:9px; border-radius:2px; background: linear-gradient(90deg, var(--bloom-swatch), transparent); }
   .lg-hard{ height:9px; border-radius:2px; border:1px solid var(--colonial); background: var(--colonial-fill); }
   .lg-route{ border-top:1.5px dashed var(--route); }
+
+  /* Zoom controls, typographic like the rest of the plate: a plus, a minus,
+     and a readout that doubles as the way back to the whole archipelago. */
+  .zoom-ctl{ position:absolute; right:14px; bottom:14px; display:grid; gap:4px; }
+  .zoom-ctl button{
+    appearance:none; cursor:pointer; padding:0; width:30px; height:26px; line-height:1;
+    background: var(--panel-bg); border:1px solid var(--line); border-radius:6px;
+    color: var(--ink-2); font:inherit; font-weight:600; font-size:0.82rem;
+    transition: color .14s, border-color .14s;
+  }
+  .zoom-ctl button:hover:not(:disabled){ color: var(--ink-1); border-color: var(--ink-3); }
+  .zoom-ctl button:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
+  .zoom-ctl button:disabled{ opacity:0.38; cursor:default; }
+  #zoom-reset{
+    font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
+    letter-spacing:0.02em; height:22px; color: var(--ink-3);
+  }
 
   /* ============================ Detail rail ============================ */
   .rail{
@@ -443,7 +464,7 @@
   .app.study .ent:hover .en, .app.study .ent:hover .ey,
   .app.study .ent.sel .en, .app.study .ent.sel .ey,
   .app.study .ent.rv .en, .app.study .ent.rv .ey{ filter:none; }
-  .app.study .rlabel text{ filter: blur(4px); transition: filter .13s; }
+  .app.study .rlabel text{ filter: blur(calc(4px / var(--mz))); transition: filter .13s; }
   .app.study .rlabel.rv text, .app.study .rlabel:hover text{ filter:none; }
 
   .study-hint{
@@ -521,21 +542,21 @@
   }
 
   /* ============================ Map primitives ============================ */
-  .land{ fill: var(--land); stroke: var(--land-edge); stroke-width:0.7; stroke-linejoin:round; }
-  .graticule{ stroke: var(--grat); stroke-width:0.5; fill:none; }
+  .land{ fill: var(--land); stroke: var(--land-edge); stroke-width:0.7; stroke-linejoin:round; vector-effect: non-scaling-stroke; }
+  .graticule{ stroke: var(--grat); stroke-width:0.5; fill:none; vector-effect: non-scaling-stroke; }
 
   .region-hit{ fill: transparent; cursor:pointer; outline:none; }
   .region-hit:hover + .region-glow, .region-hit:focus-visible + .region-glow{ opacity:1; }
   .region-glow{
     fill: var(--glow-fill); stroke: var(--glow-stroke);
-    stroke-width:0.8; stroke-dasharray:4 4; opacity:0; pointer-events:none;
+    stroke-width:0.8; stroke-dasharray:4 4; opacity:0; pointer-events:none; vector-effect: non-scaling-stroke;
     transition: opacity .16s;
   }
   .region-glow.sel{ opacity:1; fill: var(--glow-fill-sel); stroke: var(--glow-stroke-sel); stroke-dasharray:none; }
   .region-hit:focus-visible + .region-glow{ stroke: var(--ui-ring); stroke-width:1.4; stroke-dasharray:none; }
 
   .rlabel text{
-    font-family:'IBM Plex Mono', monospace; font-size:8.5px; letter-spacing:0.11em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(8.5px / var(--mz)); letter-spacing:0.11em;
     text-transform: uppercase; fill: var(--ink-3); text-anchor:middle;
     pointer-events:none; transition: fill .16s;
   }
@@ -548,17 +569,17 @@
   .hard{ pointer-events:none; }
   .hard .hp{
     fill: var(--colonial-fill); stroke: var(--colonial);
-    stroke-width:0.9; stroke-linejoin:round;
+    stroke-width:0.9; stroke-linejoin:round; vector-effect: non-scaling-stroke;
     transition: opacity .3s var(--ease-out);
   }
 
   .route{
-    fill:none; stroke: var(--route); stroke-width:1.1; stroke-dasharray:5 4;
+    fill:none; stroke: var(--route); stroke-width:1.1; stroke-dasharray:5 4; vector-effect: non-scaling-stroke;
     opacity:0.30; transition: opacity .3s var(--ease-out), stroke .3s var(--ease-out);
   }
   .route.hot{ opacity:0.95; stroke: var(--route-hi); stroke-width:1.5; }
   .route-label{
-    font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.13em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(7.5px / var(--mz)); letter-spacing:0.13em;
     text-transform:uppercase; fill: var(--route); opacity:0.5;
     pointer-events:none; transition: opacity .3s var(--ease-out), fill .3s var(--ease-out);
   }
@@ -570,7 +591,7 @@
      rule 4, carried forward. Where control was genuinely diffuse (guerrilla
      zones, party support) the edge stays dashed and the fill stays weak. */
   .ov{ pointer-events:none; }
-  .ov-zone{ stroke-width:1.1; stroke-linejoin:round; fill-opacity:0.15; }
+  .ov-zone{ stroke-width:1.1; stroke-linejoin:round; fill-opacity:0.15; vector-effect: non-scaling-stroke; }
   .ov-zone.soft{ stroke-dasharray:5 4; fill-opacity:0.09; }
   .z-nat{ fill: var(--f-nat); stroke: var(--f-nat); }
   .z-islam{ fill: var(--f-islam); stroke: var(--f-islam); }
@@ -580,26 +601,28 @@
   .z-belanda{ fill: var(--colonial); stroke: var(--colonial); }
 
   /* The Van Mook Line was negotiated and surveyed — it gets a real edge. */
-  .vanmook{ fill:none; stroke: var(--vanmook); stroke-width:1.6; stroke-dasharray:9 3 2 3; }
+  .vanmook{ fill:none; stroke: var(--vanmook); stroke-width:1.6; stroke-dasharray:9 3 2 3; vector-effect: non-scaling-stroke; }
   .vanmook-label{
-    font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.12em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(7.5px / var(--mz)); letter-spacing:0.12em;
     text-transform:uppercase; fill: var(--vanmook); opacity:0.85;
   }
 
-  .ov-mark circle{ fill:none; stroke-width:1.3; }
+  .ov-mark circle{ fill:none; stroke-width:1.3; vector-effect: non-scaling-stroke; r: calc(var(--r,4.5) * 1px / var(--mz)); }
   .ov-mark text{
-    font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.08em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(7.5px / var(--mz)); letter-spacing:0.08em;
     fill: var(--ink-1); text-anchor:middle;
-    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width: calc(2.6px / var(--mz)); stroke-linejoin:round;
+    transform: translateY(calc(-9px / var(--mz)));
   }
 
   /* 1965-66 is rendered as intensity, never as territory. No bloom, no glow:
      a flat hatch that reads as a record rather than as power radiating. */
-  .kill-zone{ stroke: var(--violence); stroke-width:1; fill:url(#hatch); }
+  .kill-zone{ stroke: var(--violence); stroke-width:1; fill:url(#hatch); vector-effect: non-scaling-stroke; }
   .kill-label{
-    font-family:'IBM Plex Mono', monospace; font-size:7px; letter-spacing:0.1em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(7px / var(--mz)); letter-spacing:0.1em;
     fill: var(--violence-text); text-anchor:middle;
-    paint-order: stroke; stroke: var(--halo); stroke-width:2.4px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width: calc(2.4px / var(--mz)); stroke-linejoin:round;
+    transform: translateY(calc(11px / var(--mz)));
   }
 
   .ov-legend{
@@ -651,22 +674,22 @@
      influence, control, nor party support. It is where everyone came from. */
   .mig{ pointer-events:none; }
   .mig path{
-    fill:none; stroke: var(--mig); stroke-width:1.4; stroke-dasharray:7 5; opacity:0.8;
+    fill:none; stroke: var(--mig); stroke-width:1.4; stroke-dasharray:7 5; opacity:0.8; vector-effect: non-scaling-stroke;
   }
   .mig text{
-    font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.12em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(8px / var(--mz)); letter-spacing:0.12em;
     text-transform:uppercase; fill: var(--mig-text); text-anchor:middle;
-    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width: calc(2.6px / var(--mz)); stroke-linejoin:round;
   }
 
   .node{ pointer-events:none; transition: opacity .3s var(--ease-out); }
-  .node circle{ fill: var(--gold-warm); }
+  .node circle{ fill: var(--gold-warm); r: calc(var(--r,2.6) * 1px / var(--mz)); }
   .node text{
-    font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.06em;
+    font-family:'IBM Plex Mono', monospace; font-size: calc(8px / var(--mz)); letter-spacing:0.06em;
     fill: var(--ink-1); text-anchor:middle;
-    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width: calc(2.6px / var(--mz)); stroke-linejoin:round;
   }
-  .app.study .node text{ filter: blur(4px); }
+  .app.study .node text{ filter: blur(calc(4px / var(--mz))); }
   .app.study .node.rv text{ filter:none; }
 
   @media (prefers-reduced-motion: reduce){
@@ -678,7 +701,11 @@
 
   /* ============================ Responsive ============================ */
   @media (max-width: 900px){
-    .stage{ grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(300px, 52vh) auto; }
+    /* Fitting a 2.53:1 plate into a phone leaves ocean above and below it.
+       Keep the frame close to the geography so the band reads as sea, not
+       as a gap, and leave room for the badge, the caveat and the zoom keys. */
+    .stage{ grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(250px, 40vh) auto; }
+    .map-wrap{ min-height: 250px; }
     .rail{ border-left:none; border-top:1px solid var(--line); max-height: none; }
     .legend-map{ display:none; }
     /* The rail carries the same information in full on small screens. */
@@ -748,6 +775,12 @@
 
       <div class="ov-legend" id="ov-legend"></div>
 
+      <div class="zoom-ctl">
+        <button type="button" id="zoom-in">+</button>
+        <button type="button" id="zoom-out">&#8722;</button>
+        <button type="button" id="zoom-reset">1.0&#215;</button>
+      </div>
+
       <div class="caveat"><b data-i18n="caveatLead"></b> <span data-i18n="caveatBody"></span></div>
     </div>
 
@@ -811,6 +844,9 @@ var CHROME = {
     id:"Bukan batas wilayah. Kerajaan pra-kolonial adalah negara mandala — pengaruh memudar keluar tanpa garis batas.",
     en:"Not territorial borders. Pre-colonial polities were mandala states — influence fading outward with no boundary line."
   },
+  zoomIn:{ id:"Perbesar peta", en:"Zoom in" },
+  zoomOut:{ id:"Perkecil peta", en:"Zoom out" },
+  zoomReset:{ id:"Kembali ke seluruh peta", en:"Back to the whole map" },
   lgBloom:{ id:"pengaruh (memudar)", en:"influence (fading)" },
   lgHard:{ id:"batas administratif", en:"administrative border" },
   lgRoute:{ id:"jalur laut", en:"sea lane" },
@@ -1722,7 +1758,9 @@ function el(tag, attrs){
 }
 
 svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+/* meet, not slice: the archipelago is never cropped out of reach. The bands
+   this leaves fall on the ocean gradient, so the plate simply continues. */
+svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
 /* --- gradient defs: one per confidence tier. Lower confidence diffuses
        wider and softer, so uncertainty is legible at a glance (rule 3). --- */
@@ -1946,7 +1984,7 @@ function buildOverlay(ov){
       var reg = REGIONS.filter(function(r){ return r.id === k.region; })[0];
       if (!reg) return;
       var t = el('text', { class:'kill-label',
-        x:px(reg.lab[0]).toFixed(1), y:(py(reg.lab[1]) + 11).toFixed(1) });
+        x:px(reg.lab[0]).toFixed(1), y:py(reg.lab[1]).toFixed(1) });
       t.textContent = k.note[S.lang];
       gOv.appendChild(t);
     });
@@ -1967,13 +2005,13 @@ function buildMarks(y){
     var m = MARKS[i];
     var g = el('g', { class:'ov-mark' });
     g.appendChild(el('circle', {
-      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:5.5, style:'stroke:' + (COL[m.fac] || 'var(--gold)')
+      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:5.5, style:'--r:5.5;stroke:' + (COL[m.fac] || 'var(--gold)')
     }));
     g.appendChild(el('circle', {
       cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:1.8,
-      style:'fill:' + (COL[m.fac] || 'var(--gold)'), stroke:'none'
+      style:'--r:1.8;fill:' + (COL[m.fac] || 'var(--gold)'), stroke:'none'
     }));
-    var t = el('text', { x:px(m.lon).toFixed(1), y:(py(m.lat) - 9).toFixed(1) });
+    var t = el('text', { x:px(m.lon).toFixed(1), y:py(m.lat).toFixed(1) });
     t.textContent = m.label[S.lang];
     g.appendChild(t);
     gMarks.appendChild(g);
@@ -2008,7 +2046,7 @@ DATA.forEach(function(e, i){
   e.nodes.forEach(function(n){
     if (n.kind === 'vassal') return;               /* keep the map quiet; vassals show as bloom only */
     var r = n.kind === 'capital' ? 2.6 : 1.9;
-    grp.appendChild(el('circle', { cx:px(n.lon).toFixed(1), cy:py(n.lat).toFixed(1), r:r }));
+    grp.appendChild(el('circle', { cx:px(n.lon).toFixed(1), cy:py(n.lat).toFixed(1), r:r, style:'--r:' + r }));
   });
   gNodes.appendChild(grp);
   entNodeEls[i] = grp;
@@ -2453,6 +2491,10 @@ function applyChrome(){
   document.getElementById('btn-id').classList.toggle('active', S.lang === 'id');
   document.getElementById('btn-en').classList.toggle('active', S.lang === 'en');
   document.getElementById('map-title').textContent = T('title') + ' — ' + T('caveatLead');
+  [['zoom-in','zoomIn'], ['zoom-out','zoomOut'], ['zoom-reset','zoomReset']].forEach(function(p){
+    var b = document.getElementById(p[0]);
+    if (b){ b.setAttribute('aria-label', T(p[1])); b.title = T(p[1]); }
+  });
   document.documentElement.lang = S.lang;
   applyTheme();
 }
@@ -2510,6 +2552,176 @@ themeBtn.addEventListener('click', function(){
 try {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 } catch(e){}
+
+/* ==================================================================
+   ZOOM + PAN
+
+   The plate is something you lean over, not a camera that flies. Only the
+   viewBox moves: every layer keeps its map coordinates, and --mz tells the
+   CSS how far to counter-scale the furniture so labels, hairlines and node
+   dots hold their size on screen while the geography grows. Blooms are the
+   deliberate exception. A sphere of influence has real extent, so it scales
+   with the land it covers.
+   ================================================================== */
+var mapWrap = document.querySelector('.map-wrap');
+var zBtnIn  = document.getElementById('zoom-in');
+var zBtnOut = document.getElementById('zoom-out');
+var zBtnRst = document.getElementById('zoom-reset');
+var ZMIN = 1, ZMAX = 8, ZSTEP = 1.5;
+var VB = { x:0, y:0, w:W, h:H };
+var zTween = null, zFallback = null;
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function zNow(){ return W / VB.w; }
+
+function applyView(){
+  /* Never let the frame leave the plate. At 1x this pins it to the origin. */
+  VB.x = Math.max(0, Math.min(W - VB.w, VB.x));
+  VB.y = Math.max(0, Math.min(H - VB.h, VB.y));
+  svg.setAttribute('viewBox', VB.x.toFixed(2) + ' ' + VB.y.toFixed(2) + ' ' + VB.w.toFixed(2) + ' ' + VB.h.toFixed(2));
+  var z = zNow(), zoomed = z > 1.001;
+  svg.style.setProperty('--mz', z.toFixed(4));
+  /* At the default frame the page owns touch, so the map never traps a
+     scroll. Once zoomed the map takes it: one finger pans, two pinch. */
+  svg.style.touchAction = zoomed ? 'none' : 'pan-y';
+  svg.style.cursor = zoomed ? 'grab' : '';
+  zBtnOut.disabled = !zoomed;
+  zBtnRst.disabled = !zoomed;
+  zBtnIn.disabled  = z >= ZMAX - 1e-4;
+  zBtnRst.textContent = (z < 10 ? z.toFixed(1) : String(Math.round(z))) + '\u00d7';
+}
+
+function toMap(clientX, clientY){
+  var m = svg.getScreenCTM();
+  if (!m) return { x: VB.x + VB.w / 2, y: VB.y + VB.h / 2 };
+  var p = svg.createSVGPoint();
+  p.x = clientX; p.y = clientY;
+  return p.matrixTransform(m.inverse());
+}
+
+/* Zoom about a fixed map point, so the thing under the cursor stays put. */
+function zoomTo(z, ax, ay){
+  z = Math.max(ZMIN, Math.min(ZMAX, z));
+  if (ax == null){ ax = VB.x + VB.w / 2; ay = VB.y + VB.h / 2; }
+  var fx = (ax - VB.x) / VB.w, fy = (ay - VB.y) / VB.h;
+  VB.w = W / z; VB.h = H / z;
+  VB.x = ax - fx * VB.w; VB.y = ay - fy * VB.h;
+  applyView();
+}
+
+function stopTween(){
+  if (zTween){ cancelAnimationFrame(zTween); zTween = null; }
+  if (zFallback){ clearTimeout(zFallback); zFallback = null; }
+}
+
+function zoomAnim(target){
+  target = Math.max(ZMIN, Math.min(ZMAX, target));
+  stopTween();
+  var from = zNow();
+  if (REDUCED || Math.abs(target - from) < 1e-4){ zoomTo(target); return; }
+  var ax = VB.x + VB.w / 2, ay = VB.y + VB.h / 2, t0 = 0;
+  /* Frames are paused in a background tab, and a press that quietly does
+     nothing is worse than one that skips the tween. Land it either way. */
+  zFallback = setTimeout(function(){ zFallback = null; stopTween(); zoomTo(target, ax, ay); }, 400);
+  zTween = requestAnimationFrame(function step(ts){
+    if (!t0) t0 = ts;
+    var k = Math.min(1, (ts - t0) / 180);
+    zoomTo(from + (target - from) * (1 - Math.pow(1 - k, 3)), ax, ay);
+    if (k < 1){ zTween = requestAnimationFrame(step); }
+    else { zTween = null; clearTimeout(zFallback); zFallback = null; }
+  });
+}
+
+zBtnIn.addEventListener('click',  function(){ zoomAnim(zNow() * ZSTEP); });
+zBtnOut.addEventListener('click', function(){ zoomAnim(zNow() / ZSTEP); });
+zBtnRst.addEventListener('click', function(){ zoomAnim(ZMIN); });
+
+mapWrap.addEventListener('wheel', function(ev){
+  var d = ev.deltaY * (ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 400 : 1);
+  var next = zNow() * Math.pow(1.0018, -d);
+  /* Already at the full frame and still scrolling out: let the page have it. */
+  if (next <= ZMIN && zNow() <= ZMIN) return;
+  ev.preventDefault();
+  stopTween();
+  var a = toMap(ev.clientX, ev.clientY);
+  zoomTo(next, a.x, a.y);
+}, { passive:false });
+
+/* Drag to pan, two fingers to pinch. A drag that travelled is not a click,
+   so aiming at Sumatra and missing never selects the wrong region. */
+var pts = {}, nPts = 0, lastPt = null, pinchDist = 0, travelled = 0;
+
+function livePts(){
+  var out = [];
+  for (var k in pts) if (pts.hasOwnProperty(k)) out.push(pts[k]);
+  return out;
+}
+
+svg.addEventListener('pointerdown', function(ev){
+  if (ev.pointerType === 'mouse' && ev.button !== 0) return;
+  /* At the default frame a touch belongs to the page, not to the map. */
+  if (ev.pointerType !== 'mouse' && nPts === 0 && zNow() <= 1.001) return;
+  pts[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
+  nPts++;
+  if (nPts === 1){ lastPt = { x:ev.clientX, y:ev.clientY }; travelled = 0; }
+  else if (nPts === 2){ var p = livePts(); pinchDist = Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2)); }
+  stopTween();
+});
+
+svg.addEventListener('pointermove', function(ev){
+  if (!pts[ev.pointerId]) return;
+  pts[ev.pointerId].x = ev.clientX; pts[ev.pointerId].y = ev.clientY;
+
+  if (nPts >= 2){
+    var p = livePts();
+    var d = Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2));
+    if (pinchDist > 0 && d > 0){
+      var a = toMap((p[0].x + p[1].x) / 2, (p[0].y + p[1].y) / 2);
+      zoomTo(zNow() * (d / pinchDist), a.x, a.y);
+    }
+    pinchDist = d;
+    travelled = 99;
+    return;
+  }
+
+  if (!lastPt || zNow() <= 1.001) return;
+  var m = svg.getScreenCTM();
+  if (!m || !m.a) return;
+  var dx = ev.clientX - lastPt.x, dy = ev.clientY - lastPt.y;
+  travelled += Math.abs(dx) + Math.abs(dy);
+  VB.x -= dx / m.a; VB.y -= dy / m.d;
+  lastPt.x = ev.clientX; lastPt.y = ev.clientY;
+  if (travelled > 4) svg.classList.add('grabbing');
+  applyView();
+});
+
+function endPointer(ev){
+  if (pts[ev.pointerId]){ delete pts[ev.pointerId]; nPts = Math.max(0, nPts - 1); }
+  if (nPts < 2) pinchDist = 0;
+  if (nPts === 0){ lastPt = null; svg.classList.remove('grabbing'); }
+}
+svg.addEventListener('pointerup', endPointer);
+svg.addEventListener('pointercancel', endPointer);
+svg.addEventListener('pointerleave', endPointer);
+
+svg.addEventListener('click', function(ev){
+  if (travelled > 4){ ev.stopPropagation(); ev.preventDefault(); travelled = 0; }
+}, true);
+
+mapWrap.addEventListener('keydown', function(ev){
+  var step = VB.w * 0.18;
+  if (ev.key === '+' || ev.key === '=') zoomAnim(zNow() * ZSTEP);
+  else if (ev.key === '-' || ev.key === '_') zoomAnim(zNow() / ZSTEP);
+  else if (ev.key === '0') zoomAnim(ZMIN);
+  else if (ev.key === 'ArrowLeft'){ VB.x -= step; applyView(); }
+  else if (ev.key === 'ArrowRight'){ VB.x += step; applyView(); }
+  else if (ev.key === 'ArrowUp'){ VB.y -= step; applyView(); }
+  else if (ev.key === 'ArrowDown'){ VB.y += step; applyView(); }
+  else return;
+  ev.preventDefault();
+});
+
+applyView();
 
 /* ==================================================================
    BOOT
