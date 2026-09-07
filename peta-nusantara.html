@@ -1,5 +1,8 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Peta Nusantara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
   /* Two designed themes, not one inverted (PRD NFR-7).
@@ -18,6 +21,7 @@
      the other way. Every token exists here first. */
   :root{
     color-scheme: light;
+    --ease-out:      cubic-bezier(.22, 1, .36, 1);   /* theme-independent */
     --ground:        #f3ede0;
     /* Paper chart: the sea leans cool and the land leans warm so that ochre
        pigment multiplied onto land reads as a tint, not as mud. */
@@ -26,7 +30,6 @@
     --ocean-deep:    oklch(88.5% 0.018 215);
     --land:          oklch(91.5% 0.026 88);
     --land-edge:     oklch(76% 0.055 85);
-    --land-hi:       oklch(89% 0.03 88);
     --gold:          #96691a;
     --gold-warm:     #b5822a;
     --route:         #1f7a70;
@@ -40,7 +43,6 @@
     --surface:       #fbf8f1;
     --surface-2:     #f1eadb;
     --surface-3:     #e8dfcb;
-    --on-accent:     #fff8ea;
     --accent-line:   #cfa863;
     --panel-bg:      rgba(251,248,241,0.92);
     --swatch-line:   rgba(34,28,20,0.18);
@@ -103,7 +105,6 @@
       --ocean-deep:    #0b0d10;
       --land:          #272219;
       --land-edge:     #3d3626;
-      --land-hi:       #332c20;
       --gold:          #d9ab55;
       --gold-warm:     #f0c877;
       --route:         #3f9d92;
@@ -117,7 +118,6 @@
       --surface:       #14120e;
       --surface-2:     #1c1913;
       --surface-3:     #231e16;
-      --on-accent:     #1a1408;
       --accent-line:   #4a3c1e;
       --panel-bg:      rgba(14,12,9,0.90);
       --swatch-line:   rgba(255,255,255,0.18);
@@ -162,7 +162,6 @@
     --ocean-deep:    #0b0d10;
     --land:          #272219;
     --land-edge:     #3d3626;
-    --land-hi:       #332c20;
     --gold:          #d9ab55;
     --gold-warm:     #f0c877;
     --route:         #3f9d92;
@@ -176,7 +175,6 @@
     --surface:       #14120e;
     --surface-2:     #1c1913;
     --surface-3:     #231e16;
-    --on-accent:     #1a1408;
     --accent-line:   #4a3c1e;
     --panel-bg:      rgba(14,12,9,0.90);
     --swatch-line:   rgba(255,255,255,0.18);
@@ -383,7 +381,7 @@
   .ent{
     --cat: var(--ink-3);
     background: var(--surface-2); border:1px solid var(--line);
-    border-radius:8px; padding:11px 13px; cursor:pointer; text-align:left;
+    border-radius:8px; padding:12px 14px; cursor:pointer; text-align:left;
     font:inherit; color:inherit; width:100%;
     transition: border-color .14s, background .14s;
   }
@@ -504,13 +502,14 @@
   /* Era ticks are dots, not labels: 15 eras will not fit as text on a phone,
      and the badge above already names the current one. Each dot is a jump. */
   .era-names{ position:relative; height:28px; margin-top:3px; }
+  /* The hit area is wider than the dot: 24px so a thumb can land on it. */
   .era-dot{
-    position:absolute; top:0; transform: translateX(-50%);
-    width:16px; height:14px; padding:0; border:none; background:transparent; cursor:pointer;
+    position:absolute; top:-3px; transform: translateX(-50%);
+    width:24px; height:20px; padding:0; border:none; background:transparent; cursor:pointer;
   }
   .era-dot::after{
     content:''; display:block; width:5px; height:5px; border-radius:50%;
-    background: var(--ink-3); margin:4px auto; transition: background .14s, transform .14s;
+    background: var(--ink-3); margin:7px auto 0; transition: background .14s var(--ease-out), transform .14s var(--ease-out);
   }
   .era-dot:hover::after{ background: var(--ink-2); }
   .era-dot.on::after{ background: var(--gold); transform: scale(1.55); }
@@ -544,24 +543,24 @@
 
   /* screen on dark (adds light), multiply on paper (adds pigment) */
   .influence{ mix-blend-mode: var(--blend); pointer-events:none; }
-  .bloom{ transition: opacity .3s ease; }
+  .bloom{ transition: opacity .3s var(--ease-out); }
 
   .hard{ pointer-events:none; }
   .hard .hp{
     fill: var(--colonial-fill); stroke: var(--colonial);
     stroke-width:0.9; stroke-linejoin:round;
-    transition: opacity .3s ease;
+    transition: opacity .3s var(--ease-out);
   }
 
   .route{
     fill:none; stroke: var(--route); stroke-width:1.1; stroke-dasharray:5 4;
-    opacity:0.30; transition: opacity .3s ease, stroke .3s ease;
+    opacity:0.30; transition: opacity .3s var(--ease-out), stroke .3s var(--ease-out);
   }
   .route.hot{ opacity:0.95; stroke: var(--route-hi); stroke-width:1.5; }
   .route-label{
     font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.13em;
     text-transform:uppercase; fill: var(--route); opacity:0.5;
-    pointer-events:none; transition: opacity .3s, fill .3s;
+    pointer-events:none; transition: opacity .3s var(--ease-out), fill .3s var(--ease-out);
   }
   .route-label.hot{ opacity:1; fill: var(--route-hi); }
 
@@ -660,7 +659,7 @@
     paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
   }
 
-  .node{ pointer-events:none; transition: opacity .3s ease; }
+  .node{ pointer-events:none; transition: opacity .3s var(--ease-out); }
   .node circle{ fill: var(--gold-warm); }
   .node text{
     font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.06em;
@@ -684,7 +683,12 @@
     .legend-map{ display:none; }
     /* The rail carries the same information in full on small screens. */
     .ov-legend, .ov-legend.on{ display:none; }
-    .caveat{ font-size:0.58rem; max-width: 36ch; }
+    /* On a short map the caveat sits over region labels; give it the legend's
+       panel so it stays legible without hiding what is under it. */
+    .caveat{
+      font-size:0.58rem; max-width: 36ch; left:10px; bottom:10px;
+      background: var(--panel-bg); border:1px solid var(--line); border-radius:6px; padding:6px 8px;
+    }
     .head{ padding:13px 16px 11px; }
     .scrub{ padding:11px 16px 14px; }
     .controls{ align-items:flex-start; }
