@@ -1,0 +1,13 @@
+{
+  "name": "peta-nusantara",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An interactive historical map of the Indonesian archipelago, built as a companion view over a bilingual timeline dataset.",
+  "scripts": {
+    "fetch": "node tools/fetch-geometry.js",
+    "prep": "node tools/prep.js",
+    "build": "node tools/build.js",
+    "all": "npm run fetch && npm run prep && npm run build"
+  },
+  "license": "MIT"
+}
