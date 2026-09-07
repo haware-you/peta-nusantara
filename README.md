@@ -216,4 +216,12 @@ Not built, deliberately:
 
 ## Licence
 
-MIT for the code. Historical content and Natural Earth geometry as noted above.
+The code is MIT — see [LICENSE](LICENSE). That covers the build pipeline, the
+template, and the rendering.
+
+It does not cover the other two things in this repository, which have their own
+terms. **Natural Earth geometry** is public domain and carries no restriction.
+The **historical content** — entity records, the explanations, the overlay text
+— is assembled from general knowledge and English Wikipedia and is offered as
+study material, not scholarship; reuse it under MIT if you like, but re-verify
+anything you intend to publish, and read the provenance note above first.
