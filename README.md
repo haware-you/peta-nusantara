@@ -108,6 +108,47 @@ merely empty this year — it says the historiography of the archipelago is buil
 around states and written sources, and structurally under-records non-state
 societies. The blank is itself a finding.
 
+## The faction layers (1945–49, 1955, 1965–66)
+
+Three overlays activate automatically when the scrubber enters their window.
+They are drawn in their own colour channel, separate from the gold influence
+bloom, because they make a different kind of claim.
+
+**1945–1949 — control.** Four sub-phases: the proclamation's claim without
+control; Linggadjati's de facto recognition of Java, Sumatra and Madura; the
+Renville reduction; and Operatie Kraai. The **Van Mook Line** gets the hardest
+edge anywhere on this map, because unlike everything else here it was actually
+negotiated and surveyed. Madiun (Sept 1948) and the Darul Islam proclamation
+(Aug 1949) are point-anchored events, not zones.
+
+**1955 — support.** Regional plurality for PNI, Masyumi, NU, PKI and the
+Christian parties. This is the one moment where nationalist, Islamic and
+communist blocs are all simultaneously and honestly mappable. The runner-up
+field matters as much as the winner: it is where the PKI actually appears, as
+the strong second in Central Java. Papua is marked outside the franchise — it
+was still under Dutch rule and did not vote.
+
+**1965–66 — violence.** Rendered as flat hatch in its own colour, never as
+bloom. Influence bloom is the visual language of prestige radiating from a
+centre; using it for mass killing would be obscene. Concentrations in Central
+Java, East Java, Bali and North Sumatra, with Buru Island marked for the
+detention period. Estimates range from 500,000 to over a million and remain
+contested; no one has ever been prosecuted.
+
+### On drawing the PKI
+
+The PKI never held territory. It was a mass party with an electoral base, not a
+state, and its only armed bid for control was about three weeks at Madiun in
+1948. Drawing it as a shaded territory would repeat exactly the error the rest
+of this map exists to avoid — and it would reproduce the New Order's own
+cartography, which portrayed the party as a territorial enemy. So it appears
+as a point event in 1948 and as vote share in 1955, and the map says why in
+both languages.
+
+The communist channel is deliberately **not red**. Red is PNI's and the
+Republic's colour in this period, and using it for the PKI would collapse a
+distinction the layers exist to draw.
+
 ## Data provenance
 
 Entity data is carried verbatim from the timeline. Map-specific fields (nodes,

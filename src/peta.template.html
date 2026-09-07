@@ -23,6 +23,15 @@
     --line:        #2a2419;
     --surface:     #14120e;
     --surface-2:   #1c1913;
+
+    /* Faction channel — separate from the gold influence channel, because
+       these are 20th-century political blocs, not mandala spheres. */
+    --f-nat:       #d0503f;   /* republican / nationalist (PNI) */
+    --f-islam:     #46a06a;   /* Islamic (Masyumi, NU, Darul Islam) */
+    --f-komunis:   #c9628f;   /* communist (PKI) — deliberately not red, see README */
+    --f-kristen:   #5b9bd5;   /* Christian parties (Parkindo, Partai Katolik) */
+    --f-none:      #574f42;
+    --violence:    #a83a3a;   /* 1965-66 — its own channel, never "influence" */
   }
 
   *{ box-sizing: border-box; }
@@ -251,16 +260,25 @@
     box-shadow: 0 0 0 3px var(--ground), 0 0 0 6px var(--gold-warm);
   }
 
-  .era-names{
-    position:relative; height:15px; margin-top:2px;
+  /* Era ticks are dots, not labels: 15 eras will not fit as text on a phone,
+     and the badge above already names the current one. Each dot is a jump. */
+  .era-names{ position:relative; height:28px; margin-top:3px; }
+  .era-dot{
+    position:absolute; top:0; transform: translateX(-50%);
+    width:16px; height:14px; padding:0; border:none; background:transparent; cursor:pointer;
   }
-  .era-names span{
-    position:absolute; transform: translateX(-50%);
-    font-family:'IBM Plex Mono', monospace; font-size:0.6rem; letter-spacing:0.06em;
-    color: var(--ink-3); white-space:nowrap; top:0;
-    transition: color .14s;
+  .era-dot::after{
+    content:''; display:block; width:5px; height:5px; border-radius:50%;
+    background: var(--ink-3); margin:4px auto; transition: background .14s, transform .14s;
   }
-  .era-names span.on{ color: var(--gold); }
+  .era-dot:hover::after{ background: var(--ink-2); }
+  .era-dot.on::after{ background: var(--gold); transform: scale(1.55); }
+  .era-dot:focus-visible{ outline:2px solid var(--gold-warm); outline-offset:1px; border-radius:4px; }
+  .era-cur{
+    position:absolute; top:15px; transform: translateX(-50%);
+    font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.08em;
+    color: var(--gold); white-space:nowrap; pointer-events:none;
+  }
 
   /* ============================ Map primitives ============================ */
   .land{ fill: var(--land); stroke: var(--land-edge); stroke-width:0.7; stroke-linejoin:round; }
@@ -305,6 +323,89 @@
   }
   .route-label.hot{ opacity:1; fill: var(--route-hi); }
 
+  /* ---- Faction overlays (1945-49, 1955, 1965-66) ----
+     By the 1940s every side is drawing lines, including the Republic. So these
+     render with harder edges than the mandala blooms — the same logic as PRD 08
+     rule 4, carried forward. Where control was genuinely diffuse (guerrilla
+     zones, party support) the edge stays dashed and the fill stays weak. */
+  .ov{ pointer-events:none; }
+  .ov-zone{ stroke-width:1.1; stroke-linejoin:round; fill-opacity:0.15; }
+  .ov-zone.soft{ stroke-dasharray:5 4; fill-opacity:0.09; }
+  .z-nat{ fill: var(--f-nat); stroke: var(--f-nat); }
+  .z-islam{ fill: var(--f-islam); stroke: var(--f-islam); }
+  .z-komunis{ fill: var(--f-komunis); stroke: var(--f-komunis); }
+  .z-kristen{ fill: var(--f-kristen); stroke: var(--f-kristen); }
+  .z-none{ fill: var(--f-none); stroke: var(--f-none); }
+  .z-belanda{ fill: var(--colonial); stroke: var(--colonial); }
+
+  /* The Van Mook Line was negotiated and surveyed — it gets a real edge. */
+  .vanmook{ fill:none; stroke:#e8dcc0; stroke-width:1.6; stroke-dasharray:9 3 2 3; }
+  .vanmook-label{
+    font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.12em;
+    text-transform:uppercase; fill:#e8dcc0; opacity:0.85;
+  }
+
+  .ov-mark circle{ fill:none; stroke-width:1.3; }
+  .ov-mark text{
+    font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.08em;
+    fill: var(--ink-1); text-anchor:middle;
+    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.6px; stroke-linejoin:round;
+  }
+
+  /* 1965-66 is rendered as intensity, never as territory. No bloom, no glow:
+     a flat hatch that reads as a record rather than as power radiating. */
+  .kill-zone{ stroke: var(--violence); stroke-width:1; fill:url(#hatch); }
+  .kill-label{
+    font-family:'IBM Plex Mono', monospace; font-size:7px; letter-spacing:0.1em;
+    fill:#e8a0a0; text-anchor:middle;
+    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.4px; stroke-linejoin:round;
+  }
+
+  .ov-legend{
+    position:absolute; left:16px; bottom:52px;
+    background: rgba(14,12,9,0.90); border:1px solid var(--line);
+    border-radius:8px; padding:10px 13px; max-width: 330px;
+    display:none;
+  }
+  .ov-legend.on{ display:block; }
+  .ov-legend h4{
+    font-family:'IBM Plex Mono', monospace; font-size:0.63rem; letter-spacing:0.13em;
+    text-transform:uppercase; color: var(--gold); margin:0 0 6px; font-weight:600;
+  }
+  .ov-legend .rows{ display:grid; gap:4px; }
+  .ov-legend .r{ display:flex; align-items:center; gap:8px; font-size:0.72rem; color: var(--ink-2); }
+  .ov-legend .sw{ width:13px; height:9px; border-radius:2px; flex-shrink:0; border:1px solid rgba(255,255,255,0.18); }
+  .ov-legend .note{
+    font-size:0.68rem; color: var(--ink-3); line-height:1.5; margin-top:8px;
+    border-top:1px solid var(--line); padding-top:7px;
+  }
+
+  /* Overlay explainer in the rail. The 1965-66 variant is the one place the
+     page raises its voice, and even there only by a border and a heading. */
+  .ov-block{
+    border:1px solid var(--line); border-left:3px solid var(--gold);
+    border-radius:8px; padding:12px 14px; margin-bottom:16px; background: var(--surface-2);
+  }
+  .ov-block.grave{ border-left-color: var(--violence); }
+  .ov-block h3{
+    font-family:'Fraunces', Georgia, serif; font-size:0.98rem; margin:0 0 3px; line-height:1.25;
+  }
+  .ov-block .kicker{
+    font-family:'IBM Plex Mono', monospace; font-size:0.6rem; letter-spacing:0.13em;
+    text-transform:uppercase; color: var(--gold); font-weight:600; margin-bottom:5px;
+  }
+  .ov-block.grave .kicker{ color:#e08b8b; }
+  .ov-block p{ font-size:0.82rem; color: var(--ink-2); line-height:1.6; margin:7px 0 0; }
+  .ov-block .caution{
+    font-size:0.78rem; color: var(--ink-2); line-height:1.6; margin-top:9px;
+    border-top:1px solid var(--line); padding-top:8px;
+  }
+  .ov-block .caution b{ color: var(--f-komunis); font-weight:600; }
+  .ov-rows{ display:grid; gap:4px; margin-top:9px; }
+  .ov-rows .r{ display:flex; align-items:center; gap:8px; font-size:0.76rem; color: var(--ink-2); }
+  .ov-rows .sw{ width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(255,255,255,0.16); }
+  .ov-rows .rr{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color: var(--ink-3); }
+
   .node{ pointer-events:none; transition: opacity .3s ease; }
   .node circle{ fill: var(--gold-warm); }
   .node text{
@@ -327,6 +428,8 @@
     .stage{ grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(300px, 52vh) auto; }
     .rail{ border-left:none; border-top:1px solid var(--line); max-height: none; }
     .legend-map{ display:none; }
+    /* The rail carries the same information in full on small screens. */
+    .ov-legend, .ov-legend.on{ display:none; }
     .caveat{ font-size:0.58rem; max-width: 36ch; }
     .head{ padding:13px 16px 11px; }
     .scrub{ padding:11px 16px 14px; }
@@ -381,6 +484,8 @@
         <div><span data-i18n="lgHard"></span><i class="lg-hard"></i></div>
         <div><span data-i18n="lgRoute"></span><i class="lg-route"></i></div>
       </div>
+
+      <div class="ov-legend" id="ov-legend"></div>
 
       <div class="caveat"><b data-i18n="caveatLead"></b> <span data-i18n="caveatBody"></span></div>
     </div>
@@ -471,6 +576,46 @@ var CHROME = {
   confHint:{
     id:"Keyakinan rendah digambar lebih kabur — ketidakpastian tampil sebagai sifat visual, bukan catatan kaki.",
     en:"Lower confidence renders blurrier — uncertainty shown as a visual property, not a footnote."
+  },
+
+  /* ---- Faction overlay strings ---- */
+  facNat:{ id:"Republik / nasionalis", en:"Republican / nationalist" },
+  facIslam:{ id:"Islam", en:"Islamic" },
+  facKomunis:{ id:"Komunis (PKI)", en:"Communist (PKI)" },
+  facKristen:{ id:"Partai Kristen & Katolik", en:"Christian & Catholic parties" },
+  facBelanda:{ id:"Diduduki Belanda", en:"Dutch-occupied" },
+  facNone:{ id:"Di luar Indonesia saat itu", en:"Outside Indonesia at the time" },
+
+  ovRevolusi:{ id:"Revolusi Nasional 1945–1949", en:"National Revolution 1945–1949" },
+  ovPemilu:{ id:"Pemilu 1955", en:"The 1955 Election" },
+  ovKill:{ id:"Pembunuhan Massal 1965–1966", en:"Mass Killings 1965–1966" },
+
+  ovRevolusiNote:{
+    id:"Wilayah kendali, bukan dukungan. Garis Van Mook (Renville, Januari 1948) adalah satu-satunya garis yang benar-benar dirundingkan dan dipetakan di sini — sisanya perkiraan.",
+    en:"Zones of control, not of support. The Van Mook Line (Renville, January 1948) is the only genuinely negotiated and surveyed line here — the rest are approximate."
+  },
+  ovPemiluNote:{
+    id:"Partai pemenang per wilayah, bukan penguasaan wilayah. Persentase nasional: PNI 22,3% · Masyumi 20,9% · NU 18,4% · PKI 16,4%. Angka per wilayah adalah perkiraan.",
+    en:"Winning party per region, not territorial control. National shares: PNI 22.3% · Masyumi 20.9% · NU 18.4% · PKI 16.4%. Regional figures are approximate."
+  },
+  ovKillNote:{
+    id:"Ini bukan wilayah. Ini sebaran kekerasan. Perkiraan korban berkisar 500.000 hingga lebih dari satu juta jiwa dan masih diperdebatkan; tidak pernah ada pengadilan.",
+    en:"This is not territory. It is the distribution of violence. Death-toll estimates range from 500,000 to over a million and remain contested; no one has ever been prosecuted."
+  },
+
+  /* PKI never held territory. Saying so plainly is the whole point — the New
+     Order's own maps portrayed it as a territorial enemy, and repeating that
+     framing would undo PRD 08. */
+  pkiNote:{
+    id:"PKI tidak pernah menguasai wilayah. Ia adalah partai massa dengan basis pemilih — kuat di Jawa Tengah dan Jawa Timur — bukan negara. Satu-satunya perebutan kekuasaan bersenjata adalah Peristiwa Madiun, sekitar tiga minggu pada September 1948. Menggambarnya sebagai wilayah akan mengulang persis kekeliruan yang dihindari peta ini.",
+    en:"The PKI never held territory. It was a mass party with an electoral base — strongest in Central and East Java — not a state. Its only armed bid for control was the Madiun Affair, roughly three weeks in September 1948. Drawing it as territory would repeat precisely the error this map exists to avoid."
+  },
+
+  ovOpen:{ id:"Lapisan aktif", en:"Active layer" },
+  secondPlace:{ id:"peringkat kedua", en:"runner-up" },
+  outsideFranchise:{
+    id:"Papua Barat masih dikuasai Belanda pada 1955 dan tidak ikut pemilu.",
+    en:"West Papua was still under Dutch rule in 1955 and did not vote."
   },
   catNames:{
     classical:{ id:"Kerajaan Hindu-Buddha", en:"Hindu-Buddhist Kingdom" },
@@ -768,6 +913,120 @@ var ROUTES = [
 ];
 
 /* ==================================================================
+   FACTION OVERLAYS — 1945-49, 1955, 1965-66
+   ------------------------------------------------------------------
+   These are a different kind of claim from the mandala blooms, and are
+   drawn in a different channel to say so. Three rules carried over from
+   PRD 08 and extended:
+
+   - Control zones (1945-49) are territory, and by then the parties were
+     genuinely drawing lines. They get edges. The Van Mook Line gets the
+     hardest edge on the map because it was actually negotiated and surveyed.
+   - Party support (1955) is not control. It fills whole regions flatly
+     and the legend says "winning party", never "held by".
+   - 1965-66 is neither. It is an event with a geography, drawn as flat
+     hatch in its own colour so it can never read as influence or power.
+   ================================================================== */
+
+/* Island hulls, used as coarse "all of Java / all of Sumatra" zones. */
+var HULL_JAVA = [[105.1,-5.5],[108.8,-5.7],[112.8,-6.4],[114.6,-7.7],[114.4,-8.8],[110.0,-8.3],[106.4,-7.5],[105.0,-6.9]];
+var HULL_SUMATRA = [[95.1,5.9],[98.8,4.2],[103.0,1.2],[106.2,-1.5],[106.6,-5.9],[104.0,-5.9],[101.0,-2.5],[97.5,1.6],[94.9,3.3]];
+
+/* Renville, 17 Jan 1948: the Republic reduced to the interior of Central
+   Java plus a spine of Sumatra. */
+var REN_JAVA = [[108.8,-7.2],[109.8,-6.9],[111.0,-6.8],[112.4,-7.2],[112.2,-8.1],[110.4,-8.2],[109.0,-7.9]];
+var REN_SUMATRA = [[95.2,5.6],[97.8,4.0],[99.4,2.2],[100.6,0.2],[102.0,-1.8],[103.6,-4.0],[104.4,-5.2],[102.6,-4.6],[100.8,-2.0],[99.0,0.6],[96.8,3.0],[94.9,4.8]];
+
+var REV_PHASES = [
+  { from:1945, to:1945,
+    title:{ id:"Proklamasi — klaim tanpa kendali", en:"Proclamation — claim without control" },
+    body:{
+      id:"Kemerdekaan diproklamasikan 17 Agustus 1945 atas seluruh bekas Hindia Belanda. Kendali nyata jauh lebih sempit: pemerintahan republik berdiri di pedalaman Jawa dan Sumatra, sementara Sekutu lalu Belanda mendarat di kota-kota pelabuhan.",
+      en:"Independence was proclaimed on 17 August 1945 over the whole of the former Dutch East Indies. Actual control was far narrower: republican administration held in the interior of Java and Sumatra while Allied and then Dutch forces landed at the port cities."
+    },
+    zones:[ { poly:HULL_JAVA, fac:'nat', soft:1 }, { poly:HULL_SUMATRA, fac:'nat', soft:1 } ],
+    dutchDots:[[106.83,-6.13],[112.75,-7.25],[110.42,-6.97],[98.67,3.59]] },
+
+  { from:1946, to:1947,
+    title:{ id:"Linggarjati — pengakuan de facto", en:"Linggadjati — de facto recognition" },
+    body:{
+      id:"Perjanjian Linggarjati (November 1946) mengakui kekuasaan de facto Republik atas Jawa, Sumatra, dan Madura. Belanda tetap memegang kota-kota besar sebagai kantong. Agresi Militer I pada Juli 1947 merebut Jawa Barat dan sabuk perkebunan Sumatra.",
+      en:"The Linggadjati Agreement (November 1946) recognised de facto Republican authority over Java, Sumatra and Madura. The Dutch held the major cities as enclaves. Operatie Product in July 1947 seized West Java and the Sumatran plantation belt."
+    },
+    zones:[ { poly:HULL_JAVA, fac:'nat', soft:1 }, { poly:HULL_SUMATRA, fac:'nat', soft:1 } ],
+    dutchDots:[[106.83,-6.13],[107.60,-6.90],[110.42,-6.97],[112.75,-7.25],[98.67,3.59],[100.35,-0.95],[104.75,-2.99]] },
+
+  { from:1948, to:1948,
+    title:{ id:"Garis Van Mook — Republik menyusut", en:"The Van Mook Line — the Republic shrinks" },
+    body:{
+      id:"Perjanjian Renville (Januari 1948) memformalkan Garis Van Mook. Republik tinggal sekitar sepertiga Jawa — Banyumas, Kedu, Yogyakarta, Surakarta, Madiun, Kediri — ditambah pedalaman Sumatra. Inilah satu-satunya garis di peta ini yang benar-benar dirundingkan dan dipetakan.",
+      en:"The Renville Agreement (January 1948) formalised the Van Mook Line. The Republic was left with about a third of Java — Banyumas, Kedu, Yogyakarta, Surakarta, Madiun, Kediri — plus the Sumatran interior. This is the only line on this map that was genuinely negotiated and surveyed."
+    },
+    dutchAll:1,
+    zones:[ { poly:REN_JAVA, fac:'nat' }, { poly:REN_SUMATRA, fac:'nat' } ],
+    vanmook:[REN_JAVA] },
+
+  { from:1949, to:1949,
+    title:{ id:"Agresi II dan pengakuan kedaulatan", en:"Operatie Kraai and the transfer of sovereignty" },
+    body:{
+      id:"Agresi Militer II (19 Desember 1948) merebut Yogyakarta dan menawan Soekarno serta Hatta. Pemerintah Darurat Republik Indonesia berlanjut dari Bukittinggi, dan perlawanan gerilya membuat pendudukan mustahil dipertahankan. Kedaulatan diserahkan 27 Desember 1949.",
+      en:"Operatie Kraai (19 December 1948) took Yogyakarta and captured Sukarno and Hatta. The Emergency Government of the Republic continued from Bukittinggi, and guerrilla resistance made the occupation unsustainable. Sovereignty was transferred on 27 December 1949."
+    },
+    dutchAll:1,
+    zones:[] }
+];
+
+/* Point-anchored events. A three-week uprising is a point, not a territory. */
+var MARKS = [
+  { lon:110.37, lat:-7.80, from:1946, to:1948, fac:'nat',
+    label:{ id:"Yogyakarta — ibu kota republik", en:"Yogyakarta — republican capital" } },
+  { lon:111.52, lat:-7.63, from:1948, to:1948, fac:'komunis',
+    label:{ id:"Peristiwa Madiun (Sep 1948)", en:"Madiun Affair (Sept 1948)" } },
+  { lon:100.37, lat:-0.31, from:1949, to:1949, fac:'nat',
+    label:{ id:"PDRI — Bukittinggi", en:"Emergency government — Bukittinggi" } },
+  { lon:108.22, lat:-7.33, from:1949, to:1962, fac:'islam',
+    label:{ id:"Darul Islam / NII — Jawa Barat", en:"Darul Islam / NII — West Java" } },
+  { lon:120.20, lat:-3.60, from:1952, to:1965, fac:'islam',
+    label:{ id:"Darul Islam — Sulawesi Selatan", en:"Darul Islam — South Sulawesi" } },
+  { lon:96.60, lat:5.00, from:1953, to:1962, fac:'islam',
+    label:{ id:"Darul Islam — Aceh", en:"Darul Islam — Aceh" } },
+  { lon:126.55, lat:-3.38, from:1969, to:1979, fac:'violence',
+    label:{ id:"Pulau Buru — kamp tahanan politik", en:"Buru Island — political prison camp" } }
+];
+
+/* 1955 parliamentary election, plurality by region. Regional figures are
+   approximate; the national shares in the note are not. */
+var PEMILU55 = {
+  aceh:   { fac:'islam',   win:{id:'Masyumi', en:'Masyumi'},        second:{id:'NU', en:'NU'} },
+  sumsel: { fac:'islam',   win:{id:'Masyumi', en:'Masyumi'},        second:{id:'PNI', en:'PNI'} },
+  jabar:  { fac:'islam',   win:{id:'Masyumi', en:'Masyumi'},        second:{id:'PNI', en:'PNI'} },
+  jateng: { fac:'nat',     win:{id:'PNI', en:'PNI'},                second:{id:'PKI', en:'PKI'} },
+  jatim:  { fac:'islam',   win:{id:'NU', en:'NU'},                  second:{id:'PNI', en:'PNI'} },
+  nustra: { fac:'nat',     win:{id:'PNI', en:'PNI'},                second:{id:'Masyumi', en:'Masyumi'} },
+  kalbar: { fac:'islam',   win:{id:'NU', en:'NU'},                  second:{id:'Masyumi', en:'Masyumi'} },
+  kaltim: { fac:'islam',   win:{id:'Masyumi', en:'Masyumi'},        second:{id:'NU', en:'NU'} },
+  sulsel: { fac:'islam',   win:{id:'Masyumi', en:'Masyumi'},        second:{id:'PNI', en:'PNI'} },
+  sulut:  { fac:'kristen', win:{id:'Parkindo & Katolik', en:'Parkindo & Catholic'}, second:{id:'Masyumi', en:'Masyumi'} },
+  maluku: { fac:'kristen', win:{id:'Parkindo', en:'Parkindo'},      second:{id:'Masyumi', en:'Masyumi'} },
+  papua:  { fac:'none',    win:null, second:null }
+};
+
+/* 1965-66. Concentration, not territory. */
+var KILL_ZONES = [
+  { region:'jateng', note:{ id:"Jawa Tengah — basis PKI terbesar", en:"Central Java — the PKI's largest base" } },
+  { region:'jatim',  note:{ id:"Jawa Timur — pembunuhan terluas", en:"East Java — the broadest killings" } },
+  { region:'nustra', note:{ id:"Bali — proporsi korban tertinggi", en:"Bali — the highest proportional toll" } },
+  { region:'aceh',   note:{ id:"Sumatra Utara — sabuk perkebunan", en:"North Sumatra — the plantation belt" } }
+];
+
+var KILL_BODY = {
+  id:"Menyusul peristiwa 30 September 1965, tentara dan milisi sipil membunuh anggota PKI serta orang-orang yang dituduh terkait, terutama di Jawa Tengah, Jawa Timur, Bali, dan Sumatra Utara. Bali menanggung proporsi terberat. Lebih dari satu juta orang ditahan tanpa pengadilan, sebagian sampai satu dekade di Pulau Buru. Komnas HAM menyimpulkan pada 2012 bahwa terjadi pelanggaran HAM berat; pada 2023 Presiden mengakuinya sebagai pelanggaran berat masa lalu. Belum ada seorang pun diadili.",
+  en:"Following the events of 30 September 1965, the army and civilian militias killed PKI members and those accused of association with them, concentrated in Central Java, East Java, Bali and North Sumatra. Bali bore the heaviest proportional toll. More than a million people were detained without trial, some for a decade on Buru Island. Indonesia's human rights commission concluded in 2012 that gross violations occurred; in 2023 the President acknowledged it as a past gross violation. No one has ever been prosecuted."
+};
+
+var FAC_LABEL = { nat:'facNat', islam:'facIslam', komunis:'facKomunis', kristen:'facKristen', none:'facNone', belanda:'facBelanda' };
+
+/* ==================================================================
    SCALE — the chart's three segments, reused verbatim. A linear scale
    would put 60% of the track before the first entity (FR-8a).
    ================================================================== */
@@ -806,9 +1065,13 @@ var ERAS = [
   { y:1500, id:'Zaman Kesultanan',     en:'Age of Sultanates' },
   { y:1602, id:'Zaman VOC',            en:'VOC Era' },
   { y:1800, id:'Hindia Belanda',       en:'Dutch East Indies' },
-  { y:1942, id:'Perang & Revolusi',    en:'War & Revolution' },
-  { y:1950, id:'Zaman Soekarno',       en:'Sukarno Years' },
-  { y:1966, id:'Orde Baru',            en:'New Order' },
+  { y:1942, id:'Pendudukan Jepang',    en:'Japanese Occupation' },
+  { y:1945, id:'Proklamasi',           en:'Proclamation' },
+  { y:1948, id:'Garis Van Mook',       en:'The Van Mook Line' },
+  { y:1955, id:'Pemilu 1955',          en:'The 1955 Election' },
+  { y:1959, id:'Demokrasi Terpimpin',  en:'Guided Democracy' },
+  { y:1965, id:'1965–1966',            en:'1965–1966' },
+  { y:1967, id:'Orde Baru',            en:'New Order' },
   { y:1998, id:'Reformasi',            en:'Reformasi' }
 ];
 
@@ -893,6 +1156,14 @@ for (var tk in TIERS){
   });
   defs.appendChild(g);
 }
+
+/* Hatch for 1965-66. Deliberately flat and graphic — a bloom would render
+   mass killing in the same visual language as royal prestige. */
+var hatch = el('pattern', { id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
+hatch.appendChild(el('rect', { width:6, height:6, fill:'#a83a3a', 'fill-opacity':0.10 }));
+hatch.appendChild(el('line', { x1:0, y1:0, x2:0, y2:6, stroke:'#a83a3a', 'stroke-width':1.6, 'stroke-opacity':0.55 }));
+defs.appendChild(hatch);
+
 svg.appendChild(defs);
 
 /* --- graticule: nautical-chart register, 5° --- */
@@ -970,6 +1241,136 @@ DATA.forEach(function(e, i){
   bloomNodes[i] = grp;
 });
 svg.appendChild(gInf);
+
+/* --- which region does each landmass belong to? Used so the election and
+       1965-66 layers tint actual land rather than the region rectangles,
+       which would flood the sea with colour. --- */
+var RING_REGION = LAND.map(function(ring){
+  var pts = ring.split(' '), sx = 0, sy = 0, n = 0;
+  for (var i=0;i<pts.length;i++){
+    var c = pts[i].split(',');
+    sx += +c[0]; sy += +c[1]; n++;
+  }
+  var clon = sx/n, clat = sy/n, hit = null;
+  for (var r=0;r<REGIONS.length;r++){
+    if (pointInPoly(clon, clat, REGIONS[r].poly)){ hit = REGIONS[r].id; break; }
+  }
+  return hit;
+});
+
+/* --- faction overlay layer, rebuilt only when the active layer changes --- */
+var gOv = el('g', { class:'ov' });
+svg.appendChild(gOv);
+var gMarks = el('g', { class:'ov' });
+svg.appendChild(gMarks);
+
+function activeOverlay(y){
+  if (y >= 1945 && y <= 1949){
+    var ph = null;
+    for (var i=0;i<REV_PHASES.length;i++){
+      if (y >= REV_PHASES[i].from && y <= REV_PHASES[i].to){ ph = REV_PHASES[i]; break; }
+    }
+    return { id:'revolusi', phase:ph };
+  }
+  if (y >= 1955 && y <= 1958) return { id:'pemilu55' };
+  if (y >= 1965 && y <= 1966) return { id:'killings' };
+  return null;
+}
+
+function poly2pts(poly){
+  return poly.map(function(p){ return px(p[0]).toFixed(1) + ',' + py(p[1]).toFixed(1); }).join(' ');
+}
+
+var ovSig = null;
+function buildOverlay(ov){
+  var sig = ov ? (ov.id + ':' + (ov.phase ? ov.phase.from : '') + ':' + S.lang) : 'none';
+  if (sig === ovSig) return;
+  ovSig = sig;
+  while (gOv.firstChild) gOv.removeChild(gOv.firstChild);
+  if (!ov) return;
+
+  if (ov.id === 'revolusi' && ov.phase){
+    var ph = ov.phase;
+
+    /* Dutch claim first, so republican zones read as sitting inside it. */
+    if (ph.dutchAll){
+      LAND_PTS.forEach(function(p){
+        gOv.appendChild(el('polygon', { class:'ov-zone z-belanda', points:p }));
+      });
+    }
+    (ph.zones || []).forEach(function(z){
+      gOv.appendChild(el('polygon', {
+        class:'ov-zone z-' + z.fac + (z.soft ? ' soft' : ''), points:poly2pts(z.poly)
+      }));
+    });
+    (ph.dutchDots || []).forEach(function(d){
+      gOv.appendChild(el('circle', {
+        cx:px(d[0]).toFixed(1), cy:py(d[1]).toFixed(1), r:4.5,
+        fill:'#9085e9', 'fill-opacity':0.30, stroke:'#9085e9', 'stroke-width':1.1
+      }));
+    });
+    (ph.vanmook || []).forEach(function(poly){
+      gOv.appendChild(el('polygon', { class:'vanmook', points:poly2pts(poly) }));
+      var t = el('text', { class:'vanmook-label',
+        x:px(110.6).toFixed(1), y:py(-8.7).toFixed(1), 'text-anchor':'middle' });
+      t.textContent = S.lang === 'id' ? 'GARIS VAN MOOK · RENVILLE 1948' : 'VAN MOOK LINE · RENVILLE 1948';
+      gOv.appendChild(t);
+    });
+  }
+
+  if (ov.id === 'pemilu55'){
+    LAND.forEach(function(ring, ri){
+      var reg = RING_REGION[ri];
+      var e = reg && PEMILU55[reg];
+      if (!e) return;
+      gOv.appendChild(el('polygon', { class:'ov-zone z-' + e.fac, points:LAND_PTS[ri] }));
+    });
+  }
+
+  if (ov.id === 'killings'){
+    var kset = {};
+    KILL_ZONES.forEach(function(k){ kset[k.region] = k; });
+    LAND.forEach(function(ring, ri){
+      if (!kset[RING_REGION[ri]]) return;
+      gOv.appendChild(el('polygon', { class:'kill-zone', points:LAND_PTS[ri] }));
+    });
+    KILL_ZONES.forEach(function(k){
+      var reg = REGIONS.filter(function(r){ return r.id === k.region; })[0];
+      if (!reg) return;
+      var t = el('text', { class:'kill-label',
+        x:px(reg.lab[0]).toFixed(1), y:(py(reg.lab[1]) + 11).toFixed(1) });
+      t.textContent = k.note[S.lang];
+      gOv.appendChild(t);
+    });
+  }
+}
+
+var markSig = null;
+function buildMarks(y){
+  var act = [];
+  MARKS.forEach(function(m, i){ if (y >= m.from && y <= m.to) act.push(i); });
+  var sig = act.join(',') + ':' + S.lang;
+  if (sig === markSig) return;
+  markSig = sig;
+  while (gMarks.firstChild) gMarks.removeChild(gMarks.firstChild);
+
+  var COL = { nat:'#d0503f', islam:'#46a06a', komunis:'#c9628f', violence:'#a83a3a' };
+  act.forEach(function(i){
+    var m = MARKS[i];
+    var g = el('g', { class:'ov-mark' });
+    g.appendChild(el('circle', {
+      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:5.5, stroke:COL[m.fac] || '#d9ab55'
+    }));
+    g.appendChild(el('circle', {
+      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:1.8,
+      fill:COL[m.fac] || '#d9ab55', stroke:'none'
+    }));
+    var t = el('text', { x:px(m.lon).toFixed(1), y:(py(m.lat) - 9).toFixed(1) });
+    t.textContent = m.label[S.lang];
+    g.appendChild(t);
+    gMarks.appendChild(g);
+  });
+}
 
 /* --- region hit + highlight layer. Hit areas are their own layer so
        Ternate and Tidore stay tappable at true scale (NFR-5). --- */
@@ -1095,13 +1496,19 @@ function rx(pos){ return (pos / PMAX) * RW; }
   ruler.appendChild(gl);
 })();
 
-/* era tick names under the track */
+/* Era ticks: clickable dots, with only the active era named beneath. */
+var eraCur = document.createElement('div');
+eraCur.className = 'era-cur';
 ERAS.forEach(function(era, i){
-  var s = document.createElement('span');
-  s.style.left = ((posFromYear(era.y) / PMAX) * 100).toFixed(3) + '%';
-  s.dataset.i = i;
-  eraNames.appendChild(s);
+  var b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'era-dot';
+  b.style.left = ((posFromYear(era.y) / PMAX) * 100).toFixed(3) + '%';
+  b.dataset.i = i;
+  b.addEventListener('click', function(){ setYear(ERAS[i].y); });
+  eraNames.appendChild(b);
 });
+eraNames.appendChild(eraCur);
 
 function currentEra(){
   var found = ERAS[0];
@@ -1178,6 +1585,7 @@ var badgeCount = document.getElementById('badge-count');
 
 function render(){
   var y = S.year;
+  var ov = activeOverlay(y);
 
   /* --- map layers --- */
   var activeRouteIds = {};
@@ -1189,7 +1597,10 @@ function render(){
       e.routes.forEach(function(r){ activeRouteIds[r] = true; });
     }
     if (bloomNodes[i]) bloomNodes[i].setAttribute('opacity', on ? 1 : 0);
-    if (hardNodes[i]) hardNodes[i].setAttribute('opacity', on ? 1 : 0);
+    /* While a faction overlay owns the map, the generic colonial hard edge
+       would draw violet over every landmass and fight it. The overlay is the
+       more precise statement for these years, so it wins. */
+    if (hardNodes[i]) hardNodes[i].setAttribute('opacity', (on && !ov) ? 1 : 0);
     if (entNodeEls[i]) entNodeEls[i].setAttribute('opacity', on ? 0.9 : 0);
   });
 
@@ -1217,12 +1628,21 @@ function render(){
   badgeEra.textContent = era[S.lang];
   badgeCount.textContent = activeCount + ' ' + T('entities');
 
-  /* --- era name strip --- */
+  /* --- era dots: only the active one is named --- */
   var curIdx = ERAS.indexOf(era);
-  Array.prototype.forEach.call(eraNames.children, function(s, i){
-    s.textContent = ERAS[i][S.lang];
-    s.classList.toggle('on', i === curIdx);
+  Array.prototype.forEach.call(eraNames.querySelectorAll('.era-dot'), function(b, i){
+    b.classList.toggle('on', i === curIdx);
+    b.setAttribute('aria-label', ERAS[i][S.lang] + ' · ' + ERAS[i].y);
+    b.title = ERAS[i][S.lang];
   });
+  eraCur.textContent = era[S.lang];
+  var curPct = (posFromYear(era.y) / PMAX) * 100;
+  eraCur.style.left = Math.min(93, Math.max(7, curPct)).toFixed(2) + '%';
+
+  /* --- faction overlays --- */
+  buildOverlay(ov);
+  buildMarks(y);
+  renderOverlayLegend(ov);
 
   /* --- scrubber throughline --- */
   var X = rx(posFromYear(y));
@@ -1232,9 +1652,93 @@ function render(){
   renderRail();
 }
 
+var FAC_HEX = { nat:'#d0503f', islam:'#46a06a', komunis:'#c9628f', kristen:'#5b9bd5', none:'#574f42', belanda:'#9085e9' };
+var ovLegendEl = document.getElementById('ov-legend');
+
+function renderOverlayLegend(ov){
+  if (!ov){ ovLegendEl.classList.remove('on'); ovLegendEl.innerHTML = ''; return; }
+  var title, rows = [], note;
+
+  if (ov.id === 'revolusi'){
+    title = T('ovRevolusi');
+    rows = [['nat', T('facNat')], ['belanda', T('facBelanda')]];
+    if (S.year === 1948) rows.push(['komunis', T('facKomunis')]);
+    if (S.year >= 1949) rows.push(['islam', T('facIslam')]);
+    note = T('ovRevolusiNote');
+  } else if (ov.id === 'pemilu55'){
+    title = T('ovPemilu');
+    rows = [['nat','PNI'], ['islam','Masyumi · NU'], ['kristen', T('facKristen')], ['none', T('facNone')]];
+    note = T('ovPemiluNote');
+  } else {
+    title = T('ovKill');
+    rows = [];
+    note = T('ovKillNote');
+  }
+
+  var html = '<h4>' + esc(title) + '</h4>';
+  if (rows.length){
+    html += '<div class="rows">';
+    rows.forEach(function(r){
+      html += '<div class="r"><span class="sw" style="background:' + FAC_HEX[r[0]] + '"></span>' + esc(r[1]) + '</div>';
+    });
+    html += '</div>';
+  }
+  html += '<div class="note">' + esc(note) + '</div>';
+  ovLegendEl.innerHTML = html;
+  ovLegendEl.classList.add('on');
+}
+
+/* The rail carries the substance. The legend is a key; this is the argument. */
+function overlayBlockHtml(ov){
+  if (!ov) return '';
+
+  if (ov.id === 'revolusi'){
+    var ph = ov.phase;
+    if (!ph) return '';
+    var h = '<div class="ov-block">' +
+      '<div class="kicker">' + esc(T('ovRevolusi')) + '</div>' +
+      '<h3>' + esc(ph.title[S.lang]) + '</h3>' +
+      '<p>' + esc(ph.body[S.lang]) + '</p>';
+    if (S.year === 1948){
+      h += '<div class="caution"><b>' + esc(T('facKomunis')) + '.</b> ' + esc(T('pkiNote')) + '</div>';
+    }
+    return h + '</div>';
+  }
+
+  if (ov.id === 'pemilu55'){
+    var h2 = '<div class="ov-block">' +
+      '<div class="kicker">' + esc(T('ovPemilu')) + '</div>' +
+      '<h3>' + esc(S.lang === 'id' ? 'Empat blok, satu peta' : 'Four blocs, one map') + '</h3>' +
+      '<p>' + esc(T('ovPemiluNote')) + '</p>';
+    /* Runner-up is where the PKI actually lives on this map. */
+    if (S.region && PEMILU55[S.region]){
+      var e = PEMILU55[S.region];
+      if (e.win){
+        h2 += '<div class="ov-rows"><div class="r">' +
+          '<span class="sw" style="background:' + FAC_HEX[e.fac] + '"></span>' +
+          esc(e.win[S.lang]) +
+          '<span class="rr">' + esc(T('secondPlace')) + ': ' + esc(e.second[S.lang]) + '</span>' +
+          '</div></div>';
+      } else {
+        h2 += '<div class="caution">' + esc(T('outsideFranchise')) + '</div>';
+      }
+    }
+    h2 += '<div class="caution"><b>' + esc(T('facKomunis')) + '.</b> ' + esc(T('pkiNote')) + '</div>';
+    return h2 + '</div>';
+  }
+
+  return '<div class="ov-block grave">' +
+    '<div class="kicker">' + esc(T('ovKill')) + '</div>' +
+    '<h3>' + esc(S.lang === 'id' ? 'Sebaran kekerasan, bukan wilayah' : 'A distribution of violence, not a territory') + '</h3>' +
+    '<p>' + esc(KILL_BODY[S.lang]) + '</p>' +
+    '</div>';
+}
+
 function renderRail(){
+  var ovHtml = overlayBlockHtml(activeOverlay(S.year));
+
   if (!S.region){
-    rail.innerHTML =
+    rail.innerHTML = ovHtml +
       '<div class="rail-label">' + esc(T('railIdle')) + '</div>' +
       '<div class="rail-empty">' + esc(T('railIdleBody')) + '</div>' +
       (S.study ? '<div class="study-hint">' + esc(T('studyHint')) + '</div>' : '') +
@@ -1245,7 +1749,7 @@ function renderRail(){
   var region = REGIONS.filter(function(r){ return r.id === S.region; })[0];
   var idxs = entitiesInRegion(region, S.year);
 
-  var html =
+  var html = ovHtml +
     '<div class="rail-label">' + esc(T('activeHere')) + '</div>' +
     '<h2>' + esc(region.label[S.lang]) + '</h2>' +
     '<div class="rail-count mono">' + (S.year >= NOW ? NOW : S.year) + ' · ' + idxs.length + ' ' + esc(T('entities')) + '</div>';
