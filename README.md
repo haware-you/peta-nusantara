@@ -96,10 +96,14 @@ because recall needs stable nameable states, not arbitrary years. A density
 histogram behind the track shows how many entities are active at each point, so
 sparse centuries read as "little recorded here" rather than as broken UI.
 
-**Ground.** Dark, deliberately. Influence renders as radial bloom; on
-paper-cream a soft radial gradient reads as a *stain*, on near-black it reads as
-*light* — which is the semantic wanted. This is a conscious override of the
-light/dark parity requirement in the spec.
+**Ground.** Two designed themes, following the viewer's setting, with an
+in-page toggle. The spec's objection to a light ground was real: a gold radial
+gradient on paper reads as a *stain*. The answer is to change what the bloom
+*is* per theme. On near-black it is screen-blended light, radiating from a
+centre. On paper it is multiply-blended pigment — an ink wash, as on a
+hand-tinted chart. Same data, different physics. The light ground borrows the
+timeline artifact's paper so the two views read as siblings; the dark ground
+keeps the atmospheric treatment the map was first designed around.
 
 **The blank third.** Papua and much of eastern Nusa Tenggara are nearly absent
 from the dataset. On a chart that is invisible; on a map it is a conspicuous

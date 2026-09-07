@@ -1,38 +1,220 @@
 <title>Peta Nusantara</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
-  /* Peta Nusantara commits to a dark ground deliberately (PRD 16): influence
-     renders as radial bloom, which reads as a stain on paper and as light on
-     near-black. Single visual world, every color painted explicitly. */
-  :root{
-    color-scheme: dark;
-    --ground:      #0c0b09;
-    --ocean:       #0f1115;
-    --ocean-deep:  #0b0d10;
-    --land:        #272219;
-    --land-edge:   #3d3626;
-    --land-hi:     #332c20;
-    --gold:        #d9ab55;
-    --gold-warm:   #f0c877;
-    --route:       #3f9d92;
-    --route-hi:    #63c8bb;
-    --colonial:    #9085e9;
-    --ink-1:       #f3ecdd;
-    --ink-2:       #a89b83;
-    --ink-3:       #6e6555;
-    --line:        #2a2419;
-    --surface:     #14120e;
-    --surface-2:   #1c1913;
+  /* Two designed themes, not one inverted (PRD NFR-7).
 
-    /* Faction channel — separate from the gold influence channel, because
-       these are 20th-century political blocs, not mandala spheres. */
-    --f-nat:       #d0503f;   /* republican / nationalist (PNI) */
-    --f-islam:     #46a06a;   /* Islamic (Masyumi, NU, Darul Islam) */
-    --f-komunis:   #c9628f;   /* communist (PKI) — deliberately not red, see README */
-    --f-kristen:   #5b9bd5;   /* Christian parties (Parkindo, Partai Katolik) */
-    --f-none:      #574f42;
-    --violence:    #a83a3a;   /* 1965-66 — its own channel, never "influence" */
+     PRD 16's objection to a light ground was real: a gold radial gradient on
+     paper reads as a stain. The fix is to change what the bloom IS per theme.
+     On near-black it is screen-blended light, radiating from a centre. On
+     paper it is multiply-blended pigment — an ink wash, as on a hand-tinted
+     chart. Same data, different physics. The light ground echoes the timeline
+     artifact's paper so the two views read as siblings.
+
+     Three viewer states: an explicit choice stamps data-theme on the root;
+     the default "system" state stamps nothing and only prefers-color-scheme
+     applies. So: bare :root is the complete LIGHT set, the media query
+     redefines to dark unless light was chosen, and [data-theme="dark"] wins
+     the other way. Every token exists here first. */
+  :root{
+    color-scheme: light;
+    --ground:        #f3ede0;
+    --ocean:         #e2e9ea;
+    --ocean-hi:      #eaf0f0;
+    --ocean-deep:    #d5dfe1;
+    --land:          #ece3cf;
+    --land-edge:     #c4b593;
+    --land-hi:       #e4d9c0;
+    --gold:          #96691a;
+    --gold-warm:     #b5822a;
+    --route:         #1f7a70;
+    --route-hi:      #146a60;
+    --colonial:      #4a3aa7;
+    --colonial-fill: rgba(74,58,167,0.12);
+    --ink-1:         #221c14;
+    --ink-2:         #5b5347;
+    --ink-3:         #8c8371;
+    --line:          #ddd2ba;
+    --surface:       #fbf8f1;
+    --surface-2:     #f1eadb;
+    --surface-3:     #e8dfcb;
+    --on-accent:     #fff8ea;
+    --accent-line:   #cfa863;
+    --panel-bg:      rgba(251,248,241,0.92);
+    --swatch-line:   rgba(34,28,20,0.18);
+    --tag-line:      #b9b0dc;
+    --halo:          rgba(251,248,241,0.92);   /* text halo, so labels sit on the ground */
+
+    /* Influence: pigment on paper. Deeper ochre than the UI gold, multiplied. */
+    --bloom:         #b8791c;
+    --bloom-swatch:  rgba(184,121,28,0.55);
+    --blend:         multiply;
+    --bh0:.62; --bh1:.36; --bh2:.13; --bh3:0;    /* high confidence: tight */
+    --bm0:.46; --bm1:.28; --bm2:.10; --bm3:0;    /* medium */
+    --bl0:.32; --bl1:.21; --bl2:.08; --bl3:0;    /* low: diffuse — uncertainty is visible */
+    --glow-fill:       rgba(150,105,26,0.07);
+    --glow-stroke:     rgba(150,105,26,0.45);
+    --glow-fill-sel:   rgba(150,105,26,0.10);
+    --glow-stroke-sel: rgba(150,105,26,0.75);
+    --gold-glow-a:     rgba(150,105,26,0.22);
+    --gold-glow-b:     rgba(150,105,26,0.30);
+    --vanmook:       #2a2116;
+
+    /* Faction channel — separate from the influence channel, because these
+       are 20th-century political blocs, not mandala spheres. */
+    --f-nat:         #b8402f;   /* republican / nationalist (PNI) */
+    --f-islam:       #2f7d4f;   /* Islamic (Masyumi, NU, Darul Islam) */
+    --f-komunis:     #a8446f;   /* communist (PKI) — deliberately not red, see README */
+    --f-kristen:     #2f6fae;   /* Christian parties (Parkindo, Partai Katolik) */
+    --f-none:        #b3a892;
+    --violence:      #8f2b2b;   /* 1965-66 — its own channel, never "influence" */
+    --violence-text: #8f2b2b;
+    --mig:           #2c7d93;   /* Austronesian migration */
+    --mig-text:      #1f6478;
+
+    /* Scrubber ruler */
+    --rl-base:  #ddd2ba; --rl-major: #a89b83; --rl-minor: #cfc4aa;
+    --rl-break: #b5905a; --rl-lab:   #8c8371;
+    --dens:     #96691a; --dens-a: .18; --thr: #96691a;
+    --grat:     #d3dcdd;
+
+    /* Timeline category colours, light variants — carried from the chart */
+    --cat-classical: #2a78d6; --cat-islamic: #eb6834; --cat-modern: #c23a3a;
   }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --ground:        #0c0b09;
+      --ocean:         #0f1115;
+      --ocean-hi:      #12151a;
+      --ocean-deep:    #0b0d10;
+      --land:          #272219;
+      --land-edge:     #3d3626;
+      --land-hi:       #332c20;
+      --gold:          #d9ab55;
+      --gold-warm:     #f0c877;
+      --route:         #3f9d92;
+      --route-hi:      #63c8bb;
+      --colonial:      #9085e9;
+      --colonial-fill: rgba(144,133,233,0.10);
+      --ink-1:         #f3ecdd;
+      --ink-2:         #a89b83;
+      --ink-3:         #6e6555;
+      --line:          #2a2419;
+      --surface:       #14120e;
+      --surface-2:     #1c1913;
+      --surface-3:     #231e16;
+      --on-accent:     #1a1408;
+      --accent-line:   #4a3c1e;
+      --panel-bg:      rgba(14,12,9,0.90);
+      --swatch-line:   rgba(255,255,255,0.18);
+      --tag-line:      #3a3560;
+      --halo:          var(--halo);
+      --bloom:         #d9ab55;
+      --bloom-swatch:  rgba(217,171,85,0.62);
+      --blend:         screen;
+      --bh0:.62; --bh1:.34; --bh2:.11; --bh3:0;
+      --bm0:.44; --bm1:.26; --bm2:.09; --bm3:0;
+      --bl0:.30; --bl1:.20; --bl2:.08; --bl3:0;
+      --glow-fill:       rgba(217,171,85,0.05);
+      --glow-stroke:     rgba(217,171,85,0.30);
+      --glow-fill-sel:   rgba(217,171,85,0.075);
+      --glow-stroke-sel: rgba(217,171,85,0.55);
+      --gold-glow-a:     rgba(217,171,85,0.20);
+      --gold-glow-b:     rgba(217,171,85,0.34);
+      --vanmook:       #e8dcc0;
+      --f-nat:         #d0503f;
+      --f-islam:       #46a06a;
+      --f-komunis:     #c9628f;
+      --f-kristen:     #5b9bd5;
+      --f-none:        #574f42;
+      --violence:      #a83a3a;
+      --violence-text: #e8a0a0;
+      --mig:           #7fb6c9;
+      --mig-text:      #9fd0de;
+      --rl-base:  #2a2419; --rl-major: #4a4232; --rl-minor: #2f2a1e;
+      --rl-break: #5a4a26; --rl-lab:   #6e6555;
+      --dens:     #d9ab55; --dens-a: .16; --thr: #d9ab55; --grat: #1a1e24;
+      --cat-classical: #3987e5; --cat-islamic: #e07a44; --cat-modern: #e06666;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --ground:        #0c0b09;
+    --ocean:         #0f1115;
+    --ocean-hi:      #12151a;
+    --ocean-deep:    #0b0d10;
+    --land:          #272219;
+    --land-edge:     #3d3626;
+    --land-hi:       #332c20;
+    --gold:          #d9ab55;
+    --gold-warm:     #f0c877;
+    --route:         #3f9d92;
+    --route-hi:      #63c8bb;
+    --colonial:      #9085e9;
+    --colonial-fill: rgba(144,133,233,0.10);
+    --ink-1:         #f3ecdd;
+    --ink-2:         #a89b83;
+    --ink-3:         #6e6555;
+    --line:          #2a2419;
+    --surface:       #14120e;
+    --surface-2:     #1c1913;
+    --surface-3:     #231e16;
+    --on-accent:     #1a1408;
+    --accent-line:   #4a3c1e;
+    --panel-bg:      rgba(14,12,9,0.90);
+    --swatch-line:   rgba(255,255,255,0.18);
+    --tag-line:      #3a3560;
+    --halo:          var(--halo);
+    --bloom:         #d9ab55;
+    --bloom-swatch:  rgba(217,171,85,0.62);
+    --blend:         screen;
+    --bh0:.62; --bh1:.34; --bh2:.11; --bh3:0;
+    --bm0:.44; --bm1:.26; --bm2:.09; --bm3:0;
+    --bl0:.30; --bl1:.20; --bl2:.08; --bl3:0;
+    --glow-fill:       rgba(217,171,85,0.05);
+    --glow-stroke:     rgba(217,171,85,0.30);
+    --glow-fill-sel:   rgba(217,171,85,0.075);
+    --glow-stroke-sel: rgba(217,171,85,0.55);
+    --gold-glow-a:     rgba(217,171,85,0.20);
+    --gold-glow-b:     rgba(217,171,85,0.34);
+    --vanmook:       #e8dcc0;
+    --f-nat:         #d0503f;
+    --f-islam:       #46a06a;
+    --f-komunis:     #c9628f;
+    --f-kristen:     #5b9bd5;
+    --f-none:        #574f42;
+    --violence:      #a83a3a;
+    --violence-text: #e8a0a0;
+    --mig:           #7fb6c9;
+    --mig-text:      #9fd0de;
+    --rl-base:  #2a2419; --rl-major: #4a4232; --rl-minor: #2f2a1e;
+    --rl-break: #5a4a26; --rl-lab:   #6e6555;
+    --dens:     #d9ab55; --dens-a: .16; --thr: #d9ab55; --grat: #1a1e24;
+      --cat-classical: #3987e5; --cat-islamic: #e07a44; --cat-modern: #e06666;
+  }
+
+  /* SVG built by script carries classes, not colours; these resolve them. */
+  #bloom-high   .s0{ stop-color: var(--bloom); stop-opacity: var(--bh0); }
+  #bloom-high   .s1{ stop-color: var(--bloom); stop-opacity: var(--bh1); }
+  #bloom-high   .s2{ stop-color: var(--bloom); stop-opacity: var(--bh2); }
+  #bloom-high   .s3{ stop-color: var(--bloom); stop-opacity: var(--bh3); }
+  #bloom-medium .s0{ stop-color: var(--bloom); stop-opacity: var(--bm0); }
+  #bloom-medium .s1{ stop-color: var(--bloom); stop-opacity: var(--bm1); }
+  #bloom-medium .s2{ stop-color: var(--bloom); stop-opacity: var(--bm2); }
+  #bloom-medium .s3{ stop-color: var(--bloom); stop-opacity: var(--bm3); }
+  #bloom-low    .s0{ stop-color: var(--bloom); stop-opacity: var(--bl0); }
+  #bloom-low    .s1{ stop-color: var(--bloom); stop-opacity: var(--bl1); }
+  #bloom-low    .s2{ stop-color: var(--bloom); stop-opacity: var(--bl2); }
+  #bloom-low    .s3{ stop-color: var(--bloom); stop-opacity: var(--bl3); }
+  .dens{ fill: var(--dens); fill-opacity: var(--dens-a); }
+  .rl-base{ stroke: var(--rl-base); stroke-width:1; }
+  .rl-major{ stroke: var(--rl-major); stroke-width:.8; }
+  .rl-minor{ stroke: var(--rl-minor); stroke-width:.8; }
+  .rl-break{ stroke: var(--rl-break); stroke-width:1; stroke-dasharray:2 3; }
+  .rl-lab{ fill: var(--rl-lab); font-size:9px; font-family:'IBM Plex Mono', monospace; }
+  #thr{ stroke: var(--thr); stroke-width:1; stroke-opacity:.55; }
+  .dutch-dot{ fill: var(--colonial); fill-opacity:.30; stroke: var(--colonial); stroke-width:1.1; }
 
   *{ box-sizing: border-box; }
 
@@ -80,7 +262,7 @@
     transition: background .14s, color .14s;
   }
   .seg button:hover{ color: var(--ink-1); }
-  .seg button.active{ background: var(--gold); color: #1a1408; }
+  .seg button.active{ background: var(--gold); color: var(--on-accent); }
   .seg button:focus-visible{ outline:2px solid var(--gold-warm); outline-offset:-2px; }
 
   .pill{
@@ -91,16 +273,16 @@
     transition: color .14s, border-color .14s;
   }
   .pill .knob{
-    width:28px; height:17px; border-radius:999px; background:#241f16;
+    width:28px; height:17px; border-radius:999px; background: var(--surface-3);
     border:1px solid var(--line); position:relative; flex-shrink:0; transition: background .15s;
   }
   .pill .knob::after{
     content:''; position:absolute; top:1px; left:1px; width:13px; height:13px;
     border-radius:50%; background: var(--ink-3); transition: transform .15s, background .15s;
   }
-  .pill.on{ color: var(--gold); border-color:#4a3c1e; }
+  .pill.on{ color: var(--gold); border-color: var(--accent-line); }
   .pill.on .knob{ background: var(--gold); }
-  .pill.on .knob::after{ transform: translateX(11px); background:#1a1408; }
+  .pill.on .knob::after{ transform: translateX(11px); background: var(--on-accent); }
   .pill:focus-visible{ outline:2px solid var(--gold-warm); outline-offset:2px; }
 
   /* ============================ Stage ============================ */
@@ -113,7 +295,7 @@
   .map-wrap{
     position: relative;
     background:
-      radial-gradient(120% 90% at 50% 42%, #12151a 0%, var(--ocean) 45%, var(--ocean-deep) 100%);
+      radial-gradient(120% 90% at 50% 42%, var(--ocean-hi) 0%, var(--ocean) 45%, var(--ocean-deep) 100%);
     overflow: hidden;
     min-height: 340px;
   }
@@ -148,8 +330,8 @@
   }
   .legend-map div{ display:flex; align-items:center; gap:7px; }
   .legend-map i{ width:22px; height:0; display:block; flex-shrink:0; }
-  .lg-bloom{ height:9px; border-radius:2px; background: linear-gradient(90deg, rgba(217,171,85,.62), rgba(217,171,85,0)); }
-  .lg-hard{ height:9px; border-radius:2px; border:1px solid var(--colonial); background: rgba(144,133,233,.14); }
+  .lg-bloom{ height:9px; border-radius:2px; background: linear-gradient(90deg, var(--bloom-swatch), transparent); }
+  .lg-hard{ height:9px; border-radius:2px; border:1px solid var(--colonial); background: var(--colonial-fill); }
   .lg-route{ border-top:1.5px dashed var(--route); }
 
   /* ============================ Detail rail ============================ */
@@ -176,13 +358,13 @@
     border-left:3px solid var(--ink-3);
     transition: border-color .14s, background .14s;
   }
-  .ent:hover{ background:#231e16; }
+  .ent:hover{ background: var(--surface-3); }
   .ent:focus-visible{ outline:2px solid var(--gold-warm); outline-offset:2px; }
-  .ent.sel{ border-color:#4a3c1e; border-left-color: var(--gold); background:#231e16; }
-  .ent.c-classical{ border-left-color:#3987e5; }
-  .ent.c-islamic{ border-left-color:#e07a44; }
+  .ent.sel{ border-color: var(--accent-line); border-left-color: var(--gold); background: var(--surface-3); }
+  .ent.c-classical{ border-left-color: var(--cat-classical); }
+  .ent.c-islamic{ border-left-color: var(--cat-islamic); }
   .ent.c-colonial{ border-left-color: var(--colonial); }
-  .ent.c-modern{ border-left-color:#e06666; }
+  .ent.c-modern{ border-left-color: var(--cat-modern); }
   .ent .en{ font-weight:600; font-size:0.88rem; line-height:1.3; }
   .ent .ey{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color: var(--ink-2); margin-top:3px; }
   .ent .ed{ font-size:0.82rem; color: var(--ink-2); line-height:1.55; margin-top:7px; display:none; }
@@ -190,7 +372,7 @@
   .ent .tag{
     display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
     letter-spacing:0.06em; text-transform:uppercase; color: var(--colonial);
-    border:1px solid #3a3560; border-radius:3px; padding:1px 5px; margin-left:6px;
+    border:1px solid var(--tag-line); border-radius:3px; padding:1px 5px; margin-left:6px;
     vertical-align:1px;
   }
   .ent .conf{
@@ -272,12 +454,12 @@
     -webkit-appearance:none; appearance:none;
     width:15px; height:15px; border-radius:50%;
     background: var(--gold-warm); border:none; margin-top:5.5px;
-    box-shadow: 0 0 0 4px rgba(217,171,85,0.20), 0 0 14px 4px rgba(217,171,85,0.34);
+    box-shadow: 0 0 0 4px var(--gold-glow-a), 0 0 14px 4px var(--gold-glow-b);
   }
   input[type=range].era::-moz-range-thumb{
     width:15px; height:15px; border-radius:50%;
     background: var(--gold-warm); border:none;
-    box-shadow: 0 0 0 4px rgba(217,171,85,0.20), 0 0 14px 4px rgba(217,171,85,0.34);
+    box-shadow: 0 0 0 4px var(--gold-glow-a), 0 0 14px 4px var(--gold-glow-b);
   }
   input[type=range].era:focus{ outline:none; }
   input[type=range].era:focus-visible::-webkit-slider-thumb{
@@ -309,16 +491,16 @@
 
   /* ============================ Map primitives ============================ */
   .land{ fill: var(--land); stroke: var(--land-edge); stroke-width:0.7; stroke-linejoin:round; }
-  .graticule{ stroke:#1a1e24; stroke-width:0.5; fill:none; }
+  .graticule{ stroke: var(--grat); stroke-width:0.5; fill:none; }
 
   .region-hit{ fill: transparent; cursor:pointer; outline:none; }
   .region-hit:hover + .region-glow, .region-hit:focus-visible + .region-glow{ opacity:1; }
   .region-glow{
-    fill: rgba(217,171,85,0.05); stroke: rgba(217,171,85,0.30);
+    fill: var(--glow-fill); stroke: var(--glow-stroke);
     stroke-width:0.8; stroke-dasharray:4 4; opacity:0; pointer-events:none;
     transition: opacity .16s;
   }
-  .region-glow.sel{ opacity:1; fill: rgba(217,171,85,0.075); stroke: rgba(217,171,85,0.55); stroke-dasharray:none; }
+  .region-glow.sel{ opacity:1; fill: var(--glow-fill-sel); stroke: var(--glow-stroke-sel); stroke-dasharray:none; }
   .region-hit:focus-visible + .region-glow{ stroke: var(--gold-warm); stroke-width:1.4; stroke-dasharray:none; }
 
   .rlabel text{
@@ -328,12 +510,13 @@
   }
   .rlabel.sel text, .rlabel.hot text{ fill: var(--ink-2); }
 
-  .influence{ mix-blend-mode: screen; pointer-events:none; }
+  /* screen on dark (adds light), multiply on paper (adds pigment) */
+  .influence{ mix-blend-mode: var(--blend); pointer-events:none; }
   .bloom{ transition: opacity .3s ease; }
 
   .hard{ pointer-events:none; }
   .hard .hp{
-    fill: rgba(144,133,233,0.10); stroke: var(--colonial);
+    fill: var(--colonial-fill); stroke: var(--colonial);
     stroke-width:0.9; stroke-linejoin:round;
     transition: opacity .3s ease;
   }
@@ -366,17 +549,17 @@
   .z-belanda{ fill: var(--colonial); stroke: var(--colonial); }
 
   /* The Van Mook Line was negotiated and surveyed — it gets a real edge. */
-  .vanmook{ fill:none; stroke:#e8dcc0; stroke-width:1.6; stroke-dasharray:9 3 2 3; }
+  .vanmook{ fill:none; stroke: var(--vanmook); stroke-width:1.6; stroke-dasharray:9 3 2 3; }
   .vanmook-label{
     font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.12em;
-    text-transform:uppercase; fill:#e8dcc0; opacity:0.85;
+    text-transform:uppercase; fill: var(--vanmook); opacity:0.85;
   }
 
   .ov-mark circle{ fill:none; stroke-width:1.3; }
   .ov-mark text{
     font-family:'IBM Plex Mono', monospace; font-size:7.5px; letter-spacing:0.08em;
     fill: var(--ink-1); text-anchor:middle;
-    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.6px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
   }
 
   /* 1965-66 is rendered as intensity, never as territory. No bloom, no glow:
@@ -384,13 +567,13 @@
   .kill-zone{ stroke: var(--violence); stroke-width:1; fill:url(#hatch); }
   .kill-label{
     font-family:'IBM Plex Mono', monospace; font-size:7px; letter-spacing:0.1em;
-    fill:#e8a0a0; text-anchor:middle;
-    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.4px; stroke-linejoin:round;
+    fill: var(--violence-text); text-anchor:middle;
+    paint-order: stroke; stroke: var(--halo); stroke-width:2.4px; stroke-linejoin:round;
   }
 
   .ov-legend{
     position:absolute; left:16px; bottom:52px;
-    background: rgba(14,12,9,0.90); border:1px solid var(--line);
+    background: var(--panel-bg); border:1px solid var(--line);
     border-radius:8px; padding:10px 13px; max-width: 330px;
     display:none;
   }
@@ -401,7 +584,7 @@
   }
   .ov-legend .rows{ display:grid; gap:4px; }
   .ov-legend .r{ display:flex; align-items:center; gap:8px; font-size:0.72rem; color: var(--ink-2); }
-  .ov-legend .sw{ width:13px; height:9px; border-radius:2px; flex-shrink:0; border:1px solid rgba(255,255,255,0.18); }
+  .ov-legend .sw{ width:13px; height:9px; border-radius:2px; flex-shrink:0; border:1px solid var(--swatch-line); }
   .ov-legend .note{
     font-size:0.68rem; color: var(--ink-3); line-height:1.5; margin-top:8px;
     border-top:1px solid var(--line); padding-top:7px;
@@ -421,7 +604,7 @@
     font-family:'IBM Plex Mono', monospace; font-size:0.6rem; letter-spacing:0.13em;
     text-transform:uppercase; color: var(--gold); font-weight:600; margin-bottom:5px;
   }
-  .ov-block.grave .kicker{ color:#e08b8b; }
+  .ov-block.grave .kicker{ color: var(--violence-text); }
   .ov-block p{ font-size:0.82rem; color: var(--ink-2); line-height:1.6; margin:7px 0 0; }
   .ov-block .caution{
     font-size:0.78rem; color: var(--ink-2); line-height:1.6; margin-top:9px;
@@ -430,19 +613,19 @@
   .ov-block .caution b{ color: var(--f-komunis); font-weight:600; }
   .ov-rows{ display:grid; gap:4px; margin-top:9px; }
   .ov-rows .r{ display:flex; align-items:center; gap:8px; font-size:0.76rem; color: var(--ink-2); }
-  .ov-rows .sw{ width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(255,255,255,0.16); }
+  .ov-rows .sw{ width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid var(--swatch-line); }
   .ov-rows .rr{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color: var(--ink-3); }
 
   /* Austronesian migration — a fifth channel again, because this is neither
      influence, control, nor party support. It is where everyone came from. */
   .mig{ pointer-events:none; }
   .mig path{
-    fill:none; stroke:#7fb6c9; stroke-width:1.4; stroke-dasharray:7 5; opacity:0.8;
+    fill:none; stroke: var(--mig); stroke-width:1.4; stroke-dasharray:7 5; opacity:0.8;
   }
   .mig text{
     font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.12em;
-    text-transform:uppercase; fill:#9fd0de; text-anchor:middle;
-    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.6px; stroke-linejoin:round;
+    text-transform:uppercase; fill: var(--mig-text); text-anchor:middle;
+    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
   }
 
   .node{ pointer-events:none; transition: opacity .3s ease; }
@@ -450,7 +633,7 @@
   .node text{
     font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.06em;
     fill: var(--ink-1); text-anchor:middle;
-    paint-order: stroke; stroke: rgba(8,7,5,0.85); stroke-width:2.6px; stroke-linejoin:round;
+    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
   }
   .app.study .node text{ filter: blur(4px); }
   .app.study .node.rv text{ filter:none; }
@@ -496,6 +679,9 @@
           <button type="button" id="btn-id">Bahasa Indonesia</button>
           <button type="button" id="btn-en">English</button>
         </div>
+        <button type="button" class="pill" id="theme-btn" aria-pressed="false">
+          <span class="knob"></span><span id="theme-label"></span>
+        </button>
       </div>
       <div class="ctl-row">
         <button type="button" class="pill" id="study-btn" aria-pressed="false">
@@ -577,6 +763,8 @@ var CHROME = {
   },
   studyToggle:{ id:"Mode Belajar", en:"Study Mode" },
   routesToggle:{ id:"Jalur Laut", en:"Sea Lanes" },
+  themeLight:{ id:"Mode Terang", en:"Light Mode" },
+  themeDark:{ id:"Mode Gelap", en:"Dark Mode" },
   scrubTitle:{ id:"Garis Waktu", en:"Era Scrubber" },
   scrubHint:{
     id:"Seret bebas — pegangan berhenti di batas era. Panah kiri/kanan berpindah antar era.",
@@ -1439,6 +1627,7 @@ var ERAS = [
    ================================================================== */
 var S = {
   lang: 'id',
+  theme: '',           /* '' = follow the viewer; 'light' | 'dark' = explicit choice */
   year: 1365,          /* opens on the Majapahit peak — a full first frame */
   region: null,
   entity: null,
@@ -1510,8 +1699,9 @@ var TIERS = {
 var TIER_SCALE = { high:1.0, medium:1.16, low:1.34 };
 for (var tk in TIERS){
   var g = el('radialGradient', { id:'bloom-'+tk });
-  TIERS[tk].forEach(function(st){
-    g.appendChild(el('stop', { offset:(st[0]*100)+'%', 'stop-color':'#d9ab55', 'stop-opacity':st[1] }));
+  /* Colour and opacity come from CSS (per theme); JS only sets the offsets. */
+  TIERS[tk].forEach(function(st, si){
+    g.appendChild(el('stop', { offset:(st[0]*100)+'%', class:'s' + si }));
   });
   defs.appendChild(g);
 }
@@ -1519,8 +1709,8 @@ for (var tk in TIERS){
 /* Hatch for 1965-66. Deliberately flat and graphic — a bloom would render
    mass killing in the same visual language as royal prestige. */
 var hatch = el('pattern', { id:'hatch', width:6, height:6, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
-hatch.appendChild(el('rect', { width:6, height:6, fill:'#a83a3a', 'fill-opacity':0.10 }));
-hatch.appendChild(el('line', { x1:0, y1:0, x2:0, y2:6, stroke:'#a83a3a', 'stroke-width':1.6, 'stroke-opacity':0.55 }));
+hatch.appendChild(el('rect', { width:6, height:6, style:'fill:var(--violence)', 'fill-opacity':0.10 }));
+hatch.appendChild(el('line', { x1:0, y1:0, x2:0, y2:6, style:'stroke:var(--violence)', 'stroke-width':1.6, 'stroke-opacity':0.55 }));
 defs.appendChild(hatch);
 
 svg.appendChild(defs);
@@ -1626,7 +1816,7 @@ svg.appendChild(gMarks);
 /* --- Austronesian migration, drawn only in the prologue state --- */
 var arrow = el('marker', { id:'arrowhead', viewBox:'0 0 10 8', refX:'9', refY:'4',
   markerWidth:'7', markerHeight:'6', orient:'auto-start-reverse' });
-arrow.appendChild(el('path', { d:'M0 0 L10 4 L0 8 z', fill:'#7fb6c9' }));
+arrow.appendChild(el('path', { d:'M0 0 L10 4 L0 8 z', style:'fill:var(--mig)' }));
 defs.appendChild(arrow);
 
 var gMig = el('g', { class:'mig' });
@@ -1688,7 +1878,7 @@ function buildOverlay(ov){
     (ph.dutchDots || []).forEach(function(d){
       gOv.appendChild(el('circle', {
         cx:px(d[0]).toFixed(1), cy:py(d[1]).toFixed(1), r:4.5,
-        fill:'#9085e9', 'fill-opacity':0.30, stroke:'#9085e9', 'stroke-width':1.1
+        class:'dutch-dot'
       }));
     });
     (ph.vanmook || []).forEach(function(poly){
@@ -1736,16 +1926,16 @@ function buildMarks(y){
   markSig = sig;
   while (gMarks.firstChild) gMarks.removeChild(gMarks.firstChild);
 
-  var COL = { nat:'#d0503f', islam:'#46a06a', komunis:'#c9628f', violence:'#a83a3a' };
+  var COL = { nat:'var(--f-nat)', islam:'var(--f-islam)', komunis:'var(--f-komunis)', violence:'var(--violence)' };
   act.forEach(function(i){
     var m = MARKS[i];
     var g = el('g', { class:'ov-mark' });
     g.appendChild(el('circle', {
-      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:5.5, stroke:COL[m.fac] || '#d9ab55'
+      cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:5.5, style:'stroke:' + (COL[m.fac] || 'var(--gold)')
     }));
     g.appendChild(el('circle', {
       cx:px(m.lon).toFixed(1), cy:py(m.lat).toFixed(1), r:1.8,
-      fill:COL[m.fac] || '#d9ab55', stroke:'none'
+      style:'fill:' + (COL[m.fac] || 'var(--gold)'), stroke:'none'
     }));
     var t = el('text', { x:px(m.lon).toFixed(1), y:(py(m.lat) - 9).toFixed(1) });
     t.textContent = m.label[S.lang];
@@ -1827,14 +2017,14 @@ function rx(pos){ return (pos / PMAX) * RW; }
     var h = max ? (c / max) * 20 : 0;
     gd.appendChild(el('rect', {
       x:(i*bw).toFixed(2), y:(20 - h).toFixed(2), width:(bw + 0.35).toFixed(2), height:h.toFixed(2),
-      fill:'#d9ab55', 'fill-opacity':0.16
+      class:'dens'
     }));
   });
   ruler.appendChild(gd);
 
   /* engraved ruler: dense hairline minors, sparse taller majors */
   var gt = el('g');
-  gt.appendChild(el('line', { x1:0, y1:33, x2:RW, y2:33, stroke:'#2a2419', 'stroke-width':1 }));
+  gt.appendChild(el('line', { x1:0, y1:33, x2:RW, y2:33, class:'rl-base' }));
   SEGMENTS.forEach(function(s){
     var minor = s.step / 2;
     for (var y = s.yStart; y <= s.yEnd; y += minor){
@@ -1842,7 +2032,7 @@ function rx(pos){ return (pos / PMAX) * RW; }
       var X = rx(posFromYear(y));
       gt.appendChild(el('line', {
         x1:X.toFixed(2), y1:33, x2:X.toFixed(2), y2:(isMajor ? 41 : 37).toFixed(2),
-        stroke: isMajor ? '#4a4232' : '#2f2a1e', 'stroke-width':0.8
+        class: isMajor ? 'rl-major' : 'rl-minor'
       }));
     }
   });
@@ -1853,14 +2043,14 @@ function rx(pos){ return (pos / PMAX) * RW; }
   [SEGMENTS[1].pStart, SEGMENTS[2].pStart].forEach(function(p){
     var X = rx(p);
     gb.appendChild(el('line', { x1:X.toFixed(2), y1:8, x2:X.toFixed(2), y2:47,
-      stroke:'#5a4a26', 'stroke-width':1, 'stroke-dasharray':'2 3' }));
+      class:'rl-break' }));
   });
   ruler.appendChild(gb);
 
   /* throughline + handle bloom, so the current position is findable
      without hunting for the disc */
   var gh = el('g');
-  var thr = el('line', { id:'thr', x1:0, y1:4, x2:0, y2:52, stroke:'#d9ab55', 'stroke-width':1, 'stroke-opacity':0.55 });
+  var thr = el('line', { id:'thr', x1:0, y1:4, x2:0, y2:52 });
   gh.appendChild(thr);
   ruler.appendChild(gh);
   ruler._thr = thr;
@@ -1871,7 +2061,7 @@ function rx(pos){ return (pos / PMAX) * RW; }
     var X = rx(posFromYear(y));
     var anchor = y === 300 ? 'start' : (y === NOW ? 'end' : 'middle');
     var t = el('text', { x:X.toFixed(2), y:57, 'text-anchor':anchor,
-      fill:'#6e6555', 'font-size':'9', 'font-family':'IBM Plex Mono, monospace' });
+      class:'rl-lab' });
     t.textContent = y === NOW ? String(NOW) : String(y);
     gl.appendChild(t);
   });
@@ -2039,7 +2229,7 @@ function render(){
   renderRail();
 }
 
-var FAC_HEX = { nat:'#d0503f', islam:'#46a06a', komunis:'#c9628f', kristen:'#5b9bd5', none:'#574f42', belanda:'#9085e9' };
+var FAC_HEX = { nat:'var(--f-nat)', islam:'var(--f-islam)', komunis:'var(--f-komunis)', kristen:'var(--f-kristen)', none:'var(--f-none)', belanda:'var(--colonial)' };
 var ovLegendEl = document.getElementById('ov-legend');
 
 function renderOverlayLegend(ov){
@@ -2228,6 +2418,7 @@ function applyChrome(){
   document.getElementById('btn-en').classList.toggle('active', S.lang === 'en');
   document.getElementById('map-title').textContent = T('title') + ' — ' + T('caveatLead');
   document.documentElement.lang = S.lang;
+  applyTheme();
 }
 
 function setLang(l){
@@ -2258,10 +2449,38 @@ routesBtn.addEventListener('click', function(){
   render();
 });
 
+/* Theme. With no explicit choice the page follows the viewer — the host's
+   data-theme stamp if there is one, else prefers-color-scheme. A click makes
+   the choice explicit and persists it. */
+var themeBtn = document.getElementById('theme-btn');
+var themeLabel = document.getElementById('theme-label');
+function effectiveTheme(){
+  var t = document.documentElement.getAttribute('data-theme');
+  if (t === 'light' || t === 'dark') return t;
+  return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+}
+function applyTheme(){
+  if (S.theme === 'light' || S.theme === 'dark') document.documentElement.setAttribute('data-theme', S.theme);
+  var eff = effectiveTheme();
+  themeBtn.classList.toggle('on', eff === 'light');
+  themeBtn.setAttribute('aria-pressed', eff === 'light' ? 'true' : 'false');
+  themeLabel.textContent = eff === 'light' ? T('themeLight') : T('themeDark');
+}
+themeBtn.addEventListener('click', function(){
+  S.theme = effectiveTheme() === 'light' ? 'dark' : 'light';
+  LS.set('nusantara-map-theme', S.theme);
+  applyTheme();
+});
+try {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+} catch(e){}
+
 /* ==================================================================
    BOOT
    ================================================================== */
 S.lang  = LS.get('nusantara-map-lang', 'id') === 'en' ? 'en' : 'id';
+var savedTheme = LS.get('nusantara-map-theme', '');
+S.theme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : '';
 S.study = LS.get('nusantara-map-study', '0') === '1';
 S.routes = LS.get('nusantara-map-routes', '1') === '1';
 try { S.revealed = JSON.parse(LS.get('nusantara-map-revealed', '{}')) || {}; } catch(e){ S.revealed = {}; }
