@@ -1,0 +1,5 @@
+# The deployable is the single built page. Everything else is source,
+# tooling, or working documents that should not be served.
+*
+!peta-nusantara.html
+!vercel.json
