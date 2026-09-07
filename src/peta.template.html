@@ -432,7 +432,10 @@
   .ent.sel .sources{ display:block; }
   .src-label{ margin-bottom:6px; }
   .src-photo{ margin-bottom:9px; }
-  .src-photo img{ display:none; } /* 1x1 placeholder — hidden until real bytes are embedded */
+  .src-thumb{
+    display:block; width:100%; max-width:240px; height:auto;
+    border-radius:6px; border:1px solid var(--line); margin-bottom:6px;
+  }
   .src-credit{ font-size:0.76rem; color: var(--ink-3); line-height:1.5; }
   .src-credit a{ color: var(--gold); }
   .src-license{ font-family:'IBM Plex Mono', monospace; font-size:0.63rem; color: var(--ink-3); margin-top:2px; }
@@ -2791,13 +2794,17 @@ function sourcesBodyHtml(src){
   var html = '';
   var img = src.image;
   if (img) {
+    // Only render a real <img> once actual bytes are embedded (embed-image.js
+    // replaces the shared PLACEHOLDER_IMG). Until then, show the pending note
+    // instead of an invisible 1x1 placeholder.
+    var embedded = img.data && img.data !== PLACEHOLDER_IMG;
     html += '<div class="src-photo">' +
-      '<img src="' + img.data + '" alt="" width="1" height="1">' +
+      (embedded ? '<img class="src-thumb" src="' + img.data + '" alt="' + esc(img.credit) + '">' : '') +
       '<div class="src-credit">' + esc(T('sourcesPhotoCredit')) + ': ' + esc(img.credit) +
         ' — <a href="' + esc(img.commons_url) + '" target="_blank" rel="noopener">' + esc(T('sourcesViewLink')) + '</a>' +
         '<div class="src-license' + (img.license_confirmed ? '' : ' unconfirmed') + '">' + esc(img.license) + '</div>' +
       '</div>' +
-      '<div class="src-pending">' + esc(T('sourcesPhotoPending')) + '</div>' +
+      (embedded ? '' : '<div class="src-pending">' + esc(T('sourcesPhotoPending')) + '</div>') +
       '</div>';
   } else {
     html += '<div class="src-pending">' + esc(T('sourcesPhotoUnresolved')) + '</div>';
