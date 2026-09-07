@@ -199,6 +199,33 @@
   }
   .ent.sel .conf{ display:block; }
 
+  /* Why here / how power worked / how it ended — the study layer. Each answer
+     is keyed by a hanging monospace label so the three read as a set. */
+  .ent .lore{ display:none; margin-top:11px; }
+  .ent.sel .lore{ display:grid; gap:9px; }
+  .lore .lr{
+    font-size:0.82rem; color: var(--ink-2); line-height:1.6;
+    border-left:2px solid var(--line); padding-left:10px;
+  }
+  .lore .lk{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
+    letter-spacing:0.13em; text-transform:uppercase; color: var(--gold);
+    font-weight:600; margin-bottom:2px;
+  }
+
+  /* Prologue milestone list */
+  .ms-list{ display:grid; gap:7px; margin-top:10px; }
+  .ms{ display:grid; gap:1px; }
+  .ms-y{
+    font-family:'IBM Plex Mono', monospace; font-size:0.63rem; letter-spacing:0.06em;
+    color: var(--gold); font-variant-numeric: tabular-nums;
+  }
+  .ms-n{ font-size:0.8rem; color: var(--ink-2); line-height:1.45; }
+  .conf-inline{
+    display:block; font-family:'IBM Plex Mono', monospace; font-size:0.64rem;
+    color: var(--ink-3); margin-top:6px;
+  }
+
   /* Study mode blurs names until revealed (FR-7). */
   .app.study .ent .en, .app.study .ent .ey{ filter: blur(5px); transition: filter .13s; }
   .app.study .ent:hover .en, .app.study .ent:hover .ey,
@@ -406,6 +433,18 @@
   .ov-rows .sw{ width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(255,255,255,0.16); }
   .ov-rows .rr{ margin-left:auto; font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color: var(--ink-3); }
 
+  /* Austronesian migration — a fifth channel again, because this is neither
+     influence, control, nor party support. It is where everyone came from. */
+  .mig{ pointer-events:none; }
+  .mig path{
+    fill:none; stroke:#7fb6c9; stroke-width:1.4; stroke-dasharray:7 5; opacity:0.8;
+  }
+  .mig text{
+    font-family:'IBM Plex Mono', monospace; font-size:8px; letter-spacing:0.12em;
+    text-transform:uppercase; fill:#9fd0de; text-anchor:middle;
+    paint-order: stroke; stroke: rgba(8,7,5,0.9); stroke-width:2.6px; stroke-linejoin:round;
+  }
+
   .node{ pointer-events:none; transition: opacity .3s ease; }
   .node circle{ fill: var(--gold-warm); }
   .node text{
@@ -612,6 +651,27 @@ var CHROME = {
   },
 
   ovOpen:{ id:"Lapisan aktif", en:"Active layer" },
+
+  /* ---- Study layer labels ---- */
+  loreWhy:{ id:"Mengapa di sini", en:"Why here" },
+  lorePower:{ id:"Cara berkuasa", en:"How power worked" },
+  loreEnd:{ id:"Akhirnya", en:"How it ended" },
+
+  /* ---- Prologue ---- */
+  prologueTitle:{ id:"Sebelum Kerajaan", en:"Before the Kingdoms" },
+  prologueNote:{
+    id:"Rentang waktu di sini terlalu panjang untuk digambar sebanding dengan sisa peta — disajikan sebagai daftar, bukan garis waktu berskala. Kerajaan pertama yang tercatat baru muncul sekitar 350 M, di ujung kiri penggeser.",
+    en:"These spans are far too long to plot proportionally against the rest of the map — shown as a list, not a scaled timeline. The first recorded kingdom appears only around 350 CE, at the far left of the scrubber."
+  },
+  migrationLabel:{ id:"Migrasi Austronesia ±2000 SM", en:"Austronesian migration ±2000 BCE" },
+  migrationNote:{
+    id:"Panah menunjukkan model “Keluar dari Taiwan”: penutur Austronesia bergerak lewat Filipina ke Nusantara, lalu jauh ke timur sampai Pasifik dan ke barat sampai Madagaskar. Ini pelayaran samudra terjauh yang dilakukan manusia mana pun saat itu, dan menjelaskan mengapa bahasa-bahasa di seluruh kepulauan ini berkerabat.",
+    en:"The arrows show the “Out of Taiwan” model: Austronesian speakers moving through the Philippines into the archipelago, then far east into the Pacific and west as far as Madagascar. These were the longest ocean voyages anyone on earth was making at the time, and they are why the languages across this whole region are related."
+  },
+  migrationConf:{
+    id:"Keyakinan sedang-tinggi pada modelnya; jalur dan tanggal persisnya masih diperdebatkan.",
+    en:"Medium-high confidence in the model; the precise routes and dates are still argued over."
+  },
   secondPlace:{ id:"peringkat kedua", en:"runner-up" },
   outsideFranchise:{
     id:"Papua Barat masih dikuasai Belanda pada 1955 dan tidak ikut pemilu.",
@@ -864,6 +924,304 @@ DATA.forEach(function(e){
 });
 
 /* ==================================================================
+   LORE — the study layer. Three questions per polity, in the order a
+   learner actually needs them:
+
+     why   — why HERE? the geographic logic. This is the map's thesis:
+             most of these powers are explained by position.
+     power — how power was actually exercised. Rarely territory; usually
+             chokepoints, tribute, rice surplus, or monopoly.
+     end   — how it ended, because that is what the timeline shows and
+             the map cannot.
+
+   Kept separate from DATA for the same reason MAPX is: the timeline owns
+   the entity records, this file only annotates them.
+   ================================================================== */
+function L(wId, wEn, pId, pEn, eId, eEn){
+  return { why:{id:wId, en:wEn}, power:{id:pId, en:pEn}, end:{id:eId, en:eEn} };
+}
+
+var LORE = {
+
+  'Sriwijaya': L(
+    "Palembang terletak di Sungai Musi, cukup dekat ke mulut selatan Selat Malaka untuk mengawasinya, cukup jauh ke hulu untuk dipertahankan. Siapa yang memegang Selat Malaka dan Selat Sunda sekaligus memungut pajak dari hampir seluruh lalu lintas India–Tiongkok.",
+    "Palembang sits up the Musi river — close enough to the southern mouth of the Malacca Strait to police it, far enough inland to be defensible. Whoever holds both the Malacca and Sunda Straits taxes nearly everything moving between India and China.",
+    "Bukan wilayah, melainkan titik sempit dan kesetiaan. Kota-kota pelabuhan mengirim upeti; armada Sriwijaya dapat menghancurkan pelabuhan yang membangkang. Juga pusat pembelajaran Buddha — biksu Yijing singgah pada 671 untuk belajar bahasa Sanskerta.",
+    "Not territory but chokepoints and allegiance. Port towns sent tribute; the Srivijayan fleet could ruin any port that defected. Also a Buddhist scholarly centre — the monk Yijing stopped there in 671 to study Sanskrit.",
+    "Serangan armada Chola dari India Selatan pada 1025 mematahkan monopolinya. Jalur dagang bergeser, para vassal menjauh, dan pada abad ke-13 Sriwijaya sudah tidak berarti lagi.",
+    "Chola naval raids from South India in 1025 broke the monopoly. Trade shifted, vassals drifted away, and by the 13th century Srivijaya had ceased to matter."),
+
+  'Kesultanan Samudera Pasai': L(
+    "Pesisir utara Aceh adalah daratan pertama yang dijumpai kapal yang menunggangi angin muson dari India dan Arab menuju selat. Pelabuhan pertama juga berarti pelabuhan Muslim pertama.",
+    "The north Aceh coast is the first landfall for ships riding the monsoon in from India and Arabia toward the strait. First port of call meant first Muslim port.",
+    "Perdagangan lada dan wibawa sebagai kesultanan Islam pertama di Nusantara. Ibnu Battuta singgah sekitar 1345 dan mencatat istananya sudah mapan bermazhab Syafi‘i.",
+    "The pepper trade, and the authority of being the archipelago’s first Islamic sultanate. Ibn Battuta called there around 1345 and described a court already settled in the Shafi‘i school.",
+    "Serangan Portugis setelah jatuhnya Malaka pada 1511, lalu diserap oleh Aceh yang sedang naik sekitar 1521.",
+    "Portuguese attacks after the fall of Malacca in 1511, then absorption by the rising Aceh sultanate around 1521."),
+
+  'Kesultanan Aceh': L(
+    "Ujung barat Sumatra menguasai pintu masuk selat dari arah Samudra Hindia. Setelah Portugis merebut Malaka pada 1511, pedagang Muslim membutuhkan jalur alternatif — dan Aceh menjadikan dirinya jalur itu.",
+    "The western tip of Sumatra commands the strait’s Indian Ocean approach. After Portugal took Malacca in 1511, Muslim traders needed a route that avoided it — and Aceh made itself that route.",
+    "Monopoli lada, angkatan laut besar, dan diplomasi yang menjangkau Utsmaniyah, yang mengirim juru meriam dan senjata. Puncaknya di bawah Sultan Iskandar Muda (1607–1636).",
+    "A pepper monopoly, a large navy, and diplomacy reaching as far as the Ottomans, who sent gunners and cannon. Its peak came under Sultan Iskandar Muda (1607–1636).",
+    "Perang Aceh. Belanda menyerbu pada 1873; perlawanan resmi berakhir 1903–1904, tetapi perang gerilya berlanjut jauh setelah itu.",
+    "The Aceh War. The Dutch invaded in 1873; formal resistance ended in 1903–1904, though guerrilla war continued long after."),
+
+  'Tarumanagara': L(
+    "Dataran Citarum di Jawa Barat: tanah padi berair melimpah dengan akses sungai ke Laut Jawa. Kontak dagang India paling awal masuk lewat sungai-sungai ini.",
+    "The Citarum plain of West Java: well-watered rice land with river access to the Java Sea. The earliest Indian trade contact came up these rivers.",
+    "Agraris, bukan maritim — basis padi beririgasi yang disahkan lewat kerajaan Hindu berbahasa Sanskerta. Prasasti Purnawarman membanggakan penggalian kanal sepanjang belasan kilometer dalam 21 hari.",
+    "Agrarian rather than maritime — an irrigated rice base legitimised through Sanskritic Hindu kingship. Purnawarman’s inscriptions boast of a canal dug in 21 days.",
+    "Nyaris tidak tercatat. Kerajaan ini memudar pada abad ke-7 dan digantikan di wilayah yang sama oleh Sunda.",
+    "Barely recorded. The polity fades in the 7th century and is succeeded in the same region by Sunda."),
+
+  'Kalingga (Holing)': L(
+    "Pesisir utara Jawa Tengah — titik singgah di jalur Laut Jawa, cukup penting untuk dicatat pencatat istana Tiongkok sebagai “Holing”.",
+    "The north coast of Central Java — a landfall on the Java Sea route, prominent enough for Chinese court archivists to record it as “Holing”.",
+    "Hampir seluruhnya diketahui dari catatan Tiongkok dan tradisi Jawa kemudian. Yang bertahan adalah reputasi Ratu Shima atas keadilan yang keras.",
+    "Known almost entirely from Chinese records and later Javanese tradition. What survives is Queen Shima’s reputation for severe justice.",
+    "Tanggalnya adalah dugaan. Kalingga diserap ke dalam kekuasaan Medang yang sedang tumbuh di Jawa Tengah.",
+    "Its dates are guesses. Kalingga was absorbed into the emerging Medang polity in Central Java."),
+
+  'Dinasti Sailendra': L(
+    "Dataran Kedu: tanah vulkanik, surplus padi yang padat, dan cukup tenaga kerja terkumpul untuk mendirikan Borobudur.",
+    "The Kedu Plain: volcanic soil, a dense rice surplus, and enough concentrated labour to raise Borobudur.",
+    "Kerajaan Buddha Mahayana yang diungkapkan sebagai arsitektur monumental — surplus padi diubah menjadi batu, dan batu menjadi keabsahan.",
+    "Mahayana Buddhist kingship expressed as monumental architecture — a rice surplus converted into stone, and stone into legitimacy.",
+    "Tergeser di Jawa oleh wangsa Sanjaya yang bercorak Siwa sekitar pertengahan abad ke-9; garis keturunannya berlanjut di Sriwijaya lewat pernikahan.",
+    "Displaced within Java by the Shaivite Sanjaya line around the mid-9th century; the lineage continued at Srivijaya through marriage."),
+
+  'Kerajaan Mataram Kuno (Medang)': L(
+    "Jantung Kedu dan Prambanan yang sama — tanah padi vulkanik, jauh di pedalaman dan mudah dipertahankan, jauh dari jangkauan perompak pesisir.",
+    "The same Kedu and Prambanan heartland — volcanic rice land, well inland and defensible, out of reach of coastal raiding.",
+    "Surplus padi, kerja wajib, dan pembangunan candi. Prambanan adalah jawaban Siwa atas Borobudur. Pusatnya pindah ke timur ke lembah Brantas pada abad ke-10.",
+    "Rice surplus, corvée labour, and temple building. Prambanan is the Shaivite answer to Borobudur. Its centre moved east to the Brantas valley in the 10th century.",
+    "Hancur sekitar 1016 dalam bencana yang dikenal sebagai pralaya, kemungkinan serangan saingan yang didukung Sriwijaya. Airlangga membangun kembali dari puingnya.",
+    "Destroyed around 1016 in the catastrophe known as the pralaya, probably a Srivijaya-backed rival’s attack. Airlangga rebuilt from the wreckage."),
+
+  'Kediri': L(
+    "Lembah Brantas — lumbung padi Jawa Timur, dengan akses sungai ke pelabuhan-pelabuhan pesisir utara.",
+    "The Brantas valley — East Java’s rice bowl, with river access to the north-coast ports.",
+    "Pendapatan agraris ditambah bagian dari lalu lintas rempah di sepanjang pesisir utara Jawa. Warisannya justru bersifat sastra: kakawin Jawa Kuno.",
+    "Agrarian revenue plus a share of the spice traffic along Java’s north coast. Its lasting output was literary: the Old Javanese kakawin.",
+    "Ken Arok mengalahkan Kertajaya di Ganter pada 1222 dan mendirikan Singhasari.",
+    "Ken Arok defeated Kertajaya at Ganter in 1222 and founded Singhasari."),
+
+  'Singhasari': L(
+    "Dataran tinggi Malang, masih di sistem sungai Brantas — tanah subur dengan pertahanan pegunungan.",
+    "The Malang highlands, still on the Brantas system — fertile land with mountain defences.",
+    "Ekspansionis di bawah Kertanagara. Ekspedisi Pamalayu (1275) memproyeksikan kekuatan Jawa ke Sumatra — pertama kalinya Jawa menjangkau sejauh itu.",
+    "Expansionist under Kertanagara. The Pamalayu expedition of 1275 projected Javanese power into Sumatra — the first time Java had reached that far.",
+    "Kertanagara menolak tuntutan takluk dari Kublai Khan dan dibunuh pada 1292 oleh Jayakatwang dari Kediri. Armada Mongol tiba dan mendapati musuhnya sudah mati.",
+    "Kertanagara refused Kublai Khan’s demand for submission and was killed in 1292 by Jayakatwang of Kediri. The Mongol fleet arrived to find its enemy already dead."),
+
+  'Majapahit': L(
+    "Trowulan di pedalaman delta Brantas, dengan Gresik dan Tuban sebagai pelabuhannya — surplus padi di belakang, jalur laut di depan. Gabungan keduanya jarang terjadi, dan itulah sebabnya Majapahit tumbuh sebesar itu.",
+    "Trowulan, inland on the Brantas delta, with Gresik and Tuban as its ports — rice surplus behind it, sea lanes in front. The combination is rare, and it is why Majapahit grew as large as it did.",
+    "Padi, armada, dan upeti. Nagarakretagama (1365) mendaftar puluhan tempat pengirim upeti — itu daftar hubungan, bukan survei batas wilayah. Perbedaan inilah alasan peta ini menggambar pengaruh sebagai pendar, bukan poligon.",
+    "Rice, a fleet, and tribute. The Nagarakretagama (1365) lists dozens of tribute-sending places — a list of relationships, not a boundary survey. That distinction is exactly why this map draws influence as bloom rather than polygon.",
+    "Diperdebatkan. Perang suksesi, bangkitnya pelabuhan Islam di pesisir utara, dan akhirnya Demak. Sumber menempatkan akhirnya antara 1478 dan 1527.",
+    "Contested. Succession wars, the rise of the Islamic north-coast ports, and finally Demak. Sources place the end anywhere between 1478 and 1527."),
+
+  'Kesultanan Demak': L(
+    "Pelabuhan pesisir utara (pasisir). Islam datang lewat laut, sehingga kota-kota dagang pesisir memeluknya lebih dulu — lalu berbalik menghadapi pedalaman Hindu-Buddha.",
+    "A north-coast (pasisir) port. Islam arrived by sea, so the coastal trading towns converted first — then turned on the Hindu-Buddhist interior.",
+    "Kekayaan dagang ditambah keabsahan keagamaan, terkait tradisi Wali Songo. Demak menyerang Malaka yang dikuasai Portugis dan menutup pintu Jawa bagi mereka.",
+    "Trading wealth plus religious legitimacy, tied to the Wali Songo tradition. Demak attacked Portuguese Malacca and kept the Portuguese out of Java.",
+    "Kekerasan suksesi setelah wafatnya Sultan Trenggana pada 1546; kekuasaan berpindah ke pedalaman, ke Pajang.",
+    "Succession violence after Sultan Trenggana’s death in 1546; power passed inland to Pajang."),
+
+  'Kerajaan Pajang': L(
+    "Pedalaman Jawa Tengah dekat Solo sekarang — perpindahan pertama kekuasaan Jawa kembali dari pesisir ke pedalaman.",
+    "Inland Central Java, near modern Solo — the first move of Javanese power back from the coast to the interior.",
+    "Singkat dan bersifat pribadi, bertumpu pada wibawa Sultan Hadiwijaya sendiri, bukan pada lembaga.",
+    "Brief and personal, resting on Sultan Hadiwijaya’s own prestige rather than on institutions.",
+    "Runtuh setelah wafatnya; Senapati dari Mataram mengambil alih. Tanggalnya kurang terpercaya.",
+    "Collapsed after his death; Senapati of Mataram took over. The dates are poorly attested."),
+
+  'Kesultanan Mataram (Islam)': L(
+    "Kotagede, kembali ke jantung padi Kedu–Yogyakarta — basis agraris yang persis sama dengan Mataram Kuno, tujuh abad kemudian. Geografi mengulang dirinya.",
+    "Kotagede, back in the old Kedu–Yogyakarta rice heartland — the very same agrarian base as ancient Mataram, seven centuries later. The geography repeats itself.",
+    "Padi, kerja wajib, dan penaklukan pelabuhan pesisir untuk memutus saingan dari laut. Sultan Agung mengepung Batavia dua kali (1628, 1629) dan gagal, terutama karena logistik.",
+    "Rice, corvée, and the conquest of the coastal ports to cut rivals off from the sea. Sultan Agung besieged Batavia twice (1628, 1629) and failed, largely on logistics.",
+    "Tidak ditaklukkan, melainkan dibelah. Campur tangan VOC dalam perang suksesi berakhir dengan Perjanjian Giyanti 1755 yang membaginya menjadi dua.",
+    "Not conquered but partitioned. VOC intervention in its succession wars ended with the 1755 Treaty of Giyanti, which split it in two."),
+
+  'Kesultanan Yogyakarta': L(
+    "Pembagian Giyanti memberi Pangeran Mangkubumi bagian barat; ia mendirikan kraton baru di Yogyakarta.",
+    "The Giyanti partition gave Prince Mangkubumi the western half; he founded a new kraton at Yogyakarta.",
+    "Wibawa adat dan budaya, tetapi juga bobot politik nyata — kota ini menjadi ibu kota Republik sejak 1946 dan sultannya berpihak pada kemerdekaan.",
+    "Traditional and cultural authority, but real political weight too — the city became the Republic’s capital from 1946 and its sultan sided with independence.",
+    "Belum berakhir. Inilah satu-satunya bagian Indonesia yang masih dipimpin raja turun-temurun, sebagai Daerah Istimewa Yogyakarta.",
+    "It hasn’t. This is the only part of Indonesia still headed by a hereditary monarch, as the Special Region of Yogyakarta."),
+
+  'Kasunanan Surakarta': L(
+    "Bagian timur pembagian Giyanti — garis Kasunanan yang lebih tua, di Solo.",
+    "The eastern half of the Giyanti partition — the older Sunanate line, at Solo.",
+    "Budaya keraton: batik, gamelan, dan tari. Wibawanya besar, kekuasaan administratifnya tidak.",
+    "Court culture: batik, gamelan, and dance. Its prestige was large, its administrative power was not.",
+    "Kehilangan kedudukan administratif setelah 1945 di tengah gejolak anti-monarki setempat; bertahan sebagai lembaga budaya.",
+    "Lost its administrative standing after 1945 amid local anti-royalist agitation; survives as a cultural institution."),
+
+  'Kutai Martadipura (Kalimantan)': L(
+    "Sungai Mahakam di Kalimantan Timur — jalan masuk ke pedalaman dan persinggahan di lintasan antara Jawa dan Filipina serta Tiongkok.",
+    "The Mahakam river in East Kalimantan — a road inland, and a stop on the passage between Java and the Philippines and China.",
+    "Kerajaan Hindu tertua yang terbukti di Nusantara, dikenal dari tujuh tiang kurban Yupa berbahasa Sanskerta untuk Raja Mulawarman. Buktinya berupa batu, bukan wilayah.",
+    "The earliest attested Hindu kingdom in the archipelago, known from seven Yupa sacrificial posts inscribed in Sanskrit for King Mulawarman. Its evidence is stone, not territory.",
+    "Ditaklukkan oleh tetangganya di hilir yang telah memeluk Islam, Kutai Kartanegara.",
+    "Conquered by its Islamised downstream neighbour, Kutai Kartanegara."),
+
+  'Kesultanan Kutai Kartanegara (Kalimantan)': L(
+    "Mahakam bagian bawah, lebih dekat ke laut daripada pendahulunya — posisi yang lebih baik untuk berdagang.",
+    "The lower Mahakam, closer to the sea than its predecessor — better placed to trade.",
+    "Perdagangan sungai, kemudian minyak. Memeluk Islam sekitar akhir 1500-an sementara struktur kerajaannya tetap.",
+    "River trade, and later oil. It converted to Islam around the late 1500s while its royal structure carried on.",
+    "Dilebur ke dalam Republik Indonesia pada 1960.",
+    "Dissolved into the Republic of Indonesia in 1960."),
+
+  'Kesultanan Gowa (Makassar, Sulawesi)': L(
+    "Makassar duduk di selat antara Kalimantan dan Sulawesi — corong antara Laut Jawa dan Kepulauan Rempah. Siapa pun yang menuju Maluku lewat sini.",
+    "Makassar sits on the strait between Borneo and Sulawesi — the funnel between the Java Sea and the Spice Islands. Anyone bound for Maluku passes through.",
+    "Pelabuhan bebas yang terbuka bagi semua pedagang — justru itulah yang tidak dapat ditoleransi VOC. Ditambah kepelautan Bugis-Makassar dan tradisi kapal padewakang.",
+    "A free port open to all traders — which is precisely what the VOC could not tolerate. Plus Bugis-Makassar seafaring and the padewakang shipbuilding tradition.",
+    "Perang Makassar. Speelman bersekutu dengan pangeran Bugis Arung Palakka; Sultan Hasanuddin menandatangani Perjanjian Bongaya 1667 dan Somba Opu jatuh pada 1669.",
+    "The Makassar War. Speelman allied with the Bugis prince Arung Palakka; Sultan Hasanuddin signed the Treaty of Bongaya in 1667 and Somba Opu fell in 1669."),
+
+  'Kesultanan Ternate (Maluku)': L(
+    "Kerucut vulkanik kecil yang kebetulan menjadi salah satu dari sedikit tempat di dunia tempat pohon cengkih tumbuh. Geografi sebagai monopoli.",
+    "A small volcanic cone that happened to be one of the only places on earth where clove trees grew. Geography as monopoly.",
+    "Monopoli cengkih dan jaringan vassal yang membentang di Maluku hingga ke Sulawesi. Kekuasaannya jauh lebih luas daripada pulaunya.",
+    "A clove monopoly and a vassal network reaching across Maluku and into Sulawesi. Its reach vastly exceeded its island.",
+    "Mengadu Portugis, Spanyol, dan Belanda satu sama lain selama satu abad, lalu menjadi negara vazal VOC pada 1683.",
+    "Played Portugal, Spain and the Dutch against one another for a century, then became a VOC vassal state in 1683."),
+
+  'Kesultanan Tidore (Maluku)': L(
+    "Pulau berikutnya, hanya beberapa kilometer dari Ternate — cengkih yang sama, persaingan yang permanen.",
+    "The next island along, a few kilometres from Ternate — the same cloves, a permanent rivalry.",
+    "Cengkih ditambah persekutuan dengan Spanyol, sebagai penyeimbang hubungan Ternate dengan Portugis lalu Belanda. Klaimnya membentang jauh ke timur hingga Papua.",
+    "Cloves plus the Spanish alliance, as a counterweight to Ternate’s Portuguese and then Dutch ties. Its claims stretched far east toward Papua.",
+    "Dominasi Belanda. Tanggal berdirinya kurang pasti — tradisi setempat menyebut abad ke-12, jauh lebih awal daripada yang tercatat.",
+    "Dutch dominance. Its founding date is poorly attested — local tradition places it in the 12th century, far earlier than the record shows."),
+
+  'Portugis di Maluku': L(
+    "Setelah merebut Malaka pada 1511 mereka langsung menuju sumber cengkih itu sendiri, bukan pasar perantaranya.",
+    "After taking Malacca in 1511 they went straight for the source of the cloves rather than the middlemen’s market.",
+    "Benteng dan perjanjian, bukan wilayah — Ternate pada 1522, Ambon pada 1575. Model Eropa pertama di Nusantara adalah kantong bersenjata, bukan koloni.",
+    "Forts and treaties rather than territory — Ternate in 1522, Ambon in 1575. The first European model here was the armed enclave, not the colony.",
+    "Mereka membunuh Sultan Hairun pada 1570; pemberontakan di bawah Baab Ullah mengusir mereka dari Ternate pada 1575, dan Belanda merebut Ambon pada 1605.",
+    "They murdered Sultan Hairun in 1570; the revolt under Baab Ullah expelled them from Ternate by 1575, and the Dutch took Ambon in 1605."),
+
+  'VOC (Kongsi Dagang Hindia Timur Belanda)': L(
+    "Batavia, didirikan 1619 di sisi Selat Sunda — menguasai salah satu dari dua gerbang masuk Nusantara, dengan Ambon dan Banda untuk rempahnya.",
+    "Batavia, founded 1619 on the Sunda Strait side — holding one of the two gates into the archipelago, with Ambon and Banda for the spices themselves.",
+    "Perusahaan berpiagam dengan tentara, mata uang, dan hak perjanjian sendiri. Metodenya adalah monopoli yang ditegakkan dengan kekerasan: pada 1621 di Banda, hampir seluruh penduduk dibunuh atau diasingkan demi menguasai pala.",
+    "A chartered company with its own army, currency and treaty rights. Its method was monopoly enforced by violence: at Banda in 1621 nearly the entire population was killed or deported to secure the nutmeg.",
+    "Korupsi, biaya perang, dan persaingan. Bangkrut dan dibubarkan pada 1799; utang dan wilayahnya diambil alih negara Belanda.",
+    "Corruption, the cost of war, and competition. Bankrupt and dissolved in 1799, its debts and territories taken over by the Dutch state."),
+
+  'Hindia Belanda': L(
+    "Bukan sebuah tempat melainkan sebuah negara — kekuatan pertama yang menarik batas administratif tersurvei melintasi seluruh kepulauan. Di sinilah peta berhenti kabur.",
+    "Not a place but a state — the first power to draw surveyed administrative boundaries across the entire archipelago. This is where the map stops being blurry.",
+    "Sistem Tanam Paksa (1830–1870) memeras tanaman ekspor dari petani Jawa; kemudian ekonomi perkebunan liberal. Penaklukan pulau-pulau luar baru rampung pada 1900-an — kesatuan wilayah Indonesia berusia lebih muda daripada yang diduga.",
+    "The Cultivation System (1830–1870) squeezed export crops out of Javanese peasants; later came a liberal plantation economy. The conquest of the outer islands was completed only in the 1900s — Indonesia’s territorial unity is younger than people assume.",
+    "Invasi Jepang, Maret 1942. Runtuh dalam hitungan minggu, dan wibawanya tidak pernah pulih.",
+    "The Japanese invasion of March 1942. It collapsed in weeks, and its prestige never recovered."),
+
+  'Pendudukan Jepang': L(
+    "Pendudukan demi minyak dan karet. Nusantara adalah tujuan sumber daya utama dalam rencana perang Jepang di selatan.",
+    "Occupation for oil and rubber. The archipelago was the primary resource objective of Japan’s southern war plan.",
+    "Kerja paksa romusha menewaskan ratusan ribu orang. Namun Jepang juga menghancurkan wibawa Belanda tanpa bisa dipulihkan, melatih milisi Indonesia seperti PETA, dan memberi tokoh nasionalis panggung terbuka.",
+    "Romusha forced labour killed hundreds of thousands. But Japan also destroyed Dutch prestige beyond recovery, trained Indonesian militias such as PETA, and gave nationalist figures an open platform.",
+    "Menyerah pada Agustus 1945 — dan kekosongan kekuasaan yang ditinggalkannya persis itulah yang dimasuki Proklamasi.",
+    "Surrender in August 1945 — and the power vacuum it left is exactly what the Proclamation stepped into."),
+
+  'Proklamasi & Revolusi Nasional': L(
+    "Diproklamasikan di Jakarta, tetapi dijalankan dari Yogyakarta sejak 1946: pedalaman Jawa dapat dipertahankan, kota pelabuhan tidak.",
+    "Proclaimed in Jakarta but run from Yogyakarta from 1946: the Javanese interior was defensible, the port cities were not.",
+    "Perang gerilya ditambah diplomasi. Belanda memenangkan hampir setiap pertempuran dan tetap kalah — tekanan Amerika Serikat, yang mengancam bantuan Marshall Plan, terbukti lebih menentukan daripada pertempuran mana pun.",
+    "Guerrilla war plus diplomacy. The Dutch won almost every engagement and still lost — American pressure, threatening Marshall Plan aid, proved more decisive than any battle.",
+    "Pengakuan kedaulatan, 27 Desember 1949. Papua Barat sengaja dikecualikan, dan menjadi sengketa selama empat belas tahun berikutnya.",
+    "The transfer of sovereignty on 27 December 1949. West Papua was deliberately excluded, and stayed disputed for the next fourteen years."),
+
+  'Demokrasi Liberal': L(
+    "Jakarta sebagai ibu kota negara kesatuan, setelah struktur federal bentukan Belanda dibubarkan pada 1950.",
+    "Jakarta as the capital of a unitary state, after the Dutch-built federal structure was dissolved in 1950.",
+    "Demokrasi parlementer sungguhan: pers bebas, banyak partai, dan Pemilu 1955 yang secara luas dinilai jujur. Juga tujuh kabinet dalam sembilan tahun.",
+    "Genuine parliamentary democracy: a free press, many parties, and the 1955 election, widely judged honest. Also seven cabinets in nine years.",
+    "Kabinet yang rapuh, pemberontakan daerah seperti PRRI/Permesta, dan Dekret Presiden Soekarno 1959 yang mengembalikan UUD 1945.",
+    "Fragile cabinets, regional rebellions such as PRRI/Permesta, and Sukarno’s 1959 decree restoring the 1945 constitution."),
+
+  'Demokrasi Terpimpin (Soekarno)': L(
+    "Kekuasaan memusat di Jakarta, disokong keseimbangan yang disengaja antara tentara dan PKI dengan Soekarno sebagai porosnya.",
+    "Power centralised in Jakarta, propped on a deliberate balance between the army and the PKI with Sukarno as the pivot.",
+    "Kekuasaan pribadi berbalut ideologi — Nasakom, Manipol-USDEK. Papua Barat direbut pada 1963; konfrontasi dengan Malaysia dilancarkan pada 1963. Ekonomi runtuh; inflasi melampaui 600% pada 1965.",
+    "Personal rule dressed in ideology — Nasakom, Manipol-USDEK. West Papua was taken in 1963 and Konfrontasi with Malaysia launched the same year. The economy collapsed; inflation passed 600% by 1965.",
+    "Peristiwa 30 September 1965, pembunuhan massal yang menyusulnya, dan pengalihan kekuasaan bertahap kepada Soeharto hingga 1966–67.",
+    "The 30 September 1965 events, the mass killings that followed, and the gradual transfer of power to Suharto through 1966–67."),
+
+  'Orde Baru (Soeharto)': L(
+    "Jakarta, dengan pembangunan yang dipusatkan di Jawa — ketimpangan yang masih membentuk politik Indonesia hingga kini.",
+    "Jakarta, with development concentrated on Java — an imbalance that still shapes Indonesian politics.",
+    "Pertumbuhan ekonomi nyata, swasembada beras, dan penurunan angka kemiskinan yang tajam, ditopang tentara lewat dwifungsi, pers yang dibungkam, dan pemilu yang dikelola. Timor Timur diinvasi pada 1975.",
+    "Real economic growth, rice self-sufficiency, and a sharp fall in poverty — underwritten by the army’s dwifungsi doctrine, a muzzled press, and managed elections. East Timor was invaded in 1975.",
+    "Krisis moneter Asia 1997–98 menghapus tabungan kelas menengah; protes mahasiswa dan kerusuhan Mei 1998 memaksa Soeharto mundur setelah 32 tahun.",
+    "The 1997–98 Asian financial crisis wiped out middle-class savings; student protests and the May 1998 riots forced Suharto out after 32 years."),
+
+  'Era Reformasi': L(
+    "Jakarta, tetapi otonomi daerah sejak 1999 mengalihkan wewenang dan anggaran nyata kepada kabupaten — pembalikan paling tajam atas pemusatan Orde Baru.",
+    "Jakarta, but regional autonomy from 1999 pushed real authority and budgets down to the districts — the sharpest reversal of New Order centralism.",
+    "Kebebasan pers, pemilu presiden langsung sejak 2004, dan peralihan kekuasaan yang damai berulang kali. Timor Timur merdeka pada 2002; Aceh memperoleh otonomi khusus setelah perdamaian 2005.",
+    "Press freedom, direct presidential elections since 2004, and repeated peaceful transfers of power. East Timor became independent in 2002; Aceh gained special autonomy after the 2005 peace.",
+    "Berlanjut. Pertanyaan yang belum terselesaikan tetap sama: korupsi, kekuasaan tentara, dan pertanggungjawaban atas 1965 yang tidak pernah tiba.",
+    "Ongoing. The unresolved questions are the same ones: corruption, the army’s role, and an accounting for 1965 that has never arrived.")
+};
+
+/* ==================================================================
+   BEFORE THE KINGDOMS — the deep-time prologue. These spans are far too
+   long to plot against the main scale, so they are a list, not a track.
+   Carried from the timeline artifact's prologue.
+   ================================================================== */
+var MILESTONES = [
+  { year:{ id:"±1,5 juta tahun lalu", en:"±1.5 million years ago" },
+    name:{ id:"“Manusia Jawa” (Homo erectus) di Sangiran", en:"“Java Man” (Homo erectus) at Sangiran" },
+    lon:110.83, lat:-7.45 },
+  { year:{ id:"±700.000–50.000 tahun lalu", en:"±700,000–50,000 years ago" },
+    name:{ id:"Homo floresiensis (“hobbit”) di Flores", en:"Homo floresiensis (the “hobbit”) on Flores" },
+    lon:121.10, lat:-8.53 },
+  { year:{ id:"±2000 SM", en:"±2000 BCE" },
+    name:{ id:"Migrasi Austronesia memasuki Nusantara", en:"Austronesian migration into the archipelago" },
+    lon:null, lat:null },
+  { year:{ id:"±1000–300 SM", en:"±1000–300 BCE" },
+    name:{ id:"Budaya megalitik & perunggu Dong Son", en:"Megalithic culture & Dong Son bronze" },
+    lon:null, lat:null },
+  { year:{ id:"±abad 1–4 M", en:"±1st–4th century CE" },
+    name:{ id:"Kontak dagang awal dengan India dan Tiongkok", en:"Early trade contact with India and China" },
+    lon:null, lat:null }
+];
+
+/* The peopling of the archipelago — out of Taiwan through the Philippines,
+   then west and east. Mainstream in the linguistic and genetic evidence;
+   the details and dates are still argued over. Drawn only in the prologue. */
+var MIGRATION = [
+  [[121.6,8.2],[123.2,4.6],[124.4,1.4],[122.6,-1.2]],
+  [[122.6,-1.2],[118.4,-2.6],[114.0,-4.4],[110.4,-6.2]],
+  [[110.4,-6.2],[106.2,-5.8],[102.4,-2.8],[99.2,0.4]],
+  [[122.6,-1.2],[126.4,-1.6],[130.6,-2.8],[135.0,-3.4]]
+];
+
+/* Every entity must carry a full explanation, or the study layer has holes. */
+(function loreCheck(){
+  var gaps = [];
+  DATA.forEach(function(e){
+    var lo = LORE[e.name.id];
+    if (!lo || !lo.why.id || !lo.why.en || !lo.power.id || !lo.power.en || !lo.end.id || !lo.end.en){
+      gaps.push(e.name.id);
+    }
+  });
+  if (gaps.length) console.warn('Peta Nusantara — entities without complete lore:', gaps);
+})();
+
+/* ==================================================================
    HISTORICAL REGIONS — 12, hand-defined. Modern provinces are a
    20th-century administrative artifact and encode the wrong unit (FR-1).
    These are navigation zones, never territorial claims.
@@ -1058,6 +1416,7 @@ function yearFromPos(p){
 
 /* Named eras — recall needs stable, nameable states, not arbitrary years (FR-8b). */
 var ERAS = [
+  { y:300,  id:'Sebelum Kerajaan',     en:'Before the Kingdoms' },
   { y:350,  id:'Kerajaan Awal',        en:'Early Kingdoms' },
   { y:671,  id:'Zaman Sriwijaya',      en:'Srivijayan Age' },
   { y:1042, id:'Jawa Klasik',          en:'Classical Java' },
@@ -1263,6 +1622,29 @@ var gOv = el('g', { class:'ov' });
 svg.appendChild(gOv);
 var gMarks = el('g', { class:'ov' });
 svg.appendChild(gMarks);
+
+/* --- Austronesian migration, drawn only in the prologue state --- */
+var arrow = el('marker', { id:'arrowhead', viewBox:'0 0 10 8', refX:'9', refY:'4',
+  markerWidth:'7', markerHeight:'6', orient:'auto-start-reverse' });
+arrow.appendChild(el('path', { d:'M0 0 L10 4 L0 8 z', fill:'#7fb6c9' }));
+defs.appendChild(arrow);
+
+var gMig = el('g', { class:'mig' });
+MIGRATION.forEach(function(line){
+  /* quadratic smoothing so the routes read as voyages, not as ruler lines */
+  var d = 'M' + px(line[0][0]).toFixed(1) + ' ' + py(line[0][1]).toFixed(1);
+  for (var i=1;i<line.length;i++){
+    var p0 = line[i-1], p1 = line[i];
+    var cx = (p0[0] + p1[0]) / 2, cy = (p0[1] + p1[1]) / 2 + 0.5;
+    d += ' Q' + px(cx).toFixed(1) + ' ' + py(cy).toFixed(1) +
+         ' ' + px(p1[0]).toFixed(1) + ' ' + py(p1[1]).toFixed(1);
+  }
+  gMig.appendChild(el('path', { d:d, 'marker-end':'url(#arrowhead)' }));
+});
+var migText = el('text', { x:px(126.5).toFixed(1), y:py(5.4).toFixed(1) });
+gMig.appendChild(migText);
+gMig.style.display = 'none';
+svg.appendChild(gMig);
 
 function activeOverlay(y){
   if (y >= 1945 && y <= 1949){
@@ -1644,6 +2026,11 @@ function render(){
   buildMarks(y);
   renderOverlayLegend(ov);
 
+  /* --- prologue: before any kingdom is recorded --- */
+  var prologue = y < 350;
+  gMig.style.display = prologue ? '' : 'none';
+  migText.textContent = T('migrationLabel');
+
   /* --- scrubber throughline --- */
   var X = rx(posFromYear(y));
   ruler._thr.setAttribute('x1', X.toFixed(2));
@@ -1734,8 +2121,40 @@ function overlayBlockHtml(ov){
     '</div>';
 }
 
+/* Why here / how power worked / how it ended. Only rendered on the selected
+   card — three questions at once on every card would be a wall of text. */
+function loreHtml(e){
+  var lo = LORE[e.name.id];
+  if (!lo) return '';
+  return '<div class="lore">' +
+    '<div class="lr"><span class="lk">' + esc(T('loreWhy')) + '</span>' + esc(lo.why[S.lang]) + '</div>' +
+    '<div class="lr"><span class="lk">' + esc(T('lorePower')) + '</span>' + esc(lo.power[S.lang]) + '</div>' +
+    '<div class="lr"><span class="lk">' + esc(T('loreEnd')) + '</span>' + esc(lo.end[S.lang]) + '</div>' +
+    '</div>';
+}
+
+/* The deep-time prologue. Shown before the first recorded kingdom, because
+   "the beginning" of this map is 350 CE and that is not the beginning. */
+function prologueBlockHtml(){
+  if (S.year >= 350) return '';
+  var h = '<div class="ov-block">' +
+    '<div class="kicker">' + esc(T('prologueTitle')) + '</div>' +
+    '<h3>' + esc(S.lang === 'id' ? 'Satu setengah juta tahun, tanpa skala' : 'A million and a half years, not to scale') + '</h3>' +
+    '<p>' + esc(T('prologueNote')) + '</p>' +
+    '<div class="ms-list">';
+  MILESTONES.forEach(function(m){
+    h += '<div class="ms"><div class="ms-y">' + esc(m.year[S.lang]) + '</div>' +
+         '<div class="ms-n">' + esc(m.name[S.lang]) + '</div></div>';
+  });
+  h += '</div>' +
+    '<div class="caution">' + esc(T('migrationNote')) +
+    '<span class="conf-inline">' + esc(T('migrationConf')) + '</span></div>' +
+    '</div>';
+  return h;
+}
+
 function renderRail(){
-  var ovHtml = overlayBlockHtml(activeOverlay(S.year));
+  var ovHtml = prologueBlockHtml() + overlayBlockHtml(activeOverlay(S.year));
 
   if (!S.region){
     rail.innerHTML = ovHtml +
@@ -1769,6 +2188,7 @@ function renderRail(){
           '<div class="ey">' + e.start + '–' + esc(String(endLabel(e))) +
             ' · ' + esc(CHROME.catNames[e.cat][S.lang]) + '</div>' +
           '<div class="ed">' + esc(e.desc[S.lang]) + '</div>' +
+          loreHtml(e) +
           '<div class="conf">' + esc(CHROME.confLabel[e.conf][S.lang]) + '</div>' +
         '</button>';
     });

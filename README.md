@@ -108,6 +108,38 @@ merely empty this year — it says the historiography of the archipelago is buil
 around states and written sources, and structurally under-records non-state
 societies. The blank is itself a finding.
 
+## The study layer
+
+Selecting any polity opens three answers, in the order a learner needs them:
+
+- **Why here** — the geographic logic. This is the map's thesis: most of these
+  powers are explained by position. Palembang is upstream of the strait's mouth;
+  Ternate is one of the few places cloves grew; Trowulan has rice behind it and
+  sea lanes in front.
+- **How power worked** — rarely territory. Chokepoints, tribute, rice surplus,
+  monopoly, or a free port that a monopolist could not tolerate.
+- **How it ended** — which is what a timeline shows and a map cannot.
+
+These live in a `LORE` table keyed by Indonesian name, alongside `MAPX`, so the
+entity records themselves stay byte-identical to the timeline's. A build-time
+check verifies that every entity has a complete bilingual entry; a mistyped key
+surfaces as a console warning rather than a silently empty panel.
+
+## Before the kingdoms
+
+The map's scale starts at 300 CE, which is not the beginning. Scrub to the far
+left and the rail opens a deep-time prologue — Homo erectus at Sangiran, Homo
+floresiensis on Flores, the Austronesian migration, Dong Son bronze, the first
+Indian and Chinese trade contact — presented as a list, because those spans are
+far too long to plot against the rest of the scale.
+
+The map draws the **Austronesian migration** for that state: out of Taiwan
+through the Philippines, then west toward Sumatra and east toward Papua. These
+were the longest ocean voyages anyone on earth was making at the time, and they
+are why the languages across the whole region are related. Medium-high
+confidence in the model; the precise routes and dates are still argued over,
+and the map says so.
+
 ## The faction layers (1945–49, 1955, 1965–66)
 
 Three overlays activate automatically when the scrubber enters their window.
