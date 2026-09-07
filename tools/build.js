@@ -12,7 +12,12 @@ const LAND = path.join(ROOT, 'data', 'land.js');
 const OUT = path.join(ROOT, 'peta-nusantara.html');
 
 const PLACEHOLDER = '/*__LAND__*/';
-const BUDGET_KB = 250; // NFR-1
+// NFR-1 was 250 KB for a text-only page. The Sources gallery (per-entity real
+// photos, embedded as base64 via tools/embed-image.js) is expected to push
+// past that once real image bytes replace the placeholders, so the budget is
+// raised rather than silently dropped. Still a single static file with no
+// runtime fetch — just a bigger one.
+const BUDGET_KB = 4096;
 
 for (const f of [TPL, LAND]) {
   if (!fs.existsSync(f)) {

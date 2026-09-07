@@ -203,6 +203,47 @@ historians. Each entity carries a confidence tier; anything marked medium or
 below should be re-verified against a primary source before it informs published
 work. **Don't cite this academically.**
 
+## Sources & the picture gallery
+
+A `SOURCES` table (keyed by Indonesian name, alongside `MAPX`/`LORE`) partly
+closes that gap. It is reachable two ways: a **Sources** button in the header
+opens a gallery of every entry, and each entity's study panel shows its own
+sources inline. Two independent kinds of entry:
+
+- **Citations** — real, verifiable academic works, kept to the handful of
+  entities where the map itself flags a claim as contested (Majapahit's fall
+  date, Sriwijaya's decline, the 1965–66 death toll, the 1955 election). One
+  non-academic work, Ahmad Mansur Suryanegara's *Api Sejarah*, is included by
+  request on the Islamic-era entities and the 1945–49 revolution, and is
+  marked `perspective: true` — it renders with a distinct "Perspective" badge
+  so it never reads as an equal-credibility citation.
+- **Images** — one representative real photo/artifact per entity (all ~29),
+  cited to a specific Wikimedia Commons (or museum) file with its own
+  credit/licence.
+
+**The embedded images are placeholders.** Every image slot ships with a 1×1
+transparent PNG, not the real photo — the build environment this was authored
+in has no network access to Wikimedia, so no real image bytes could be fetched.
+Each slot still carries the exact source file, credit, and (unverified) licence.
+To drop in a real image:
+
+```bash
+node tools/embed-image.js path/to/downloaded-file.jpg "Majapahit"
+npm run build
+```
+
+The entity key must match the Indonesian `name.id` exactly. Five entities
+(Samudera Pasai, Kalingga, Kediri, Pajang, the Japanese Occupation) have no
+candidate image at all and show a "photo needed" note instead — no filename was
+invented for them.
+
+**Before publishing any image, verify its licence.** A licence line flagged
+`unconfirmed` (shown with a ⚠ in the UI) came from a search-result snippet, not
+from opening the file's Commons page. Open the page, confirm the licence and the
+required credit, and correct the `license`/`credit` fields by hand if needed.
+CC-BY-SA files (e.g. the Kedukan Bukit inscription) require the credit to be
+displayed, which the gallery does.
+
 ## Status
 
 Phases 0–4 are built: geometry pipeline, static map with click-to-reveal, era

@@ -284,6 +284,36 @@
   .pill.on .knob{ background: var(--gold); }
   .pill.on .knob::after{ transform: translateX(11px); background: var(--on-accent); }
   .pill:focus-visible{ outline:2px solid var(--gold-warm); outline-offset:2px; }
+  #sources-btn{ padding:6px 13px; } /* no knob — a plain button, not a toggle */
+
+  /* ======================= Sources gallery modal ======================= */
+  .modal-backdrop{
+    position:fixed; inset:0; background: rgba(0,0,0,0.45); z-index:50;
+    display:flex; align-items:flex-start; justify-content:center; padding:5vh 16px;
+    overflow-y:auto;
+  }
+  .modal-backdrop[hidden]{ display:none; }
+  .modal{
+    background: var(--surface); border:1px solid var(--line); border-radius:10px;
+    max-width:900px; width:100%; padding:22px 24px 28px; box-shadow:0 12px 40px rgba(0,0,0,0.3);
+  }
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .modal-head h2{ font-size:1.2rem; margin:0; }
+  .modal-close{
+    border:1px solid var(--line); border-radius:6px; background: var(--surface-2);
+    color: var(--ink-2); font:inherit; font-size:0.78rem; font-weight:600;
+    padding:6px 12px; cursor:pointer; flex-shrink:0;
+  }
+  .modal-close:hover{ background: var(--surface-3); }
+  .modal-intro{ font-size:0.85rem; color: var(--ink-2); line-height:1.6; margin:12px 0 18px; }
+  .src-gallery{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:14px;
+  }
+  .src-card{
+    border:1px solid var(--line); border-radius:8px; padding:12px 13px; background: var(--surface-2);
+  }
+  .src-card-name{ font-weight:600; font-size:0.86rem; margin-bottom:6px; }
+  .src-card .src-photo{ margin-bottom:8px; }
 
   /* ============================ Stage ============================ */
   .stage{
@@ -394,6 +424,33 @@
     letter-spacing:0.13em; text-transform:uppercase; color: var(--gold);
     font-weight:600; margin-bottom:2px;
   }
+
+  /* Per-entity Sources: an image slot (real candidate, cited, pending real
+     bytes until embed-image.js runs) plus any academic citations. Same
+     select-to-reveal rule as .lore. */
+  .ent .sources{ display:none; margin-top:11px; padding-top:11px; border-top:1px solid var(--line); }
+  .ent.sel .sources{ display:block; }
+  .src-label{ margin-bottom:6px; }
+  .src-photo{ margin-bottom:9px; }
+  .src-photo img{ display:none; } /* 1x1 placeholder — hidden until real bytes are embedded */
+  .src-credit{ font-size:0.76rem; color: var(--ink-3); line-height:1.5; }
+  .src-credit a{ color: var(--gold); }
+  .src-license{ font-family:'IBM Plex Mono', monospace; font-size:0.63rem; color: var(--ink-3); margin-top:2px; }
+  .src-license.unconfirmed{ color: var(--f-komunis); }
+  .src-license.unconfirmed::before{ content:'⚠ '; }
+  .src-pending{ font-size:0.76rem; color: var(--ink-3); font-style:italic; margin-top:3px; }
+  .src-cites{ display:grid; gap:9px; }
+  .src-cite{ border-left:2px solid var(--line); padding-left:10px; }
+  .src-cite.perspective{ border-left-color: var(--f-komunis); }
+  .src-badge{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
+    letter-spacing:0.06em; text-transform:uppercase; color: var(--f-komunis);
+    border:1px solid var(--f-komunis); border-radius:3px; padding:1px 5px; margin-bottom:4px;
+  }
+  .src-title{ font-size:0.84rem; font-weight:600; line-height:1.35; }
+  .src-title a{ color:inherit; }
+  .src-meta{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color: var(--ink-3); margin-top:2px; }
+  .src-note{ font-size:0.8rem; color: var(--ink-2); line-height:1.5; margin-top:4px; }
 
   /* Prologue milestone list */
   .ms-list{ display:grid; gap:7px; margin-top:10px; }
@@ -690,9 +747,23 @@
         <button type="button" class="pill" id="routes-btn" aria-pressed="true">
           <span class="knob"></span><span data-i18n="routesToggle"></span>
         </button>
+        <button type="button" class="pill" id="sources-btn">
+          <span data-i18n="sourcesToggle"></span>
+        </button>
       </div>
     </div>
   </header>
+
+  <div class="modal-backdrop" id="sources-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sources-modal-title">
+      <div class="modal-head">
+        <h2 id="sources-modal-title" data-i18n="sourcesModalTitle"></h2>
+        <button type="button" class="modal-close" id="sources-modal-close" data-i18n="sourcesModalClose"></button>
+      </div>
+      <p class="modal-intro" data-i18n="sourcesModalIntro"></p>
+      <div class="src-gallery" id="src-gallery"></div>
+    </div>
+  </div>
 
   <div class="stage">
     <div class="map-wrap">
@@ -875,7 +946,28 @@ var CHROME = {
     high:{ id:"Keyakinan tinggi pada tahun ini", en:"High confidence on these dates" },
     medium:{ id:"Keyakinan sedang — sejarawan berbeda pendapat", en:"Medium confidence — historians differ" },
     low:{ id:"Keyakinan rendah — tahun pasti tidak diketahui", en:"Low confidence — exact dates unknown" }
-  }
+  },
+
+  /* ---- Sources gallery ---- */
+  sourcesToggle:{ id:"Sumber", en:"Sources" },
+  sourcesModalTitle:{ id:"Sumber & Rujukan", en:"Sources & References" },
+  sourcesModalIntro:{
+    id:"Peta ini disusun dari pengetahuan umum dan Wikipedia bahasa Inggris untuk referensi pribadi — bukan riset akademik. Daftar ini menautkan klaim yang paling diperdebatkan ke buku dan foto arsip nyata agar dapat diverifikasi sendiri. Judul \"unconfirmed\" pada foto berarti izin/lisensi persisnya belum diperiksa langsung di Wikimedia Commons dan perlu dicek sebelum digunakan secara publik.",
+    en:"This map was assembled from general knowledge and English Wikipedia for personal reference — not academic research. This list links the most contested claims to real books and archival photos so they can be independently verified. An \"unconfirmed\" photo credit means its exact license hasn't been directly checked on Wikimedia Commons yet, and needs to be before public use."
+  },
+  sourcesModalClose:{ id:"Tutup", en:"Close" },
+  sourcesEntityLabel:{ id:"Sumber", en:"Sources" },
+  sourcesPerspective:{ id:"Perspektif", en:"Perspective" },
+  sourcesPhotoCredit:{ id:"Kredit foto", en:"Photo credit" },
+  sourcesPhotoPending:{
+    id:"Foto asli belum tersemat — menunggu berkas yang diunduh.",
+    en:"Real photo not yet embedded — awaiting a downloaded file."
+  },
+  sourcesPhotoUnresolved:{
+    id:"Belum ada foto nyata yang terverifikasi untuk entitas ini.",
+    en:"No verified real photo found for this entity yet."
+  },
+  sourcesViewLink:{ id:"Lihat sumber", en:"View source" }
 };
 
 /* ==================================================================
@@ -1363,6 +1455,222 @@ var LORE = {
     "Berlanjut. Pertanyaan yang belum terselesaikan tetap sama: korupsi, kekuasaan tentara, dan pertanggungjawaban atas 1965 yang tidak pernah tiba.",
     "Ongoing. The unresolved questions are the same ones: corruption, the army’s role, and an accounting for 1965 that has never arrived.")
 };
+
+/* ==================================================================
+   SOURCES — a real bibliography, and a real (pending) picture per entity.
+
+   Per-entity shape: { citations: [...], image: {...} | null }.
+
+   citations (optional array): real, independently verifiable academic
+   works. Kept to the handful of entities where the map itself calls a
+   claim contested (Majapahit's fall date, Sriwijaya's decline, the
+   1965-66 death toll, the 1955 election), plus Api Sejarah — a real but
+   explicitly non-mainstream Muslim-nationalist historiography, marked
+   `perspective:true` so it never reads as an equal-credibility citation
+   next to the academic works.
+
+   image (per entity, all ~29 covered): a specific real photo/artifact
+   candidate identified via web search, not invented. Every entry still
+   uses PLACEHOLDER_IMG for `data` — actual image bytes could not be
+   downloaded from this build environment (network egress to Wikimedia
+   and effectively every other external host is blocked here). Run
+   `node tools/embed-image.js <file> <entityKey>` once a real file is
+   available locally to replace the placeholder.
+
+   `license_confirmed:false` means the license/credit came from a search
+   snippet, not from opening the actual Commons file page — verify before
+   this ships anywhere public. `image:null` means no candidate was found
+   at all; do not invent one — those entities show a "photo needed" note.
+   ================================================================== */
+var PLACEHOLDER_IMG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+
+function IMG(data, credit, commonsUrl, license, confirmed){
+  return { data: data, credit: credit, commons_url: commonsUrl,
+    license: license, license_confirmed: !!confirmed };
+}
+
+var API_SEJARAH = {
+  title: 'Api Sejarah', author: 'Ahmad Mansur Suryanegara', year: '2009',
+  publisher: 'Salamadani', url: 'https://www.worldcat.org/search?q=Api+Sejarah+Suryanegara',
+  perspective: true,
+  note_id: 'Perspektif historiografi nasionalis-Muslim — menonjolkan peran Islam dalam sejarah Nusantara. Sebagian sejarawan (mis. Tiar Anwar Bachtiar) menilai buku ini banyak bertumpu pada sumber sekunder; bukan konsensus akademik arus utama.',
+  note_en: 'A Muslim-nationalist historiographical perspective — foregrounds Islam’s role in the archipelago’s history. Some historians (e.g. Tiar Anwar Bachtiar) consider it heavily reliant on secondary sources; not a mainstream academic consensus.'
+};
+
+var SOURCES = {
+  'Sriwijaya': {
+    citations: [
+      { title: 'Early Indonesian Commerce: A Study of the Origins of Śrīvijaya', author: 'O.W. Wolters',
+        year: '1967', publisher: 'Cornell University Press', url: 'https://www.worldcat.org/isbn/9781597401876',
+        note_id: 'Studi akademik dasar tentang asal-usul Sriwijaya.', note_en: 'The foundational academic study of Srivijaya’s origins.' },
+      { title: 'The Fall of Śrīvijaya in Malay History', author: 'O.W. Wolters',
+        year: '1970', publisher: 'Cornell University Press / Asia Major Library', url: 'https://www.worldcat.org/isbn/9780853312666',
+        note_id: 'Membahas langsung kemunduran Sriwijaya yang disebut dalam entri ini.', note_en: 'Directly covers the decline this entity’s text refers to.' }
+    ],
+    image: IMG(PLACEHOLDER_IMG, 'Kedukan Bukit inscription (683 CE), National Museum of Indonesia',
+      'https://commons.wikimedia.org/wiki/File:KedukanBukit001.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Samudera Pasai': {
+    citations: [ API_SEJARAH ],
+    image: null // unresolved: real tomb of Sultan Malik al-Salih exists, no Commons filename confirmed
+  },
+  'Kesultanan Aceh': {
+    citations: [ API_SEJARAH ],
+    image: IMG(PLACEHOLDER_IMG, '1615 letter from Sultan Iskandar Muda of Aceh to James I of England',
+      'https://commons.wikimedia.org/wiki/File:Letter_to_James_I_from_Sultan_Iskandar_Muda_of_Aceh_in_1615.jpg',
+      'unconfirmed — check Commons page', false)
+  },
+  'Tarumanagara': {
+    image: IMG(PLACEHOLDER_IMG, 'Ciaruteun inscription (5th c.), bearing King Purnawarman’s name',
+      'https://commons.wikimedia.org/wiki/File:Prasasti_Ciaruteun.JPG', 'CC-BY-SA-3.0-migrated / GFDL (per search snippet)', false)
+  },
+  'Kalingga (Holing)': {
+    image: null // unresolved: no artifact tied to Ratu Shima; Tuk Mas/Sojomerto candidates unconfirmed
+  },
+  'Dinasti Sailendra': {
+    image: IMG(PLACEHOLDER_IMG, 'Relief panel depicting a Sailendra-era king and queen, Borobudur',
+      'https://commons.wikimedia.org/wiki/File:Sailendra_King_and_Queen,_Borobudur.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Kerajaan Mataram Kuno (Medang)': {
+    image: IMG(PLACEHOLDER_IMG, 'Prambanan temple complex, built c. 850 CE',
+      'https://commons.wikimedia.org/wiki/File:Shiva_Temple_of_Prambanan_in_Java_Indonesia.jpg', 'typically CC-BY-SA (unconfirmed for this file)', false)
+  },
+  'Kediri': {
+    image: null // unresolved: no Kediri-specific artifact/manuscript pinned down
+  },
+  'Singhasari': {
+    image: IMG(PLACEHOLDER_IMG, 'Prajnaparamita statue (13th c.), National Museum of Indonesia',
+      'https://commons.wikimedia.org/wiki/File:Prajnaparamita_Java.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Majapahit': {
+    citations: [
+      { title: 'A History of Modern Indonesia since c.1200', author: 'M.C. Ricklefs', year: '2008 (4th ed.)',
+        publisher: 'Palgrave Macmillan', url: 'https://www.worldcat.org/isbn/9780230546868',
+        note_id: 'Sumber standar akademik; membahas kontroversi tahun keruntuhan (1478 vs. 1527).',
+        note_en: 'Standard scholarly overview; covers the 1478-vs-1527 fall-date dispute directly.' },
+      { title: 'Deśawarṇana (Nāgarakṛtāgama)', author: 'Mpu Prapañca, trans. Stuart Robson',
+        year: '1995', publisher: 'KITLV Press', url: 'https://www.worldcat.org/isbn/9789067180948',
+        note_id: 'Sumber primer 1365 di balik "peta wilayah" Majapahit.',
+        note_en: 'The 1365 primary source behind the Majapahit “territorial map.”' }
+    ],
+    image: IMG(PLACEHOLDER_IMG, 'Nagarakertagama palm-leaf manuscript (1365 CE), National Library of Indonesia',
+      'https://commons.wikimedia.org/wiki/File:Nagarakertagama.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Demak': {
+    citations: [ API_SEJARAH ],
+    image: IMG(PLACEHOLDER_IMG, 'Great Mosque of Demak, first Islamic sultanate on Java',
+      'https://commons.wikimedia.org/wiki/File:Masjid_Agung_Demak.jpg', 'CC-BY-SA-4.0 (from sibling files; unconfirmed for this exact file)', false)
+  },
+  'Kerajaan Pajang': {
+    image: null // unresolved: only a modern illustrative map found, not a real historical image
+  },
+  'Kesultanan Mataram (Islam)': {
+    image: IMG(PLACEHOLDER_IMG, 'Portrait of Sultan Agung (likely a later painting, not contemporary)',
+      'https://commons.wikimedia.org/wiki/File:Anyakrakusuma.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Yogyakarta': {
+    image: IMG(PLACEHOLDER_IMG, 'Kraton Ngayogyakarta Hadiningrat (built 1755-56)',
+      'https://commons.wikimedia.org/wiki/Category:Kraton_of_Yogyakarta', 'needs a specific file picked from this category', false)
+  },
+  'Kasunanan Surakarta': {
+    image: IMG(PLACEHOLDER_IMG, 'Keraton Kasunanan Surakarta Hadiningrat palace, Solo',
+      'https://commons.wikimedia.org/wiki/File:Keraton_Kasunanan_Surakarta_Hadiningrat.jpg', 'CC-BY-SA-4.0, credit: Jo Chryst', false)
+  },
+  'Kutai Martadipura (Kalimantan)': {
+    image: IMG(PLACEHOLDER_IMG, 'Yupa inscription of King Mulawarman (early 5th c.)',
+      'https://commons.wikimedia.org/wiki/File:Kutai_Prasasti_of_Mulawarman.JPG', 'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Kutai Kartanegara (Kalimantan)': {
+    image: IMG(PLACEHOLDER_IMG, 'Sultanate throne (singgasana), Mulawarman Museum, Tenggarong',
+      'https://commons.wikimedia.org/wiki/File:Singgasana_Kesultanan_Kutai.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Gowa (Makassar, Sulawesi)': {
+    image: IMG(PLACEHOLDER_IMG, 'The capture of Makassar from Gowa rule by VOC and Bone forces, 1669 (period painting)',
+      'https://commons.wikimedia.org/wiki/File:The_capture_of_Makassar_from_Gowa_rule_by_the_VOC_and_Bone_forces,_1669.jpg',
+      'unconfirmed — check Commons page', false)
+  },
+  'Kesultanan Ternate (Maluku)': {
+    image: IMG(PLACEHOLDER_IMG, 'Palace (Kedaton) of the Sultan of Ternate',
+      'https://commons.wikimedia.org/wiki/Category:Palace_of_the_Sultan_of_Ternate', 'needs a specific file picked from this category', false)
+  },
+  'Kesultanan Tidore (Maluku)': {
+    image: IMG(PLACEHOLDER_IMG, '17th-century painting of Sultan Saifuddin of Tidore',
+      'https://commons.wikimedia.org/wiki/File:Saifuddin_of_Tidore.JPG', 'unconfirmed — check Commons page', false)
+  },
+  'Portugis di Maluku': {
+    image: IMG(PLACEHOLDER_IMG, 'Ruins of Fort Kastela, Ternate, built by the Portuguese in 1522',
+      'https://commons.wikimedia.org/wiki/File:Ruins_of_Kastella,_Ternate.jpg', 'unconfirmed — check Commons page', false)
+  },
+  'VOC (Kongsi Dagang Hindia Timur Belanda)': {
+    image: IMG(PLACEHOLDER_IMG, 'Andries Beeckman, "The Castle of Batavia" (c. 1661-63), Rijksmuseum',
+      'https://commons.wikimedia.org/wiki/File:Andries_Beeckman_-_The_Castle_of_Batavia.jpg',
+      'public domain — Rijksmuseum open-access, pre-1900 painting', true)
+  },
+  'Hindia Belanda': {
+    image: IMG(PLACEHOLDER_IMG, 'A Tropenmuseum "COLLECTIE TROPENMUSEUM" photograph of the Dutch East Indies (specific file not yet picked)',
+      'https://commons.wikimedia.org/wiki/Category:Java_in_the_19th_century',
+      'typically CC-BY-SA-3.0, credit: Tropenmuseum / National Museum of World Cultures', false)
+  },
+  'Pendudukan Jepang': {
+    image: null // unresolved: category exists (Japanese_occupation_of_Indonesia), no specific file/license verified
+  },
+  'Proklamasi & Revolusi Nasional': {
+    citations: [ API_SEJARAH ],
+    image: IMG(PLACEHOLDER_IMG, 'Sukarno reading the Proclamation of Independence, 17 August 1945, photo by Frans Mendur',
+      'https://commons.wikimedia.org/wiki/File:Indonesia_declaration_of_independence_17_August_1945.jpg',
+      'public domain (US)', true)
+  },
+  'Demokrasi Liberal': {
+    citations: [
+      { title: 'The Decline of Constitutional Democracy in Indonesia', author: 'Herbert Feith', year: '1962',
+        publisher: 'Cornell University Press', url: 'https://catalog.hathitrust.org/Record/010639984',
+        note_id: 'Studi akademik standar tentang Indonesia era 1950-an, termasuk Pemilu 1955.',
+        note_en: 'The standard academic study of 1950s Indonesia, including the 1955 election.' },
+      { title: 'The Indonesian Elections of 1955', author: 'Herbert Feith', year: '1957',
+        publisher: 'Cornell Modern Indonesia Project', url: 'https://catalog.hathitrust.org/Record/001149318',
+        note_id: 'Studi khusus tentang pemilu 1955 itu sendiri.', note_en: 'A dedicated study of the 1955 election itself.' }
+    ],
+    image: IMG(PLACEHOLDER_IMG, '1955 Indonesian general election campaign posters',
+      'https://commons.wikimedia.org/wiki/File:1955_Indonesian_Election_Posters.png', 'unconfirmed — check Commons page', false)
+  },
+  'Demokrasi Terpimpin (Soekarno)': {
+    citations: [
+      { title: 'The Killing Season: A History of the Indonesian Massacres, 1965–66', author: 'Geoffrey B. Robinson',
+        year: '2018', publisher: 'Princeton University Press', url: 'https://www.jstor.org/stable/j.ctvc774sg',
+        note_id: 'Sejarah akademik terkini tentang pembunuhan massal 1965–66.',
+        note_en: 'The most recent major academic history of the 1965–66 mass killings.' },
+      { title: 'Pretext for Mass Murder: The September 30th Movement and Suharto’s Coup d’État in Indonesia',
+        author: 'John Roosa', year: '2006', publisher: 'University of Wisconsin Press',
+        url: 'https://archive.org/details/pretextformassmu0000roos',
+        note_id: 'Sumber primer baru tentang Gerakan 30 September dan asal-usul pembunuhan massal.',
+        note_en: 'New primary-source research on the 30 September Movement and the origins of the mass killings.' }
+    ],
+    image: IMG(PLACEHOLDER_IMG, 'Photograph related to Sukarno’s 5 July 1959 Presidential Decree that inaugurated Guided Democracy',
+      'https://commons.wikimedia.org/wiki/File:1959_Sukarno%27s_Presidential_Decree.jpg', '"PD Indonesia Old" per search snippet (unconfirmed)', false)
+    // Deliberately no image slot for the 1965-66 violence itself: archival photos of mass
+    // killings/victims need an explicit editorial decision (what, if anything, to show)
+    // that isn't this pass's call to make. Ask if you want one added (e.g. a book cover).
+  },
+  'Orde Baru (Soeharto)': {
+    image: IMG(PLACEHOLDER_IMG, 'Suharto’s appointment/inauguration as president, 1968, Dept. of Information of the Republic of Indonesia',
+      'https://commons.wikimedia.org/wiki/File:Suhartoappointedpresident.jpg', 'PD Indonesian Government (per search snippet)', false)
+  },
+  'Era Reformasi': {
+    image: IMG(PLACEHOLDER_IMG, 'Suharto delivering his resignation address, Merdeka Palace, 21 May 1998',
+      'https://commons.wikimedia.org/wiki/File:Suharto_resigns.jpg', 'likely PD/government-sourced (unconfirmed)', false)
+  }
+};
+
+/* Build-time integrity check, matching the MAPX pattern: warn on any
+   entity missing a SOURCES entry entirely, so silence isn't mistaken for
+   "checked, nothing found." A missing entry is different from
+   `image:null` (checked, nothing found) or an empty `citations` (no
+   contested claim to cite) — this only catches entities never visited. */
+(function sourcesIntegrityCheck(){
+  var missing = [];
+  DATA.forEach(function(e){ if (!SOURCES[e.name.id]) missing.push(e.name.id); });
+  if (missing.length) console.warn('Peta Nusantara — entities without a SOURCES entry:', missing);
+})();
 
 /* ==================================================================
    BEFORE THE KINGDOMS — the deep-time prologue. These spans are far too
@@ -2323,6 +2631,19 @@ function loreHtml(e){
     '</div>';
 }
 
+/* Per-entity Sources sub-section: an image slot (real candidate, cited,
+   pending real bytes) plus any academic citations. Independent of LORE —
+   an entity can have an image with no citations, or vice versa. Only
+   rendered on the selected card, same visibility rule as .lore. */
+function sourcesHtml(e){
+  var src = SOURCES[e.name.id];
+  if (!src) return '';
+  return '<div class="sources">' +
+    '<div class="lk src-label">' + esc(T('sourcesEntityLabel')) + '</div>' +
+    sourcesBodyHtml(src) +
+    '</div>';
+}
+
 /* The deep-time prologue. Shown before the first recorded kingdom, because
    "the beginning" of this map is 350 CE and that is not the beginning. */
 function prologueBlockHtml(){
@@ -2379,6 +2700,7 @@ function renderRail(){
             ' · ' + esc(CHROME.catNames[e.cat][S.lang]) + '</div>' +
           '<div class="ed">' + esc(e.desc[S.lang]) + '</div>' +
           loreHtml(e) +
+          sourcesHtml(e) +
           '<div class="conf">' + esc(CHROME.confLabel[e.conf][S.lang]) + '</div>' +
         '</button>';
     });
@@ -2447,6 +2769,69 @@ routesBtn.addEventListener('click', function(){
   routesBtn.setAttribute('aria-pressed', S.routes ? 'true' : 'false');
   LS.set('nusantara-map-routes', S.routes ? '1' : '0');
   render();
+});
+
+/* Global Sources gallery: every entity with a SOURCES entry, as an
+   image+text card grid. Rendered lazily on first open rather than at
+   load, since it duplicates nothing already in the rail. */
+function renderSourcesGallery(){
+  var gallery = document.getElementById('src-gallery');
+  var html = '';
+  DATA.forEach(function(e){
+    var src = SOURCES[e.name.id];
+    if (!src) return;
+    html += '<div class="src-card"><div class="src-card-name">' + esc(nameOf(e)) + '</div>' + sourcesBodyHtml(src) + '</div>';
+  });
+  gallery.innerHTML = html || '<div class="rail-empty">' + esc(T('sourcesModalIntro')) + '</div>';
+}
+
+/* Shared by the per-entity rail sub-section and the global gallery card —
+   both show the same image slot + citation list for a SOURCES entry. */
+function sourcesBodyHtml(src){
+  var html = '';
+  var img = src.image;
+  if (img) {
+    html += '<div class="src-photo">' +
+      '<img src="' + img.data + '" alt="" width="1" height="1">' +
+      '<div class="src-credit">' + esc(T('sourcesPhotoCredit')) + ': ' + esc(img.credit) +
+        ' — <a href="' + esc(img.commons_url) + '" target="_blank" rel="noopener">' + esc(T('sourcesViewLink')) + '</a>' +
+        '<div class="src-license' + (img.license_confirmed ? '' : ' unconfirmed') + '">' + esc(img.license) + '</div>' +
+      '</div>' +
+      '<div class="src-pending">' + esc(T('sourcesPhotoPending')) + '</div>' +
+      '</div>';
+  } else {
+    html += '<div class="src-pending">' + esc(T('sourcesPhotoUnresolved')) + '</div>';
+  }
+  var cites = src.citations || [];
+  if (cites.length) {
+    html += '<div class="src-cites">';
+    cites.forEach(function(c){
+      html += '<div class="src-cite' + (c.perspective ? ' perspective' : '') + '">' +
+        (c.perspective ? '<span class="src-badge">' + esc(T('sourcesPerspective')) + '</span>' : '') +
+        '<div class="src-title"><a href="' + esc(c.url) + '" target="_blank" rel="noopener">' + esc(c.title) + '</a></div>' +
+        '<div class="src-meta">' + esc(c.author) + ' · ' + esc(c.year) + (c.publisher ? ' · ' + esc(c.publisher) : '') + '</div>' +
+        '<div class="src-note">' + esc(c[S.lang === 'id' ? 'note_id' : 'note_en']) + '</div>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+  return html;
+}
+
+var sourcesModal = document.getElementById('sources-modal');
+var sourcesBtn = document.getElementById('sources-btn');
+sourcesBtn.addEventListener('click', function(){
+  renderSourcesGallery();
+  sourcesModal.hidden = false;
+});
+document.getElementById('sources-modal-close').addEventListener('click', function(){
+  sourcesModal.hidden = true;
+});
+sourcesModal.addEventListener('click', function(ev){
+  if (ev.target === sourcesModal) sourcesModal.hidden = true;
+});
+document.addEventListener('keydown', function(ev){
+  if (ev.key === 'Escape' && !sourcesModal.hidden) sourcesModal.hidden = true;
 });
 
 /* Theme. With no explicit choice the page follows the viewer — the host's
