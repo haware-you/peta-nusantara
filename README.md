@@ -52,15 +52,16 @@ Requires Node 18+ (uses global `fetch`). No dependencies.
 npm run all
 ```
 
-Which runs three steps, each with a gate:
+Which runs three steps:
 
-| Step | Command | Does | Gate |
-| --- | --- | --- | --- |
-| Fetch | `npm run fetch` | Downloads Natural Earth 50m admin-0 into `data/` | — |
-| Prep | `npm run prep` | Clips to the archipelago, Douglas–Peucker simplifies to ~3.9 km, drops islets under ~18 km², rounds to 2dp | geometry ≤ 100 KB |
-| Build | `npm run build` | Inlines the geometry into the template | bundle ≤ 250 KB |
+| Step | Command | Does |
+| --- | --- | --- |
+| Fetch | `npm run fetch` | Downloads Natural Earth 50m admin-0 into `data/` |
+| Prep | `npm run prep` | Clips to the archipelago, Douglas–Peucker simplifies to ~3.9 km, drops islets under ~18 km², rounds to 2dp |
+| Build | `npm run build` | Inlines the geometry into the template |
 
-Current output: **25.6 KB** of geometry inside an **89.5 KB** page.
+Both steps report their size but neither gates on it. Current output:
+**25.6 KB** of geometry inside a **199.1 KB** page.
 
 Edit `src/peta.template.html`, not `peta-nusantara.html` — the latter is
 generated and overwritten on every build.
@@ -71,7 +72,7 @@ generated and overwritten on every build.
 src/peta.template.html   the page; /*__LAND__*/ marks the geometry injection point
 tools/fetch-geometry.js  downloads Natural Earth source data
 tools/prep.js            simplification pipeline (Phase 0)
-tools/build.js           inlines geometry, checks the size budget
+tools/build.js           inlines geometry into the template
 peta-nusantara.html      build output — the deliverable
 data/                    gitignored: source geometry and generated constant
 ```

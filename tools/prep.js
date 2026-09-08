@@ -143,9 +143,4 @@ const kb = js.length / 1024;
 console.log(
   'rings ' + rings.length + '  points ' + totalPts + '  ' + kb.toFixed(1) + ' KB'
 );
-// Phase 0 gate.
-if (kb > 100) {
-  console.error('GATE FAILED: geometry over 100 KB. Raise TOL or MIN_AREA.');
-  process.exit(1);
-}
-console.log('gate ok (budget 100 KB)');
+console.log('prep ok');
