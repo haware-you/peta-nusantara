@@ -561,6 +561,7 @@
     text-transform:uppercase; color: var(--ink-3); font-weight:600;
   }
   .scrub-hint{ font-size:0.72rem; color: var(--ink-3); }
+  .scrub-head-l{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; min-width:0; }
 
   .track{ position: relative; height: 62px; }
 
@@ -753,6 +754,98 @@
   }
   @media (prefers-reduced-motion: reduce){
     .chap-open, .ms{ transition:none; }
+  }
+
+
+  /* ===================== Scrubber, stretched =====================
+     The same instrument with more vertical room — not a second timeline
+     and not a chart beside it. Collapsed, the track is the engraved ruler
+     it has always been. Stretched, the entities fan out into the four
+     lanes they already carry in DATA (`lane`), on the SAME x-axis, under
+     the SAME gold thumb, so what the scrubber was already sliding across
+     becomes visible: Pasai running alongside Majapahit, the Portuguese
+     starting mid-sultanate.
+
+     Bars are HTML, not SVG, for two reasons: the ruler beneath them is
+     stretched with preserveAspectRatio="none", which would distort any
+     type drawn into it, and PRODUCT.md requires the text stay selectable
+     and translatable.
+
+     A bar's ends are feathered by its confidence tier, using a CSS mask
+     rather than a border. A hard end is a claim that a date is known;
+     most of these are not. VOC 1799 gets an edge; Majapahit 1527 does
+     not (DESIGN.md, "edges match the evidence"). */
+  .lanes{
+    position:absolute; left:0; right:0; top:0; bottom:62px;
+    overflow-y:auto; overflow-x:hidden;
+    opacity:0; pointer-events:none;
+    transition: opacity .2s var(--ease-out);
+  }
+  .track.wide .lanes{ opacity:1; pointer-events:auto; }
+  .track{ transition: height .34s var(--ease-out); }
+
+  /* Each lane opens with a hairline carrying its name, so the four
+     lanes read as sections of one plate rather than as four charts. */
+  .lane-head{
+    position:relative; height:11px; margin-top:4px;
+    border-top:1px solid var(--line);
+  }
+  .lane-head:first-child{ margin-top:0; }
+  .lane-head span{
+    position:absolute; left:0; top:2px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.55rem; letter-spacing:0.12em;
+    text-transform:uppercase; color: var(--ink-3);
+    background: var(--surface); padding-right:7px;
+  }
+
+  .lane-row{ position:relative; height:16px; }
+
+  .bar{
+    position:absolute; top:1px; height:13px;
+    display:flex; align-items:center;
+    padding:0 6px; min-width:3px;
+    box-sizing:border-box; cursor:pointer;
+    background: var(--wash);
+    border:1px solid var(--cat);
+    border-radius:2px;
+    color: var(--ink-1);
+    font-family:'IBM Plex Mono', monospace; font-size:0.55rem; letter-spacing:0.04em;
+    white-space:nowrap; overflow:hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--f), #000 calc(100% - var(--f)), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 var(--f), #000 calc(100% - var(--f)), transparent 100%);
+    transition: background .14s var(--ease-out);
+  }
+  /* Confidence is the feather width. Low confidence has no edge to speak of. */
+  .bar.t-high{   --f: 2px; }
+  .bar.t-medium{ --f: 9px; }
+  .bar.t-low{    --f: 18px; }
+
+  .bar.c-classical{ --cat: var(--cat-classical); --wash: color-mix(in oklch, var(--cat-classical) 16%, transparent); }
+  .bar.c-islamic{   --cat: var(--cat-islamic);   --wash: color-mix(in oklch, var(--cat-islamic) 16%, transparent); }
+  .bar.c-colonial{  --cat: var(--colonial);      --wash: color-mix(in oklch, var(--colonial) 16%, transparent); }
+  .bar.c-modern{    --cat: var(--cat-modern);    --wash: color-mix(in oklch, var(--cat-modern) 16%, transparent); }
+
+  .bar:hover{ background: color-mix(in oklch, var(--cat) 30%, transparent); }
+  /* The mask clips an outline, so selection and focus are carried by the
+     fill and a thicker hairline instead of a ring outside the box. */
+  .bar:focus-visible{ background: color-mix(in oklch, var(--cat) 34%, transparent); border-width:2px; }
+  .bar.sel{ background: var(--sel-wash); border-color: var(--gold); border-width:2px; }
+  /* Bars narrower than their own label drop it rather than clipping a name
+     to two letters. Hidden by visibility, not display, so the label keeps a
+     measurable scrollWidth and the test cannot oscillate between paints. */
+  .bar.narrow{ padding:0; }
+  .bar.narrow span{ visibility:hidden; }
+
+  /* The time cursor runs the full stretched height, so the thumb below
+     and the bars above are demonstrably the same instrument. */
+  .lane-thr{
+    position:absolute; top:0; bottom:0; width:1px;
+    background: var(--gold); opacity:.55;
+    pointer-events:none; transform: translateX(-0.5px);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .track, .lanes{ transition:none; }
   }
 
   /* ============================ Map primitives ============================ */
@@ -1268,8 +1361,13 @@
 
   <div class="scrub">
     <div class="scrub-head">
-      <div class="scrub-title" data-i18n="scrubTitle"></div>
-      <div class="scrub-hint" data-i18n="scrubHint"></div>
+      <div class="scrub-head-l">
+        <div class="scrub-title" data-i18n="scrubTitle"></div>
+        <div class="scrub-hint" data-i18n="scrubHint"></div>
+      </div>
+      <button type="button" class="pill" id="lane-btn" aria-pressed="false" aria-controls="era-range">
+        <span class="knob"></span><span data-i18n="laneToggle"></span>
+      </button>
     </div>
     <div class="track">
       <svg class="ruler" id="ruler" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -1331,6 +1429,7 @@ var CHROME = {
     id:"Seret bebas — pegangan berhenti di batas era. Panah kiri/kanan berpindah antar era.",
     en:"Drag freely — the handle settles on era boundaries. Left/right arrows step between eras."
   },
+  laneToggle:{ id:"Rentangkan", en:"Stretch" },
   chapKicker:{ id:"Enam Sub-Tema", en:"Six Sub-Themes" },
   chapTitle:{ id:"Membaca peta ini menurut babnya", en:"Reading this map by its chapters" },
   chapLede:{
@@ -1378,20 +1477,7 @@ var CHROME = {
     id:"Keyakinan rendah digambar lebih kabur — ketidakpastian tampil sebagai sifat visual, bukan catatan kaki.",
     en:"Lower confidence renders blurrier — uncertainty shown as a visual property, not a footnote."
   },
-  /* ---- Chapters (the six sub-themes below the plate) ---- */
-  chapKicker:{ id:"Enam Babak", en:"Six Chapters" },
-  chapTitle:{
-    id:"Enam babak, satu kepulauan",
-    en:"Six chapters, one archipelago"
-  },
-  chapLede:{
-    id:"Peta di atas berjalan dari 300 hingga hari ini tanpa jeda; babak-babak ini hanya cara membacanya. Rentangnya sengaja bertumpang tindih — Islam tiba saat Majapahit masih berdiri, Portugis sudah di sini ketika kesultanan mencapai puncaknya. Klik tahun mana pun untuk membawa peta ke sana.",
-    en:"The map above runs from 300 to today without a break; these chapters are only a way of reading it. Their ranges overlap on purpose — Islam arrives while Majapahit still stands, the Portuguese are here through the sultanates' peak. Click any year to take the map there."
-  },
-  chapOpen:{ id:"Buka di peta", en:"Open on the map" },
-  chapMilestones:{ id:"Tonggak", en:"Milestones" },
-  chapNoteK:{ id:"Yang ditopang catatan", en:"What the record supports" },
-  chapOverlapK:{ id:"Tumpang tindih", en:"Overlap" },
+
 
   /* ---- Faction overlay strings ---- */
   facNat:{ id:"Republik / nasionalis", en:"Republican / nationalist" },
@@ -2895,6 +2981,171 @@ function rx(pos){ return (pos / PMAX) * RW; }
   ruler.appendChild(gl);
 })();
 
+
+/* ==================================================================
+   THE STRETCHED SCRUBBER
+
+   One instrument, two heights. Collapsed it is the engraved ruler.
+   Stretched, the entities fan into the four lanes DATA already carries,
+   sharing the ruler's x-mapping (posFromYear) exactly, so a bar's left
+   edge sits over the same pixel the thumb stops at for that year.
+
+   Within a lane, bars are packed greedily into as few rows as the
+   overlaps allow. The packing is the whole point of the feature: two
+   bars land on separate rows precisely when they were running at the
+   same time, which is the fact the collapsed ruler cannot show.
+   ================================================================== */
+var track = document.querySelector('.track');
+var lanesEl = document.createElement('div');
+lanesEl.className = 'lanes';
+track.insertBefore(lanesEl, track.firstChild);
+
+var LANES = [
+  { id:'sumatra',  label:{ id:'Sumatra',            en:'Sumatra' } },
+  { id:'java',     label:{ id:'Jawa',               en:'Java' } },
+  { id:'timur',    label:{ id:'Kalimantan & Timur', en:'Kalimantan & East' } },
+  { id:'nasional', label:{ id:'Nasional',           en:'Archipelago-wide' } }
+];
+
+var ROW_H = 16, HEAD_H = 15, RULER_H = 62;
+var laneThr = null;
+
+/* Greedy interval packing: first row whose last bar ends before this one
+   starts. The cushion is in percent of the whole axis, and small (0.6%,
+   about eight years at the classical scale): it only has to stop two
+   abutting reigns from touching and reading as one bar. Anything larger
+   pushes non-overlapping entities onto separate rows and inflates the
+   stretch for no reason. */
+function packLane(items){
+  var rows = [];
+  items.forEach(function(it){
+    for (var i = 0; i < rows.length; i++){
+      if (rows[i][rows[i].length - 1].p1 <= it.p0 - 0.6){ rows[i].push(it); return; }
+    }
+    rows.push([it]);
+  });
+  return rows;
+}
+
+function buildLanes(){
+  var L = S.lang;
+  lanesEl.innerHTML = '';
+  var rowCount = 0;
+
+  LANES.forEach(function(lane){
+    var items = [];
+    DATA.forEach(function(e, i){
+      if (e.lane !== lane.id) return;
+      var end = Math.min(e.end, NOW);
+      items.push({
+        i:i, e:e,
+        p0:(posFromYear(e.start) / PMAX) * 100,
+        p1:(posFromYear(end) / PMAX) * 100
+      });
+    });
+    if (!items.length) return;
+    items.sort(function(a, b){ return a.p0 - b.p0; });
+
+    var head = document.createElement('div');
+    head.className = 'lane-head';
+    var hs = document.createElement('span');
+    hs.textContent = lane.label[L];
+    head.appendChild(hs);
+    lanesEl.appendChild(head);
+
+    packLane(items).forEach(function(row){
+      var rEl = document.createElement('div');
+      rEl.className = 'lane-row';
+      row.forEach(function(it){
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'bar c-' + it.e.cat + ' t-' + it.e.conf;
+        b.style.left = it.p0.toFixed(3) + '%';
+        b.style.width = Math.max(0.25, it.p1 - it.p0).toFixed(3) + '%';
+        b.dataset.i = it.i;
+        var s = document.createElement('span');
+        s.textContent = it.e.name[L];
+        b.appendChild(s);
+        b.title = it.e.name[L] + ' · ' + it.e.start + '–' + endLabel(it.e) +
+                  ' · ' + CHROME.confLabel[it.e.conf][L];
+        b.setAttribute('aria-label', b.title);
+        b.addEventListener('click', function(){ openFromLane(it.i, it.e); });
+        rEl.appendChild(b);
+      });
+      lanesEl.appendChild(rEl);
+      rowCount++;
+    });
+  });
+
+  laneThr = document.createElement('div');
+  laneThr.className = 'lane-thr';
+  lanesEl.appendChild(laneThr);
+
+  lanesEl._h = rowCount * ROW_H + LANES.length * HEAD_H + 6;
+  applyLanes();
+  paintLanes();
+}
+
+/* A bar click is the same gesture as a milestone row or a map click:
+   go to a year this entity was actually active, select its region, open
+   it. Clamped into the entity's own span so the rail can never open a
+   card for a year the map does not draw. */
+function openFromLane(i, e){
+  var y = Math.max(e.start, Math.min(S.year, Math.min(e.end, NOW)));
+  if (y !== S.year) setYear(y);
+  var reg = regionForEntity(e.name.id);
+  if (reg){
+    selectRegion(reg);
+    var r = REGIONS.filter(function(x){ return x.id === reg; })[0];
+    if (r && entitiesInRegion(r, S.year).indexOf(i) >= 0){
+      S.entity = i;
+      S.revealed[i] = true;
+      LS.set('nusantara-map-revealed', JSON.stringify(S.revealed));
+    }
+  }
+  if (!S.rail){ S.rail = true; applyRail(); LS.set('nusantara-map-rail', '1'); }
+  render();
+}
+
+/* Height is measured from the packing, then capped against the viewport:
+   the plate is bounded at 100vh on desktop, so an unbounded stretch would
+   eat the map it is supposed to explain. Past the cap the lanes scroll
+   inside themselves, exactly as the rail does. */
+function laneCap(){ return Math.max(120, Math.round(window.innerHeight * 0.34)); }
+
+function applyLanes(){
+  track.classList.toggle('wide', S.lanes);
+  var h = S.lanes ? RULER_H + Math.min(lanesEl._h || 0, laneCap()) : RULER_H;
+  track.style.height = h + 'px';
+  if (laneBtn){
+    laneBtn.classList.toggle('on', S.lanes);
+    laneBtn.setAttribute('aria-pressed', S.lanes ? 'true' : 'false');
+  }
+}
+
+/* Cursor and selection follow the map, so the stretched view is never a
+   second source of truth about where we are. */
+function paintLanes(){
+  if (laneThr) laneThr.style.left = ((posFromYear(S.year) / PMAX) * 100).toFixed(3) + '%';
+  Array.prototype.forEach.call(lanesEl.querySelectorAll('.bar'), function(b){
+    b.classList.toggle('sel', S.entity === +b.dataset.i);
+    /* A label wider than its own bar is dropped rather than clipped. */
+    b.classList.toggle('narrow', b.offsetWidth < b.firstChild.scrollWidth + 14);
+  });
+}
+
+window.addEventListener('resize', function(){ if (S.lanes) applyLanes(); });
+
+var laneBtn = document.getElementById('lane-btn');
+if (laneBtn){
+  laneBtn.addEventListener('click', function(){
+    S.lanes = !S.lanes;
+    LS.set('nusantara-map-lanes', S.lanes ? '1' : '0');
+    applyLanes();
+    if (S.lanes) paintLanes();
+  });
+}
+
 /* Era ticks: clickable dots, with only the active era named beneath. */
 var eraCur = document.createElement('div');
 eraCur.className = 'era-cur';
@@ -3058,6 +3309,7 @@ function render(){
   var X = rx(posFromYear(y));
   ruler._thr.setAttribute('x1', X.toFixed(2));
   ruler._thr.setAttribute('x2', X.toFixed(2));
+  paintLanes();
 
   renderRail();
 }
@@ -3360,6 +3612,7 @@ function applyChrome(){
   });
   document.documentElement.lang = S.lang;
   renderChapters();
+  buildLanes();
   applyTheme();
 }
 
@@ -3634,6 +3887,7 @@ S.theme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : '';
 S.study = LS.get('nusantara-map-study', '0') === '1';
 S.routes = LS.get('nusantara-map-routes', '1') === '1';
 S.rail = LS.get('nusantara-map-rail', '1') === '1';
+S.lanes = LS.get('nusantara-map-lanes', '0') === '1';
 try { S.revealed = JSON.parse(LS.get('nusantara-map-revealed', '{}')) || {}; } catch(e){ S.revealed = {}; }
 var savedYear = parseInt(LS.get('nusantara-map-year', '1365'), 10);
 S.year = isNaN(savedYear) ? 1365 : savedYear;
