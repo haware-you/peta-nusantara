@@ -219,7 +219,7 @@ The map is the instrument; the landing page is its front door, and it is deliber
 ### Named Rules
 **The Engraver's Hand Rule.** Anything that names a thing on the map is monospace, uppercase, tracked and haloed. Anything that explains a thing is Inter, sentence case, 1.6 line-height.
 
-**The One Serif Rule.** Fraunces appears at exactly two sizes: the masthead and rail headings. It is never body, never a label, never italic.
+**The One Serif Rule.** Fraunces appears at exactly two sizes: the masthead, and the Headline size used by rail headings and chapter titles. It is never body, never a label, never italic.
 
 ## 4. Elevation
 
@@ -255,6 +255,14 @@ Quiet instruments. Flat, hairline-bordered, ink-coloured controls that stay out 
 - **Legend panel** (over the map): translucent Paper Surface (rgba(251,248,241,0.92)), 1px Paper Line, 8px radius, 10px 13px. Hidden below 900px because the rail carries the same rows.
 - **No nesting.** A card never contains a card; lore answers are keyed by a hanging mono label, not boxed.
 
+### Chapters
+The six sub-themes below the plate. A stack of hairline-separated sections, never a card grid: each is a two-column spread of a sticky identity column (mono chapter number with the category dot, Fraunces title at Headline, mono range, and one "open on the map" pill) beside a body column of Inter prose.
+
+- **Milestone list:** one hairline-bordered group at 8px radius whose rows are separated by 1px Paper Line, so the rows read as an engraved table rather than as stacked cards. Each row is a button: a Tribute Gold mono year in a fixed 92px column, then the event in Inter at Body. Hover is Surface 3; focus is the standard ring, inset. Clicking sets the year, selects the region, opens the entity, and returns the reader to the plate — a chapter never restates the map, it drives it.
+- **Chapter note** ("a note on the evidence"): the Overlay block treatment — 1px Accent Line border, 8px radius, gold wash — because it makes the same kind of statement the rail's overlay blocks do: this is what the record will and will not support. Never a warning colour; doubt is not an error.
+- **Overlap line:** mono at 0.62rem in Ink 3, naming the chapters this one overlaps. Chapters are not consecutive, and the type says so rather than letting tidy ranges imply otherwise.
+- **Colour:** the leading category dot only, drawn from channels that are already legend entries (migration teal for the prologue, then classical / islamic / colonial / modern). The chapters introduce no new hue.
+
 ### Inputs / Fields
 - **Era scrubber:** a transparent native range over an SVG ruler: 1px base line, 0.8px minor and major ticks, dashed scale-break marks, and a Tribute Gold density histogram at 18% (16% on night). Thumb: 15px Tribute Gold Warm circle with the time cursor glow. Focus: ground-offset Control Ink ring.
 - There are no text inputs.
@@ -286,6 +294,7 @@ The signature mark. A radial gradient from each capital or port node, radius set
 - **Do** divide any new fixed-size mark by `var(--mz)`, or give it `vector-effect: non-scaling-stroke`, so zoom cannot inflate it.
 
 ### Don't:
+- **Don't** let the chapters become a browsable card grid of portraits or tiles. They are a table of contents for the scrubber; every row must drive the map.
 - **Don't** build dashboard chrome on the map plate: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes. (The landing surface may use frosted glass on its hero card — see §2.)
 - **Don't** assert territory: no filled polygon with a hard border for any pre-colonial polity, no faction colour claiming land, no Majapahit shape drawn as fact.
 - **Don't** add heritage decoration: no batik, wayang silhouettes, or flag red-and-white as ornament.

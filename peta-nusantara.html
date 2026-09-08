@@ -614,6 +614,147 @@
     color: var(--gold); white-space:nowrap; pointer-events:none;
   }
 
+
+  /* ============================ Chapters ============================
+     Six sub-themes under the plate. This is a table of contents for the
+     scrubber, not a second telling: every milestone row is a jump that
+     drives the map above. Ink and hairlines throughout — the only colour
+     is the leading category dot, which is already a legend entry, so no
+     new hue enters the system (DESIGN.md §2, "every hue is a legend entry").
+
+     It lives OUTSIDE .app deliberately. The plate keeps its 100vh frame
+     and the reader scrolls past it to reach the chapters, so nothing here
+     can squeeze the map or change its slice-fit. */
+  .chapters{
+    background: var(--ground);
+    border-top:1px solid var(--line);
+    padding: 34px 22px 56px;
+  }
+  .chapters-in{ max-width: 1080px; margin:0 auto; }
+
+  .chapters-head{ margin-bottom: 26px; }
+  .chapters-kicker{
+    font-family:'IBM Plex Mono', monospace; font-size:0.63rem; letter-spacing:0.14em;
+    text-transform:uppercase; color: var(--ink-3); font-weight:600;
+  }
+  .chapters-head h2{ font-size:1.12rem; line-height:1.25; margin-top:7px; }
+  .chapters-lede{
+    font-size:0.82rem; line-height:1.6; color: var(--ink-2);
+    margin-top:8px; max-width:62ch;
+  }
+
+  .chap-list{ display:grid; gap:0; margin-top:20px; }
+
+  /* No card grid, no nesting: chapters are plate sections separated by
+     hairlines, the same way the rail separates its blocks. */
+  .chap{
+    border-top:1px solid var(--line);
+    padding: 22px 0 24px;
+    display:grid;
+    grid-template-columns: 232px minmax(0,1fr);
+    gap: 26px;
+  }
+  .chap:last-child{ border-bottom:1px solid var(--line); }
+
+  .chap-id{ position:relative; }
+  @media (min-width: 761px){
+    .chap-id{ position:sticky; top:18px; align-self:start; }
+  }
+  .chap-no{
+    font-family:'IBM Plex Mono', monospace; font-size:0.63rem; letter-spacing:0.14em;
+    text-transform:uppercase; color: var(--ink-3); font-weight:600;
+    display:flex; align-items:center; gap:7px;
+  }
+  /* Category dot, exactly as the entity card does it. */
+  .chap-no::before{
+    content:''; width:8px; height:8px; border-radius:50%;
+    background: var(--cat); flex:none;
+  }
+  .chap.c-prolog{ --cat: var(--mig); }
+  .chap.c-classical{ --cat: var(--cat-classical); }
+  .chap.c-islamic{ --cat: var(--cat-islamic); }
+  .chap.c-colonial{ --cat: var(--colonial); }
+  .chap.c-modern{ --cat: var(--cat-modern); }
+
+  .chap-title{ font-size:1.12rem; line-height:1.25; margin-top:9px; }
+  .chap-range{
+    font-family:'IBM Plex Mono', monospace; font-size:0.7rem;
+    color: var(--ink-2); margin-top:5px;
+  }
+  .chap-open{
+    margin-top:12px; padding:6px 12px; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
+    letter-spacing:0.13em; text-transform:uppercase; font-weight:600;
+    color: var(--ink-2); background: var(--surface-2);
+    border:1px solid var(--line); border-radius:999px;
+    transition: color .14s var(--ease-out), border-color .14s var(--ease-out);
+  }
+  .chap-open:hover{ color: var(--ink-1); border-color: var(--ink-3); }
+  .chap-open:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
+
+  .chap-body p{
+    font-size:0.82rem; line-height:1.6; color: var(--ink-2);
+    margin:0 0 11px; max-width:68ch;
+  }
+  .chap-body p strong{ color: var(--ink-1); font-weight:600; }
+
+  .chap-sub{
+    font-family:'IBM Plex Mono', monospace; font-size:0.6rem; letter-spacing:0.13em;
+    text-transform:uppercase; color: var(--ink-3); font-weight:600;
+    margin:18px 0 9px;
+  }
+
+  .ms-list{ display:grid; gap:1px; background: var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  .ms{
+    display:grid; grid-template-columns: 92px minmax(0,1fr); gap:14px;
+    align-items:baseline; width:100%; text-align:left;
+    padding:11px 13px; cursor:pointer;
+    background: var(--surface); border:none;
+    transition: background .14s var(--ease-out);
+  }
+  .ms:hover{ background: var(--surface-3); }
+  .ms:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:-2px; }
+  .ms-y{
+    font-family:'IBM Plex Mono', monospace; font-size:0.7rem;
+    color: var(--gold); font-variant-numeric: tabular-nums;
+  }
+  .ms-t{ font-size:0.82rem; line-height:1.5; color: var(--ink-1); }
+  .ms-d{ font-size:0.78rem; line-height:1.55; color: var(--ink-2); margin-top:3px; }
+  .ms-t .ms-d{ font-weight:400; }
+
+  /* The chapter's own honest note. Same treatment as the rail's overlay
+     block — a hairline in the accent line and a gold wash — because it is
+     the same kind of statement: this is what the record will and will not
+     support. Never a warning colour; doubt is not an error. */
+  .chap-note{
+    margin-top:15px; padding:11px 13px;
+    border:1px solid var(--accent-line); border-radius:8px;
+    background: var(--sel-wash);
+  }
+  .chap-note .k{
+    font-family:'IBM Plex Mono', monospace; font-size:0.58rem; letter-spacing:0.13em;
+    text-transform:uppercase; color: var(--ink-3); font-weight:600; display:block; margin-bottom:5px;
+  }
+  .chap-note p{ margin:0; font-size:0.78rem; line-height:1.55; color: var(--ink-2); }
+
+  /* Chapters overlap on purpose — Islam arrives while Majapahit still
+     stands, the Portuguese are here through the sultanates' peak. Saying
+     so is the point, so the overlap gets its own line rather than being
+     smoothed away by tidy consecutive ranges. */
+  .chap-overlap{
+    margin-top:11px; font-family:'IBM Plex Mono', monospace;
+    font-size:0.62rem; line-height:1.5; letter-spacing:0.03em; color: var(--ink-3);
+  }
+
+  @media (max-width: 760px){
+    .chapters{ padding: 26px 16px 44px; }
+    .chap{ grid-template-columns: minmax(0,1fr); gap:14px; padding:18px 0 20px; }
+    .ms{ grid-template-columns: 76px minmax(0,1fr); gap:10px; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .chap-open, .ms{ transition:none; }
+  }
+
   /* ============================ Map primitives ============================ */
   .land{ fill: var(--land); stroke: var(--land-edge); stroke-width:0.7; stroke-linejoin:round; vector-effect: non-scaling-stroke; }
   .graticule{ stroke: var(--grat); stroke-width:0.5; fill:none; vector-effect: non-scaling-stroke; }
@@ -1139,6 +1280,19 @@
 
 </div>
 
+<!-- Six sub-themes, below the plate. Rendered from CHAPTERS so both
+     languages stay complete and neither is a translation of the other. -->
+<section class="chapters" id="chapters" aria-labelledby="chapters-title">
+  <div class="chapters-in">
+    <div class="chapters-head">
+      <div class="chapters-kicker" data-i18n="chapKicker"></div>
+      <h2 id="chapters-title" data-i18n="chapTitle"></h2>
+      <p class="chapters-lede" data-i18n="chapLede"></p>
+    </div>
+    <div class="chap-list" id="chap-list"></div>
+  </div>
+</section>
+
 <script>
 (function(){
 "use strict";
@@ -1177,6 +1331,16 @@ var CHROME = {
     id:"Seret bebas — pegangan berhenti di batas era. Panah kiri/kanan berpindah antar era.",
     en:"Drag freely — the handle settles on era boundaries. Left/right arrows step between eras."
   },
+  chapKicker:{ id:"Enam Sub-Tema", en:"Six Sub-Themes" },
+  chapTitle:{ id:"Membaca peta ini menurut babnya", en:"Reading this map by its chapters" },
+  chapLede:{
+    id:"Enam bab, dari fosil sampai hari ini. Bab-bab ini saling tumpang tindih dengan sengaja — Islam tiba ketika Majapahit masih berdiri, dan Portugis sudah di sini ketika kesultanan sedang memuncak. Setiap baris tahun adalah pintu: klik untuk menggeser peta di atas ke tahun itu dan membuka kekuasaan yang bersangkutan.",
+    en:"Six chapters, from fossils to the present. They overlap on purpose — Islam arrives while Majapahit still stands, and the Portuguese are here through the sultanates’ peak. Every dated row is a door: click it to move the map above to that year and open the power in question."
+  },
+  chapWord:{ id:"Bab", en:"Chapter" },
+  chapOpen:{ id:"Buka di peta", en:"Open on the map" },
+  chapMilestones:{ id:"Penanda", en:"Milestones" },
+  chapNote:{ id:"Catatan atas bukti", en:"A note on the evidence" },
   caveatLead:{ id:"Perkiraan lingkup pengaruh.", en:"Approximate spheres of influence." },
   caveatBody:{
     id:"Bukan batas wilayah. Kerajaan pra-kolonial adalah negara mandala — pengaruh memudar keluar tanpa garis batas.",
@@ -1214,6 +1378,20 @@ var CHROME = {
     id:"Keyakinan rendah digambar lebih kabur — ketidakpastian tampil sebagai sifat visual, bukan catatan kaki.",
     en:"Lower confidence renders blurrier — uncertainty shown as a visual property, not a footnote."
   },
+  /* ---- Chapters (the six sub-themes below the plate) ---- */
+  chapKicker:{ id:"Enam Babak", en:"Six Chapters" },
+  chapTitle:{
+    id:"Enam babak, satu kepulauan",
+    en:"Six chapters, one archipelago"
+  },
+  chapLede:{
+    id:"Peta di atas berjalan dari 300 hingga hari ini tanpa jeda; babak-babak ini hanya cara membacanya. Rentangnya sengaja bertumpang tindih — Islam tiba saat Majapahit masih berdiri, Portugis sudah di sini ketika kesultanan mencapai puncaknya. Klik tahun mana pun untuk membawa peta ke sana.",
+    en:"The map above runs from 300 to today without a break; these chapters are only a way of reading it. Their ranges overlap on purpose — Islam arrives while Majapahit still stands, the Portuguese are here through the sultanates' peak. Click any year to take the map there."
+  },
+  chapOpen:{ id:"Buka di peta", en:"Open on the map" },
+  chapMilestones:{ id:"Tonggak", en:"Milestones" },
+  chapNoteK:{ id:"Yang ditopang catatan", en:"What the record supports" },
+  chapOverlapK:{ id:"Tumpang tindih", en:"Overlap" },
 
   /* ---- Faction overlay strings ---- */
   facNat:{ id:"Republik / nasionalis", en:"Republican / nationalist" },
@@ -2070,6 +2248,205 @@ var ERAS = [
   { y:1998, id:'Reformasi',            en:'Reformasi' }
 ];
 
+
+/* ==================================================================
+   CHAPTERS — six sub-themes under the plate (PRODUCT.md, "the job to be
+   done is understanding, not lookup").
+
+   These are a table of contents for the scrubber, not a second telling.
+   Every milestone is a jump: it sets the year, selects the region, and
+   opens the entity, so the chapter's claim is checked against the map
+   rather than asserted beside it.
+
+   Two editorial rules hold here as everywhere else:
+
+   1. The chapters OVERLAP, and say so. Islam arrives while Majapahit
+      still stands; the Portuguese are here through the sultanates' peak.
+      Consecutive tidy ranges would be a claim the dataset contradicts.
+   2. Where the popular account is firmer than the record, the chapter
+      note says which is which. That is the whole argument of the map,
+      restated in prose (PRODUCT.md, design principle 1).
+
+   `y` is the year the scrubber lands on. Deep-time milestones land on
+   300, the first year the scrubber holds; the prologue layer is what the
+   map draws there, which is the honest answer for all of them. `ent`
+   names an entity in DATA; its region is derived from its own nodes, so
+   a reshaped region can never silently break a jump. `reg` overrides
+   that, for entities that belong to no single region.
+   ================================================================== */
+function MS(y, labId, labEn, ent, reg){
+  return { y:y, lab:{ id:labId, en:labEn }, ent:ent || null, reg:reg || null };
+}
+
+var CHAPTERS = [
+  {
+    no:1, cat:'prolog', from:300,
+    title:{ id:'Indonesia Masa Pra-Aksara', en:'Indonesia Before Writing' },
+    range:{ id:'±1,5 juta tahun lalu – 400 M', en:'±1.5 million years ago – 400 CE' },
+    body:{
+      id:['Sebelum ada prasasti, yang tersisa adalah tulang, batu, dan bahasa. Nusantara adalah salah satu tempat terkaya di dunia untuk fosil manusia purba bukan karena kebetulan, melainkan karena posisi: pada zaman es, Paparan Sunda mengering menjadi jembatan darat, dan Jawa dapat dicapai dengan berjalan kaki dari Asia daratan.',
+           'Yang datang belakangan justru menyeberang laut. Penutur Austronesia bergerak dari Taiwan lewat Filipina sekitar 2000 SM, membawa perahu bercadik, padi, dan rumpun bahasa yang menurunkan hampir semua bahasa di kepulauan ini. Merekalah yang menjadikan Nusantara dunia maritim — dan itulah sebabnya seluruh peta ini bekerja lewat laut, bukan lewat darat.'],
+      en:['Before inscriptions there are bones, stone, and language. The archipelago is one of the richest places on earth for early hominin fossils, and not by chance: during the ice ages the Sunda Shelf drained into a land bridge, and Java could be reached on foot from mainland Asia.',
+          'The people who arrived later came by sea. Austronesian speakers moved out of Taiwan through the Philippines around 2000 BCE, bringing the outrigger, rice, and the language family nearly every tongue in the archipelago descends from. They are what made Nusantara a maritime world — which is why every part of this map runs on water rather than land.']
+    },
+    ms:[
+      MS(300, '±1,5 juta tahun lalu · Homo erectus di Sangiran dan Trinil, Jawa Tengah — “Manusia Jawa”, ditemukan Eugène Dubois pada 1891',
+              '±1.5 million years ago · Homo erectus at Sangiran and Trinil, Central Java — “Java Man”, found by Eugène Dubois in 1891'),
+      MS(300, '±700.000–50.000 tahun lalu · Homo floresiensis di Liang Bua, Flores — spesies bertubuh kerdil, baru diumumkan pada 2004',
+              '±700,000–50,000 years ago · Homo floresiensis at Liang Bua, Flores — a small-bodied species, only announced in 2004'),
+      MS(300, '±2000 SM · Migrasi Austronesia masuk lewat Filipina, lalu menyebar ke barat dan ke timur',
+              '±2000 BCE · Austronesian migration enters through the Philippines, then spreads west and east'),
+      MS(300, '±1000–300 SM · Budaya megalitik dan perunggu Dong Son — nekara, kubur batu, jaringan tukar yang sudah lintas pulau',
+              '±1000–300 BCE · Megalithic culture and Dong Son bronze — kettledrums, stone graves, an exchange network already crossing islands'),
+      MS(300, '±abad 1–4 M · Kontak dagang awal dengan India dan Tiongkok membawa aksara, Sanskerta, dan gagasan raja dewa',
+              '±1st–4th century CE · Early trade contact with India and China brings script, Sanskrit, and the idea of divine kingship')
+    ],
+    note:{
+      id:['Tak satu pun tanggal di bab ini berasal dari sumber tertulis Nusantara; semuanya hasil penanggalan lapisan, kalium-argon, dan linguistik banding. Rentangnya lebar karena memang begitu keadaan buktinya. Status Homo floresiensis sebagai spesies tersendiri pun masih diperdebatkan.'],
+      en:['Not one date in this chapter comes from a written source in the archipelago; all of them come from stratigraphy, potassium-argon dating, and comparative linguistics. The ranges are wide because that is the state of the evidence. Even whether Homo floresiensis is a distinct species is still argued over.']
+    },
+    overlap:null
+  },
+
+  {
+    no:2, cat:'classical', from:400,
+    title:{ id:'Indonesia Masa Hindu-Buddha', en:'The Hindu-Buddhist Period' },
+    range:{ id:'±400 – 1527', en:'±400 – 1527' },
+    body:{
+      id:['Kerajaan Hindu tertua yang bisa dibaca namanya adalah Kutai di Kalimantan Timur, sekitar 400 M, dikenal dari tujuh prasasti yupa Raja Mulawarman. Sesudah itu polanya terbelah dua dan bertahan seribu tahun: kerajaan sungai-dan-padi di pedalaman Jawa, dan kemaharajaan selat di pesisir Sumatra.',
+           'Sriwijaya memungut pajak dari selat. Mataram Kuno menanam padi dan membangun Borobudur serta Prambanan. Keduanya bukan negara berbatas, melainkan negara mandala: pengaruh memudar keluar dari ibu kota, dan kesetiaan dibeli ulang setiap generasi. Rangkaian ini berakhir di Majapahit, yang jatuh ke tangan Demak pada 1527 — bukan ditaklukkan kekuatan asing, melainkan digantikan oleh bekas pelabuhan bawahannya sendiri yang telah memeluk Islam.'],
+      en:['The oldest Hindu kingdom whose name we can actually read is Kutai in East Kalimantan, around 400 CE, known from seven yupa inscriptions of King Mulawarman. After that the pattern splits in two and holds for a thousand years: river-and-rice kingdoms in the Javanese interior, strait empires on the Sumatran coast.',
+          'Srivijaya taxed the strait. Ancient Mataram grew rice and built Borobudur and Prambanan. Neither was a bounded state; both were mandala states, influence fading outward from a capital, allegiance re-bought every generation. The sequence ends at Majapahit, which fell to Demak in 1527 — not conquered by a foreign power, but replaced by its own former vassal ports, now Muslim.']
+    },
+    ms:[
+      MS(400,  '400 · Kutai Martadipura di Sungai Mahakam — kerajaan Hindu tertua yang tercatat di Nusantara', '400 · Kutai Martadipura on the Mahakam river — the earliest recorded Hindu kingdom in the archipelago', 'Kutai Martadipura (Kalimantan)'),
+      MS(450,  '450 · Tarumanagara di dataran Citarum, Jawa Barat — prasasti Purnawarman membanggakan kanal yang digali dalam 21 hari', '450 · Tarumanagara on the Citarum plain, West Java — Purnawarman’s inscriptions boast of a canal dug in 21 days', 'Tarumanagara'),
+      MS(671,  '671 · Sriwijaya menguasai Selat Malaka dari Palembang; biksu Yijing singgah untuk belajar bahasa Sanskerta', '671 · Srivijaya commands the Malacca Strait from Palembang; the monk Yijing stops there to study Sanskrit', 'Sriwijaya'),
+      MS(800,  '±800 · Sailendra membangun Borobudur; Mataram Kuno membangun Prambanan pada abad berikutnya', '±800 · The Sailendras build Borobudur; Ancient Mataram builds Prambanan the following century', 'Dinasti Sailendra'),
+      MS(1025, '1025 · Serangan armada Chola dari India Selatan mematahkan monopoli Sriwijaya atas selat', '1025 · Chola naval raids from South India break Srivijaya’s hold on the strait', 'Sriwijaya'),
+      MS(1222, '1222 · Ken Arok mendirikan Singhasari; Kertanagara kelak memperluasnya keluar Jawa', '1222 · Ken Arok founds Singhasari; Kertanagara later pushes it beyond Java', 'Singhasari'),
+      MS(1365, '1365 · Puncak Majapahit di bawah Hayam Wuruk dan Gajah Mada — tahun Nagarakretagama digubah', '1365 · Majapahit at its peak under Hayam Wuruk and Gajah Mada — the year the Nagarakretagama was composed', 'Majapahit'),
+      MS(1527, '1527 · Majapahit runtuh; Demak, bekas pelabuhan bawahannya, mengambil alih Jawa', '1527 · Majapahit collapses; Demak, its own former vassal port, takes over Java', 'Kesultanan Demak')
+    ],
+    note:{
+      id:['Bentuk Majapahit yang biasa digambar di buku pelajaran berasal dari satu sumber: Nagarakretagama, syair pujian tahun 1365 yang memuat daftar tempat pengirim upeti. Daftar upeti bukan peta wilayah. Sumpah Palapa Gajah Mada pun hanya muncul dalam Pararaton, yang ditulis kira-kira seabad kemudian. Karena itu Majapahit di peta ini berkepercayaan sedang dan digambar sebagai pancaran, bukan poligon.'],
+      en:['The Majapahit shape drawn in most textbooks comes from a single source: the Nagarakretagama, a 1365 praise poem listing places that sent tribute. A tribute list is not a territorial map. Gajah Mada’s Palapa oath appears only in the Pararaton, written roughly a century later. That is why Majapahit sits at medium confidence here and renders as a bloom, not a polygon.']
+    },
+    overlap:{ id:'Tumpang tindih dengan Bab 3 sepanjang 1267–1527: Samudera Pasai sudah Islam ketika Majapahit masih berdiri.',
+              en:'Overlaps Chapter 3 across 1267–1527: Samudera Pasai is already Muslim while Majapahit still stands.' }
+  },
+
+  {
+    no:3, cat:'islamic', from:1082,
+    title:{ id:'Indonesia Masa Ke-Islaman', en:'The Coming of Islam' },
+    range:{ id:'1082 – 1596', en:'1082 – 1596' },
+    body:{
+      id:['Islam tidak tiba lewat penaklukan. Ia tiba lewat pelabuhan, mengikuti angin muson yang sama dengan lada dan cengkih. Bukti bertanggal paling awal adalah nisan Fatimah binti Maimun di Leran, Gresik, bertahun 475 H (1082 M) — seorang Muslimah dimakamkan di pesisir Jawa dua abad sebelum ada kesultanan mana pun di sini.',
+           'Kesultanan pertama muncul persis di titik pendaratan pertama: Samudera Pasai di pesisir utara Aceh, pelabuhan pertama yang dijumpai kapal dari India dan Arab. Dari sana Islam merambat sepanjang rantai pelabuhan — Malaka, Demak, Cirebon, Banten, Gowa, Ternate — bukan memancar keluar dari satu pusat, melainkan meloncat dari bandar ke bandar. Bab ini berakhir bukan pada sebuah kemenangan, melainkan pada kedatangan orang Eropa bersenjata di pelabuhan yang sama.'],
+      en:['Islam did not arrive by conquest. It arrived through ports, on the same monsoon that carried pepper and cloves. The earliest dated evidence is the gravestone of Fatimah binti Maimun at Leran, Gresik, marked 475 AH (1082 CE) — a Muslim woman buried on the Javanese coast two centuries before any sultanate existed here.',
+          'The first sultanate appears exactly at the first landfall: Samudera Pasai on the north Aceh coast, the first port a ship from India or Arabia reaches. From there Islam moved along the chain of ports — Malacca, Demak, Cirebon, Banten, Gowa, Ternate — not radiating out from a centre but hopping harbour to harbour. The chapter ends not on a victory but on the arrival of armed Europeans at those same ports.']
+    },
+    ms:[
+      MS(1082, '1082 · Nisan Fatimah binti Maimun di Leran, Gresik — bukti Muslim bertanggal paling awal di Jawa', '1082 · The gravestone of Fatimah binti Maimun at Leran, Gresik — the earliest dated Muslim evidence on Java'),
+      MS(1297, '1297 · Sultan Malik as-Saleh wafat di Samudera Pasai, kesultanan pertama di Nusantara', '1297 · Sultan Malik as-Saleh dies at Samudera Pasai, the archipelago’s first sultanate', 'Kesultanan Samudera Pasai'),
+      MS(1345, '1345 · Ibnu Battuta singgah di Pasai dan mencatat istana yang sudah mapan bermazhab Syafi‘i', '1345 · Ibn Battuta calls at Pasai and describes a court already settled in the Shafi‘i school', 'Kesultanan Samudera Pasai'),
+      MS(1475, '1475 · Demak berdiri di pesisir utara Jawa; tradisi Wali Songo mengaitkan dakwah dengan jaringan pelabuhan', '1475 · Demak rises on Java’s north coast; the Wali Songo tradition ties preaching to the port network', 'Kesultanan Demak'),
+      MS(1511, '1511 · Portugis merebut Malaka — pedagang Muslim mencari jalur lain, dan Aceh menjadikan dirinya jalur itu', '1511 · Portugal takes Malacca — Muslim traders need another route, and Aceh makes itself that route', 'Kesultanan Aceh'),
+      MS(1512, '1512 · Portugis mencapai Ternate, mengejar cengkih sampai ke sumbernya di Maluku', '1512 · The Portuguese reach Ternate, following cloves to their source in Maluku', 'Portugis di Maluku'),
+      MS(1527, '1527 · Fatahillah merebut Sunda Kelapa dari sekutu Portugis dan menamainya Jayakarta', '1527 · Fatahillah takes Sunda Kelapa from Portugal’s allies and renames it Jayakarta', 'Kesultanan Demak'),
+      MS(1607, '1607 · Aceh memuncak di bawah Sultan Iskandar Muda — monopoli lada, armada besar, meriam Utsmaniyah', '1607 · Aceh peaks under Sultan Iskandar Muda — a pepper monopoly, a large fleet, Ottoman cannon', 'Kesultanan Aceh')
+    ],
+    note:{
+      id:['Portugis datang ke Ternate (1512) dan membuat perjanjian di Sunda Kelapa (1522) — bukan ke Banten, yang justru didirikan sekitar 1526 oleh Sunan Gunung Jati untuk mengusir mereka. Perlu dicatat juga: 3G — Gold, Glory, Gospel — adalah motto pelayaran Portugis dan Spanyol pada bab ini, bukan motto Belanda, yang baru datang di Bab 4 dengan alasan yang jauh lebih sempit: dividen.'],
+      en:['The Portuguese came to Ternate (1512) and made a treaty at Sunda Kelapa (1522) — not at Banten, which was in fact founded around 1526 by Sunan Gunung Jati to drive them out. Worth stating too: 3G — Gold, Glory, Gospel — belongs to the Portuguese and Spanish voyages of this chapter, not to the Dutch, who arrive in Chapter 4 with a far narrower motive: the dividend.']
+    },
+    overlap:{ id:'Tumpang tindih dengan Bab 2 (1267–1527) dan Bab 4 (1512–1596): Portugis sudah di Maluku ketika kesultanan sedang di puncaknya.',
+              en:'Overlaps Chapter 2 (1267–1527) and Chapter 4 (1512–1596): the Portuguese are already in Maluku while the sultanates are at their peak.' }
+  },
+
+  {
+    no:4, cat:'colonial', from:1596,
+    title:{ id:'Indonesia Masa Kolonial & Imperial', en:'The Colonial & Imperial Period' },
+    range:{ id:'1596 – 1945', en:'1596 – 1945' },
+    body:{
+      id:['Cornelis de Houtman tiba di Banten pada 1596. Ia orang Belanda, bukan Portugis, dan pelayarannya nyaris gagal — tetapi rempah yang dibawanya pulang cukup untuk memicu perlombaan. Agar para pedagang Belanda tidak saling merusak harga, pada 1602 mereka digabungkan menjadi satu perusahaan bermonopoli: VOC.',
+           'Urutan sesudah itu penting, karena urutannya adalah sebab-akibatnya. VOC berdagang, berperang, dan memerintah selama hampir dua abad, lalu bangkrut dan dibubarkan pada akhir 1799; utangnya diwarisi negara Belanda. Baru sesudah itu Jawa berpindah tangan dua kali karena perang di Eropa — Daendels (1808–1811) untuk Belanda yang saat itu satelit Napoleon, lalu Raffles dan EIC Inggris (1811–1816). Setelah 1816 Belanda memerintah langsung, dan Tanam Paksa 1830 mengubah Jawa menjadi mesin ekspor. Semuanya berakhir pada Maret 1942, ketika Jepang datang.'],
+      en:['Cornelis de Houtman reached Banten in 1596. He was Dutch, not Portuguese, and the voyage nearly failed — but the spices he brought home were enough to start a rush. To stop rival Dutch merchants ruining each other’s prices, in 1602 they were merged into a single chartered monopoly: the VOC.',
+          'The order of what follows matters, because the order is the causation. The VOC traded, fought and governed for almost two centuries, then went bankrupt and was dissolved at the end of 1799, its debts inherited by the Dutch state. Only after that does Java change hands twice because of a war in Europe — Daendels (1808–1811) for a Netherlands that was then a Napoleonic satellite, then Raffles and the British EIC (1811–1816). After 1816 the Dutch ruled directly, and the 1830 Cultivation System turned Java into an export engine. It all ends in March 1942, when Japan arrives.']
+    },
+    ms:[
+      MS(1596, '1596 · Cornelis de Houtman mendarat di Banten — pelayaran Belanda pertama ke Nusantara', '1596 · Cornelis de Houtman lands at Banten — the first Dutch voyage to the archipelago'),
+      MS(1602, '1602 · VOC dibentuk sebagai monopoli, dengan hak mencetak uang, berperang, dan membuat perjanjian', '1602 · The VOC is chartered as a monopoly, with the right to coin money, wage war, and make treaties', 'VOC (Kongsi Dagang Hindia Timur Belanda)'),
+      MS(1619, '1619 · Jan Pieterszoon Coen menghancurkan Jayakarta dan mendirikan Batavia di reruntuhannya', '1619 · Jan Pieterszoon Coen razes Jayakarta and founds Batavia on the ruins', 'VOC (Kongsi Dagang Hindia Timur Belanda)'),
+      MS(1799, '1799 · VOC bangkrut dan dibubarkan; utang serta wilayahnya diambil alih negara Belanda', '1799 · The VOC goes bankrupt and is dissolved; its debts and territories pass to the Dutch state', 'VOC (Kongsi Dagang Hindia Timur Belanda)'),
+      MS(1808, '1808 · Daendels — orang Belanda yang mengabdi pada kerajaan bentukan Napoleon — membangun Jalan Raya Pos Anyer–Panarukan', '1808 · Daendels — a Dutchman serving Napoleon’s client kingdom — drives the Great Post Road from Anyer to Panarukan', 'Hindia Belanda'),
+      MS(1811, '1811 · Inggris merebut Jawa; Raffles memerintah untuk EIC sampai dikembalikan pada 1816', '1811 · Britain seizes Java; Raffles governs for the EIC until it is handed back in 1816', 'Hindia Belanda'),
+      MS(1830, '1830 · Tanam Paksa memaksa desa-desa Jawa menanam komoditas ekspor', '1830 · The Cultivation System forces Javanese villages to grow export crops', 'Hindia Belanda'),
+      MS(1873, '1873 · Perang Aceh dimulai; perlawanan resmi baru berakhir pada 1903–1904', '1873 · The Aceh War begins; formal resistance only ends in 1903–1904', 'Kesultanan Aceh'),
+      MS(1942, '1942 · Jepang menyerbu; tiga setengah abad kekuasaan Belanda selesai dalam hitungan pekan', '1942 · Japan invades; three and a half centuries of Dutch rule end in a matter of weeks', 'Pendudukan Jepang')
+    ],
+    note:{
+      id:['Tiga hal yang paling sering tertukar di bab ini: de Houtman orang Belanda, bukan Portugis; VOC berdiri sebelum Daendels dan Raffles, bukan sesudahnya — justru kebangkrutan VOC yang membuka jalan bagi keduanya; dan Daendels orang Belanda yang bekerja di bawah rezim bentukan Prancis, bukan orang Prancis di bawah Belanda. Garis kolonial adalah satu-satunya garis tegas di peta ini, karena hanya garis itulah yang benar-benar disurvei.'],
+      en:['Three things get swapped most often in this chapter: de Houtman was Dutch, not Portuguese; the VOC comes before Daendels and Raffles, not after — its bankruptcy is precisely what makes room for them; and Daendels was a Dutchman serving a French-installed regime, not a Frenchman serving the Dutch. The colonial lines are the only hard edges on this map, because they are the only ones that were actually surveyed.']
+    },
+    overlap:{ id:'Tumpang tindih dengan Bab 3 (1512–1596) dan Bab 5 (1942–1945): pendudukan Jepang adalah akhir bab ini sekaligus awal bab berikutnya.',
+              en:'Overlaps Chapter 3 (1512–1596) and Chapter 5 (1942–1945): the Japanese occupation is both this chapter’s ending and the next one’s opening.' }
+  },
+
+  {
+    no:5, cat:'modern', from:1945,
+    title:{ id:'Indonesia Masa Republik', en:'The Republic' },
+    range:{ id:'1945 – 1998', en:'1945 – 1998' },
+    body:{
+      id:['Proklamasi dibacakan pada 17 Agustus 1945, dua hari setelah Jepang menyerah, tepat di sela kekosongan kekuasaan. Empat tahun berikutnya adalah perang untuk membuat pernyataan itu menjadi benar. Di sinilah peta berubah watak: untuk pertama kalinya ada garis yang benar-benar digambar — Garis Van Mook 1948, batas gencatan senjata yang membelah Jawa dan Sumatra, dan tepi paling tegas di seluruh peta ini.',
+           'Setelah kedaulatan diakui pada 1949, pertanyaannya berganti dari siapa yang memerintah menjadi republik macam apa. Pemilu 1955 menjawabnya sebagai empat blok yang hampir seimbang, bukan satu bangsa yang bulat. Demokrasi Terpimpin menutup ruang itu pada 1959, dan pada 1965–66 pertanyaan tersebut dijawab dengan pembunuhan massal. Orde Baru berdiri di atas jawaban itu selama tiga puluh dua tahun.'],
+      en:['The proclamation was read on 17 August 1945, two days after Japan surrendered, into a gap where no power sat. The next four years were a war to make the statement true. This is where the map changes character: for the first time there is a line that was actually drawn — the 1948 Van Mook Line, a ceasefire boundary cutting across Java and Sumatra, and the hardest edge anywhere on this plate.',
+          'After sovereignty was recognised in 1949 the question shifted from who governs to what kind of republic. The 1955 election answered it as four nearly balanced blocs, not one settled nation. Guided Democracy closed that space in 1959, and in 1965–66 the question was answered by mass killing. The New Order stood on that answer for thirty-two years.']
+    },
+    ms:[
+      MS(1945, '1945 · Proklamasi dibacakan pada 17 Agustus; revolusi nasional dimulai', '1945 · The proclamation is read on 17 August; the national revolution begins', 'Proklamasi & Revolusi Nasional'),
+      MS(1948, '1948 · Garis Van Mook — batas gencatan senjata yang disurvei, tepi paling tegas di peta ini', '1948 · The Van Mook Line — a surveyed ceasefire boundary, the hardest edge on this map', 'Proklamasi & Revolusi Nasional'),
+      MS(1949, '1949 · Konferensi Meja Bundar; Belanda mengakui kedaulatan, status Papua Barat ditangguhkan', '1949 · The Round Table Conference; the Dutch recognise sovereignty, West Papua deferred', 'Proklamasi & Revolusi Nasional'),
+      MS(1955, '1955 · Pemilu pertama — empat blok hampir seimbang: PNI, Masyumi, NU, PKI', '1955 · The first election — four nearly balanced blocs: PNI, Masyumi, NU, PKI', 'Demokrasi Liberal'),
+      MS(1959, '1959 · Dekrit Presiden 5 Juli mengembalikan UUD 1945 dan membuka Demokrasi Terpimpin', '1959 · The 5 July decree restores the 1945 constitution and opens Guided Democracy', 'Demokrasi Terpimpin (Soekarno)'),
+      MS(1965, '1965–66 · Pembunuhan massal; perkiraan korban berkisar 500.000 hingga lebih dari satu juta jiwa', '1965–66 · The mass killings; estimates run from 500,000 to more than a million dead', 'Demokrasi Terpimpin (Soekarno)'),
+      MS(1967, '1967 · Soeharto resmi menjabat; Orde Baru bertahan tiga puluh dua tahun', '1967 · Suharto formally takes office; the New Order lasts thirty-two years', 'Orde Baru (Soeharto)'),
+      MS(1975, '1975 · Invasi ke Timor Timur; pendudukan berlangsung sampai 1999', '1975 · The invasion of East Timor; the occupation runs until 1999', 'Orde Baru (Soeharto)')
+    ],
+    note:{
+      id:['Lapisan 1965–66 sengaja digambar sebagai arsiran datar, bukan pancaran dan bukan wilayah. Yang tercatat adalah sebaran kekerasan, bukan daerah yang dikuasai siapa pun, dan angka korbannya sampai hari ini tidak pasti karena tidak pernah ada penghitungan resmi. PKI diberi warna plum, bukan merah, agar merah tetap berarti Republik dan bukan sebuah tuduhan.'],
+      en:['The 1965–66 layer is deliberately a flat hatch: not a bloom, not a territory. What is recorded is a distribution of violence, not ground held by anyone, and the death toll remains uncertain because no official count was ever made. The PKI is drawn in plum rather than red so that red keeps meaning the Republic and not an accusation.']
+    },
+    overlap:{ id:'Tumpang tindih dengan Bab 4 (1942–1945) dan bersambung langsung ke Bab 6 pada Mei 1998.',
+              en:'Overlaps Chapter 4 (1942–1945) and runs straight into Chapter 6 in May 1998.' }
+  },
+
+  {
+    no:6, cat:'modern', from:1998,
+    title:{ id:'Indonesia Masa Reformasi', en:'The Reformasi Era' },
+    range:{ id:'1998 – sekarang', en:'1998 – present' },
+    body:{
+      id:['Krisis moneter 1997 menghabiskan satu-satunya alasan Orde Baru bertahan — pertumbuhan — dan Soeharto mengundurkan diri pada 21 Mei 1998. Yang menyusul bukan sekadar pergantian presiden, melainkan pembongkaran bentuk negaranya: kebebasan pers, pemilu bebas sejak 1999, pembatasan dua periode jabatan, dan pemilihan presiden langsung sejak 2004.',
+           'Perubahan terbesarnya justru bersifat spasial, dan itulah sebabnya bab ini pantas masuk peta. Otonomi daerah sejak 2001 memindahkan kewenangan dan anggaran dari Jakarta ke kabupaten dan kota. Timor Timur memisahkan diri lewat referendum 1999. Aceh berdamai lewat MoU Helsinki 2005 setelah tsunami. Untuk pertama kalinya sejak 1945, peta kekuasaan Indonesia menjadi lebih tersebar, bukan lebih terpusat.'],
+      en:['The 1997 financial crisis destroyed the one thing that justified the New Order — growth — and Suharto resigned on 21 May 1998. What followed was not just a change of president but a dismantling of the shape of the state: a free press, free elections from 1999, a two-term limit, and direct presidential elections from 2004.',
+          'The largest change is a spatial one, which is why this chapter belongs on a map at all. Regional autonomy from 2001 moved authority and budget out of Jakarta to districts and cities. East Timor separated by referendum in 1999. Aceh made peace through the 2005 Helsinki accord after the tsunami. For the first time since 1945, the map of Indonesian power became more distributed rather than more concentrated.']
+    },
+    ms:[
+      MS(1998, '1998 · Soeharto mengundurkan diri pada 21 Mei setelah krisis moneter dan gelombang unjuk rasa', '1998 · Suharto resigns on 21 May after the financial crisis and a wave of protest', 'Era Reformasi'),
+      MS(1999, '1999 · Pemilu bebas pertama sejak 1955; referendum Timor Timur memilih merdeka', '1999 · The first free election since 1955; the East Timor referendum votes for independence', 'Era Reformasi'),
+      MS(2001, '2001 · Otonomi daerah memindahkan kewenangan dan anggaran dari Jakarta ke kabupaten dan kota', '2001 · Regional autonomy moves authority and budget from Jakarta to districts and cities', 'Era Reformasi'),
+      MS(2004, '2004 · Pemilihan presiden langsung pertama; pada Desember tsunami menghantam Aceh', '2004 · The first direct presidential election; in December the tsunami strikes Aceh', 'Era Reformasi'),
+      MS(2005, '2005 · MoU Helsinki mengakhiri perang Aceh yang berlangsung hampir tiga puluh tahun', '2005 · The Helsinki accord ends nearly thirty years of war in Aceh', 'Era Reformasi'),
+      MS(2026, 'Sekarang · Republik kesatuan dengan 38 provinsi; Papua dimekarkan menjadi enam provinsi pada 2022–2023', 'Now · A unitary republic of 38 provinces; Papua was split into six provinces in 2022–2023', 'Era Reformasi')
+    ],
+    note:{
+      id:['Bab ini satu-satunya yang belum selesai, dan peta memperlakukannya secara berbeda: tidak ada tanggal akhir, dan tidak ada klaim bahwa bentuk sekarang sudah menetap. Status Papua tetap diperselisihkan — Pepera 1969 dijalankan lewat 1.025 orang yang dipilih, bukan lewat pemungutan suara umum — dan peta ini tidak berpura-pura menyelesaikan perselisihan itu.'],
+      en:['This is the only unfinished chapter, and the map treats it differently: there is no end date, and no claim that the present shape has settled. Papua’s status remains disputed — the 1969 Act of Free Choice was conducted through 1,025 selected men rather than a general vote — and this map does not pretend to settle that dispute.']
+    },
+    overlap:null
+  }
+];
+
 /* ==================================================================
    STATE
    ================================================================== */
@@ -2861,6 +3238,110 @@ function esc(s){
   });
 }
 
+
+/* ==================================================================
+   CHAPTER RENDERING — see CHAPTERS, above.
+   ================================================================== */
+
+/* Region for a milestone: explicit if given, otherwise derived from the
+   entity's own nodes, so reshaping a region cannot silently break a jump. */
+function regionForEntity(name){
+  for (var i = 0; i < DATA.length; i++){
+    var e = DATA[i];
+    if (e.name.id !== name) continue;
+    for (var j = 0; j < REGIONS.length; j++){
+      var r = REGIONS[j];
+      var hit = e.nodes.some(function(n){ return pointInPoly(n.lon, n.lat, r.poly); });
+      if (hit) return r.id;
+    }
+  }
+  return null;
+}
+function entityIndex(name){
+  for (var i = 0; i < DATA.length; i++) if (DATA[i].name.id === name) return i;
+  return -1;
+}
+
+var chapList = document.getElementById('chap-list');
+
+function renderChapters(){
+  if (!chapList) return;
+  var L = S.lang;
+  var html = '';
+
+  CHAPTERS.forEach(function(c){
+    html +=
+      '<article class="chap c-' + c.cat + '">' +
+        '<div class="chap-id">' +
+          '<div class="chap-no">' + esc(T('chapWord') + ' ' + c.no) + '</div>' +
+          '<h3 class="chap-title">' + esc(c.title[L]) + '</h3>' +
+          '<div class="chap-range mono">' + esc(c.range[L]) + '</div>' +
+          '<button type="button" class="chap-open" data-y="' + c.from + '">' + esc(T('chapOpen')) + '</button>' +
+        '</div>' +
+        '<div class="chap-body">' +
+          c.body[L].map(function(p){ return '<p>' + esc(p) + '</p>'; }).join('') +
+          '<div class="chap-sub">' + esc(T('chapMilestones')) + '</div>' +
+          '<div class="ms-list">' +
+            c.ms.map(function(m){
+              /* The label carries its own year prefix before the middot, so
+                 the two languages can date the same event differently
+                 ("±abad 1–4 M" / "±1st–4th century CE") without a second field. */
+              var parts = m.lab[L].split(' · ');
+              var y = parts.shift();
+              return '<button type="button" class="ms" data-y="' + m.y + '"' +
+                (m.ent ? ' data-ent="' + esc(m.ent) + '"' : '') +
+                (m.reg ? ' data-reg="' + esc(m.reg) + '"' : '') + '>' +
+                '<span class="ms-y">' + esc(y) + '</span>' +
+                '<span class="ms-t">' + esc(parts.join(' · ')) + '</span>' +
+              '</button>';
+            }).join('') +
+          '</div>' +
+          '<div class="chap-note">' +
+            '<span class="k">' + esc(T('chapNote')) + '</span>' +
+            c.note[L].map(function(p){ return '<p>' + esc(p) + '</p>'; }).join('') +
+          '</div>' +
+          (c.overlap ? '<div class="chap-overlap">' + esc(c.overlap[L]) + '</div>' : '') +
+        '</div>' +
+      '</article>';
+  });
+
+  chapList.innerHTML = html;
+
+  /* A chapter jump is the same gesture as clicking the map: set the year,
+     select the place, open the entity. The page then returns to the plate,
+     because a jump the reader cannot see has not happened. Reduced motion
+     gets the same jump without the travel. */
+  Array.prototype.forEach.call(chapList.querySelectorAll('.ms, .chap-open'), function(b){
+    b.addEventListener('click', function(){
+      setYear(+b.dataset.y);
+
+      var ent = b.dataset.ent || null;
+      var reg = b.dataset.reg || (ent ? regionForEntity(ent) : null);
+      if (reg){
+        selectRegion(reg);
+        if (ent){
+          var i = entityIndex(ent);
+          var r = REGIONS.filter(function(x){ return x.id === reg; })[0];
+          /* Only open it if it is genuinely active at this year: the rail
+             must never show a card the map does not also draw. */
+          if (i >= 0 && r && entitiesInRegion(r, S.year).indexOf(i) >= 0){
+            S.entity = i;
+            S.revealed[i] = true;
+            LS.set('nusantara-map-revealed', JSON.stringify(S.revealed));
+            render();
+          }
+        }
+      }
+
+      /* The rail is where the jump's answer lands, so a jump reopens it. */
+      if (!S.rail){ S.rail = true; applyRail(); LS.set('nusantara-map-rail', '1'); }
+
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+}
+
 /* ==================================================================
    CHROME + TOGGLES
    ================================================================== */
@@ -2878,6 +3359,7 @@ function applyChrome(){
     if (b){ b.setAttribute('aria-label', T(p[1])); b.title = T(p[1]); }
   });
   document.documentElement.lang = S.lang;
+  renderChapters();
   applyTheme();
 }
 
