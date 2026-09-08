@@ -35,6 +35,7 @@ colors:
   night-surface: "#14120e"
   night-ink: "#f3ecdd"
   night-gold: "#d9ab55"
+  accent-terracotta: "#905831"
 typography:
   display:
     fontFamily: "Fraunces, Georgia, serif"
@@ -187,9 +188,12 @@ Timeline category marks, carried from the sibling chart for the rail's leading d
 - Text halo: rgba(251,248,241,0.92) on paper, rgba(12,11,9,0.90) on night. Every map caption carries one.
 
 ### Named Rules
-**The Legend Rule.** A colour may appear on the page only if it corresponds to a legend entry. If you cannot name what a hue means, it is ink or it is gone.
+**The Legend Rule.** On the map plate, a colour may appear only if it corresponds to a legend entry. If you cannot name what a hue means, it is ink or it is gone. This rule governs the instrument; the landing surface (see below) is the one place a hue may be a pure invitation rather than a legend entry, and it uses **Accent Terracotta** for that.
 
-**The Ink Controls Rule.** Interactive chrome is Control Ink. The single exception is a toggle that switches on a coloured layer, which wears that layer's colour when on. Gold on a button is forbidden.
+**The Ink Controls Rule.** On the map plate, interactive chrome is Control Ink. The single exception is a toggle that switches on a coloured layer, which wears that layer's colour when on. Gold on a button is forbidden. On the landing surface, Accent Terracotta may carry the primary CTA and the prompt text.
+
+### The Landing / Introduction Surface
+The map is the instrument; the landing page is its front door, and it is deliberately warmer and more inviting than the plate. Here — and nowhere else — the system permits what the plate forbids: an ambient hero (including looping video), a frosted-glass prompt card (`backdrop-blur`), soft box-shadows on the card and buttons, and **Accent Terracotta** (#905831) as a non-legend invitation colour on the primary CTA and prompt text. Everything else still holds: the committed type families (Fraunces / Inter / IBM Plex Mono), the paper grounds and ink tokens, no pure #000/#fff, and full bilingual parity. The moment a reader crosses into the map, the strict rules above resume.
 
 **The Surveyed Edge Rule.** A hard stroke is permitted only on Survey Violet, the Van Mook Line and the Republic's negotiated zones. Every pre-colonial entity is a radial bloom whose diffusion is set by confidence tier: high (.62/.36/.13/0), medium (.46/.28/.10/0), low (.32/.21/.08/0).
 
@@ -226,7 +230,7 @@ The system is flat. Depth comes from tonal layering of paper surfaces (Paper, Su
 - **Focus ring** (`0 0 0 3px <ground>, 0 0 0 5px <control-ink-ring>` on the thumb; `outline: 2px solid <control-ink-ring>` elsewhere): state, not elevation.
 
 ### Named Rules
-**The One Glow Rule.** If something other than the scrubber thumb has a glow, it is wrong. Cards, pills, legends and blocks sit flat on their surface with a hairline.
+**The One Glow Rule.** On the map plate, if something other than the scrubber thumb has a glow, it is wrong. Cards, pills, legends and blocks sit flat on their surface with a hairline. The landing surface is exempt: its hero prompt card and buttons may use frosted glass and soft box-shadows (see *The Landing / Introduction Surface*, §2).
 
 **The Furniture Holds Rule.** Zoom scales the geography, never the chart's furniture. `--mz` carries the live zoom factor; type, haloes, node dots and study blur divide by it, and strokes use `vector-effect: non-scaling-stroke`. The influence blooms are the one deliberate exception, because their extent is a claim about the world rather than a drawing convention.
 
@@ -282,14 +286,14 @@ The signature mark. A radial gradient from each capital or port node, radius set
 - **Do** divide any new fixed-size mark by `var(--mz)`, or give it `vector-effect: non-scaling-stroke`, so zoom cannot inflate it.
 
 ### Don't:
-- **Don't** build dashboard chrome: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes.
+- **Don't** build dashboard chrome on the map plate: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes. (The landing surface may use frosted glass on its hero card — see §2.)
 - **Don't** assert territory: no filled polygon with a hard border for any pre-colonial polity, no faction colour claiming land, no Majapahit shape drawn as fact.
 - **Don't** add heritage decoration: no batik, wayang silhouettes, or flag red-and-white as ornament.
 - **Don't** use `border-left` or `border-right` wider than 1px as a coloured accent. Selection is a full hairline plus a wash; category is a leading dot.
 - **Don't** put Tribute Gold on a button, knob or focus ring. If it is gold, it is influence or time.
 - **Don't** use red for anything but the Republic. PKI is plum, 1965-66 is umber, the modern category is charcoal.
 - **Don't** give the 1965-66 layer a bloom or a glow. It is a flat hatch because it is a record, not radiating power.
-- **Don't** use pure #000 or #fff anywhere, or a shadow on anything but the scrubber thumb.
+- **Don't** use pure #000 or #fff anywhere. On the map plate, don't put a shadow on anything but the scrubber thumb (the landing hero card and buttons are exempt — see §2).
 - **Don't** set Fraunces in italic, at body size, or as a label.
 - **Don't** style text for one language: both Bahasa Indonesia and English must fit every label and caption.
 - **Don't** replace inline SVG with canvas; text must stay selectable and translatable.

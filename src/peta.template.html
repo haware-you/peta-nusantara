@@ -54,6 +54,12 @@
     --ui-on:         #fbf8f1;
     --ui-ring:       oklch(30% 0.02 70);
     --sel-wash:      rgba(150,105,26,0.07);    /* selected power: a wash of its own colour */
+    --terracotta:    #905831;
+    --terracotta-soft: rgba(144, 88, 49, 0.12);
+    --terracotta-wash: rgba(144, 88, 49, 0.08);
+    --terracotta-hi:   #7d4b29;
+    --terracotta-fg:   #fbf8f1;
+    --shadow-soft:   0 18px 40px rgba(31, 24, 17, 0.12);
 
     /* Influence: pigment on paper. Sienna rather than the UI gold, multiplied. */
     --bloom:         oklch(56% 0.13 55);
@@ -128,6 +134,11 @@
       --sel-wash:      rgba(217,171,85,0.07);
       --bloom:         #d9ab55;
       --bloom-swatch:  rgba(217,171,85,0.62);
+      --terracotta:    #c98a5e;
+      --terracotta-soft: rgba(201, 138, 94, 0.16);
+      --terracotta-wash: rgba(201, 138, 94, 0.10);
+      --terracotta-hi:   #d99e73;
+      --terracotta-fg:   #1a1209;
       --blend:         screen;
       --bh0:.62; --bh1:.34; --bh2:.11; --bh3:0;
       --bm0:.44; --bm1:.26; --bm2:.09; --bm3:0;
@@ -185,6 +196,11 @@
     --sel-wash:      rgba(217,171,85,0.07);
     --bloom:         #d9ab55;
     --bloom-swatch:  rgba(217,171,85,0.62);
+    --terracotta:    #c98a5e;
+    --terracotta-soft: rgba(201, 138, 94, 0.16);
+    --terracotta-wash: rgba(201, 138, 94, 0.10);
+    --terracotta-hi:   #d99e73;
+    --terracotta-fg:   #1a1209;
     --blend:         screen;
     --bh0:.62; --bh1:.34; --bh2:.11; --bh3:0;
     --bm0:.44; --bm1:.26; --bm2:.09; --bm3:0;
@@ -288,6 +304,17 @@
   .seg button:hover{ color: var(--ink-1); }
   .seg button.active{ background: var(--ui); color: var(--ui-on); }
   .seg button:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:-2px; }
+
+  /* Not a toggle, so no knob: a way back to the front door. Ink, like
+     every other control on the plate. */
+  .ghost{
+    border:1px solid var(--line); border-radius:999px; background: var(--surface-2);
+    padding:7px 14px; cursor:pointer; font:inherit; font-weight:600;
+    font-size:0.75rem; color: var(--ink-2);
+    transition: color .14s, border-color .14s;
+  }
+  .ghost:hover{ color: var(--ink-1); border-color: var(--ink-3); }
+  .ghost:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
 
   .pill{
     display:inline-flex; align-items:center; gap:7px;
@@ -699,6 +726,182 @@
     }
   }
 
+  /* ============================ Landing ============================
+     DESIGN.md §2, "The Landing / Introduction Surface": the front door,
+     deliberately warmer than the plate. Frosted glass, a soft shadow and
+     Accent Terracotta are permitted HERE and nowhere else; the moment the
+     reader crosses into the map the strict rules resume.
+
+     It is a fixed overlay with its OWN scroll container, which is what
+     lets scroll drive the sequence without breaking "don't move the frame
+     on the reader's behalf": the instrument underneath keeps every gesture
+     it already claimed, and its viewBox is never touched from here. */
+  body.landing-open{ overflow:hidden; }
+
+  .landing{
+    position:fixed; inset:0; z-index:60;
+    overflow-y:auto; overflow-x:hidden;
+    overscroll-behavior: contain;
+    background: var(--ground);
+    transition: opacity .5s var(--ease-out);
+  }
+  .landing[hidden]{ display:none; }
+  .landing.dismissing{ opacity:0; pointer-events:none; }
+
+  /* The stage stays put while the panels scroll over it. */
+  .lsticky{ position:sticky; top:0; height:100dvh; overflow:hidden; background: var(--ocean); }
+  .lmap{ display:block; width:100%; height:100%; }
+  /* A ground wash so mono copy stays legible over land and bloom alike. */
+  .lveil{
+    position:absolute; inset:0; pointer-events:none;
+    background: linear-gradient(100deg, var(--ground) 0%, rgba(0,0,0,0) 62%);
+    opacity:0.90;
+  }
+
+  .lpanels{ position:relative; z-index:1; margin-top:-100dvh; }
+  .lpanel{
+    min-height:100dvh; display:flex; align-items:center;
+    padding: 88px clamp(20px, 7vw, 110px) 56px;
+  }
+  .lpanel[data-step="1"]{ align-items:flex-end; }
+  .lpanel[data-step="3"]{ align-items:flex-start; }
+  .lpanel-end{ justify-content:center; text-align:left; }
+
+  .lcard{
+    max-width: 46ch;
+    background: var(--panel-bg);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    border:1px solid var(--line); border-radius:10px;
+    padding: clamp(20px, 3vw, 32px);
+    box-shadow: 0 22px 50px -26px rgba(12,11,9,0.55);
+  }
+  .lcard-wide{ max-width: 54ch; }
+
+  .lkicker{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size:0.62rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
+    color: var(--terracotta); margin-bottom:14px;
+  }
+  .lcard h2{
+    font-size: clamp(1.55rem, 3.4vw, 2.4rem); line-height:1.08; letter-spacing:-0.015em;
+    color: var(--ink-1); margin-bottom:14px;
+  }
+
+  /* The opening panel is a headline, not a card. Brand register permits the
+     typographic risk here, and the veil already puts near-solid ground under
+     it, so the frosted panel would only shrink the type for nothing. */
+  .lhero{
+    background:none; border:0; box-shadow:none; padding:0; max-width:none;
+    -webkit-backdrop-filter:none; backdrop-filter:none;
+  }
+  .lhero .lkicker{ font-size:0.68rem; margin-bottom:20px; }
+  .lhero h2{
+    font-size: clamp(2.5rem, 7.2vw, 5.4rem); line-height:0.96; letter-spacing:-0.035em;
+    max-width: 14ch; margin-bottom:22px;
+  }
+  .lhero p{ font-size:1.02rem; line-height:1.55; max-width:46ch; }
+  .lcard p{
+    font-size:0.88rem; line-height:1.65; color: var(--ink-2); max-width:60ch; margin:0;
+  }
+  .lcard p + p{ margin-top:11px; }
+
+  /* Staggered reveal: opacity and transform only. */
+  .lreveal{
+    opacity:0; transform: translateY(20px);
+    transition: opacity .72s var(--ease-out), transform .72s var(--ease-out);
+  }
+  .lpanel.in .lreveal{ opacity:1; transform:none; }
+  .lpanel.in .lreveal:nth-child(2){ transition-delay:.09s; }
+  .lpanel.in .lreveal:nth-child(3){ transition-delay:.18s; }
+  .lpanel.in .lreveal:nth-child(4){ transition-delay:.27s; }
+
+  .lcue{ display:flex; align-items:center; gap:11px; margin-top:26px; }
+  .lcue span{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size:0.6rem; font-weight:600; letter-spacing:0.15em; text-transform:uppercase;
+    color: var(--ink-3);
+  }
+  .lcue i{
+    display:block; width:56px; height:1px; background: var(--terracotta);
+    transform-origin:left center; animation: lcue 2.6s var(--ease-out) infinite;
+  }
+  @keyframes lcue{
+    0%{ transform:scaleX(.18); opacity:.3 }
+    52%{ transform:scaleX(1); opacity:1 }
+    100%{ transform:scaleX(.18); opacity:.3 }
+  }
+
+  .lcta{
+    margin-top:22px;
+    font-family:'Inter', system-ui, sans-serif; font-size:0.85rem; font-weight:600;
+    background: var(--terracotta); color: var(--terracotta-fg);
+    border:1px solid var(--terracotta); border-radius:999px;
+    padding:13px 26px; cursor:pointer;
+    box-shadow: 0 12px 26px -14px rgba(144,88,49,0.75);
+    transition: transform .15s var(--ease-out), background .15s var(--ease-out);
+  }
+  .lcta:hover{ transform: translateY(-1px); background: var(--terracotta-hi); }
+  .lcta:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:3px; }
+
+  /* Both languages are reachable at the door, not only inside the map.
+     PRODUCT.md: they are equal and first-class, and the cold visitor
+     arrives here, not at the header. */
+  .ltop{
+    position:fixed; top:16px; right:18px; z-index:3;
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap; justify-content:flex-end;
+  }
+  .lseg{
+    display:flex; background: var(--panel-bg); border:1px solid var(--line);
+    border-radius:999px; overflow:hidden;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  }
+  .lseg button{
+    font-family:'Inter', system-ui, sans-serif; font-size:0.7rem; font-weight:600;
+    color: var(--ink-2); background:transparent; border:0; padding:7px 13px; cursor:pointer;
+    transition: background .14s var(--ease-out), color .14s var(--ease-out);
+  }
+  .lseg button:hover{ color: var(--ink-1); }
+  .lseg button.active{ background: var(--ui); color: var(--ui-on); }
+  .lseg button:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:-2px; }
+
+  .lskip{
+    z-index:3;
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size:0.6rem; font-weight:600; letter-spacing:0.13em; text-transform:uppercase;
+    color: var(--ink-2); background: var(--panel-bg);
+    border:1px solid var(--line); border-radius:999px; padding:8px 15px; cursor:pointer;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: color .14s var(--ease-out), border-color .14s var(--ease-out);
+  }
+  .lskip:hover{ color: var(--ink-1); border-color: var(--ink-3); }
+  .lskip:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
+
+  /* Landing map marks. Fixed sizes here: the landing never zooms, so --mz
+     does not apply and the furniture cannot inflate. */
+  .lnode{ fill: var(--gold-warm); }
+  .lncap{
+    font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:9px;
+    letter-spacing:0.12em; text-transform:uppercase; fill: var(--ink-2); text-anchor:middle;
+    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
+  }
+
+  @media (max-width: 900px){
+    .lpanel{ padding: 78px 20px 48px; align-items:center; }
+    .lpanel[data-step="1"], .lpanel[data-step="3"]{ align-items:center; }
+    .lveil{ background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--ground) 46%); opacity:0.94; }
+    .lcard h2{ font-size: clamp(1.25rem, 6.4vw, 1.7rem); }
+    .lhero h2{ font-size: clamp(2.1rem, 11.5vw, 3.4rem); max-width:12ch; }
+    .lhero p{ font-size:0.95rem; }
+    .ltop{ top:12px; right:12px; left:12px; }
+    .lseg button{ padding:7px 11px; font-size:0.66rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    /* No scroll dependency at all: everything is present and readable. */
+    .lreveal{ opacity:1; transform:none; }
+    .lcue i{ animation:none; transform:none; opacity:.8; }
+  }
+
   /* ============================ Responsive ============================ */
   @media (max-width: 900px){
     /* Fitting a 2.53:1 plate into a phone leaves ocean above and below it.
@@ -720,6 +923,10 @@
     .scrub{ padding:11px 16px 14px; }
     .controls{ align-items:flex-start; }
     .era-badge .yr{ font-size:1.25rem; }
+    /* 44px minimum touch target. */
+    .zoom-ctl{ gap:6px; }
+    .zoom-ctl button{ width:40px; height:40px; font-size:0.95rem; }
+    #zoom-reset{ height:32px; font-size:0.62rem; }
   }
   @media (max-width: 560px){
     .head{ flex-direction:column; gap:12px; }
@@ -727,6 +934,70 @@
     .ctl-row{ justify-content:flex-start; }
   }
 </style>
+
+<!-- The front door. Hidden until JS decides the reader has not crossed
+     before; see DESIGN.md §2 and the LANDING block in the script. -->
+<div class="landing" id="landing" hidden role="region" aria-labelledby="l-title">
+
+  <div class="ltop">
+    <div class="lseg" role="group" aria-label="Language / Bahasa">
+      <button type="button" id="l-id">Bahasa Indonesia</button>
+      <button type="button" id="l-en">English</button>
+    </div>
+    <button type="button" class="lskip" id="l-skip" data-i18n="landSkip"></button>
+  </div>
+
+  <div class="lsticky">
+    <svg class="lmap" id="lmap" aria-hidden="true"></svg>
+    <div class="lveil"></div>
+  </div>
+
+  <div class="lpanels">
+
+    <section class="lpanel" data-step="0">
+      <div class="lcard lhero">
+        <div class="lkicker lreveal" data-i18n="landKicker"></div>
+        <h2 class="lreveal" id="l-title" data-i18n="landTitle"></h2>
+        <p class="lreveal" data-i18n="landLede"></p>
+        <div class="lcue lreveal"><i></i><span data-i18n="landCue"></span></div>
+      </div>
+    </section>
+
+    <section class="lpanel" data-step="1">
+      <div class="lcard">
+        <div class="lkicker lreveal" data-i18n="land1Kicker"></div>
+        <h2 class="lreveal" data-i18n="land1Title"></h2>
+        <p class="lreveal" data-i18n="land1Body"></p>
+      </div>
+    </section>
+
+    <section class="lpanel" data-step="2">
+      <div class="lcard">
+        <div class="lkicker lreveal" data-i18n="land2Kicker"></div>
+        <h2 class="lreveal" data-i18n="land2Title"></h2>
+        <p class="lreveal" data-i18n="land2Body"></p>
+      </div>
+    </section>
+
+    <section class="lpanel" data-step="3">
+      <div class="lcard lcard-wide">
+        <div class="lkicker lreveal" data-i18n="land3Kicker"></div>
+        <h2 class="lreveal" data-i18n="land3Title"></h2>
+        <p class="lreveal" data-i18n="land3Body"></p>
+      </div>
+    </section>
+
+    <section class="lpanel lpanel-end" data-step="4">
+      <div class="lcard">
+        <div class="lkicker lreveal" data-i18n="landEnterKicker"></div>
+        <h2 class="lreveal" data-i18n="landEnterTitle"></h2>
+        <p class="lreveal" data-i18n="landEnterBody"></p>
+        <button type="button" class="lcta lreveal" id="l-enter" data-i18n="landEnter"></button>
+      </div>
+    </section>
+
+  </div>
+</div>
 
 <div class="app" id="app">
 
@@ -753,6 +1024,7 @@
         <button type="button" class="pill" id="routes-btn" aria-pressed="true">
           <span class="knob"></span><span data-i18n="routesToggle"></span>
         </button>
+        <button type="button" class="ghost" id="intro-btn" data-i18n="introBtn"></button>
       </div>
     </div>
   </header>
@@ -911,6 +1183,43 @@ var CHROME = {
   },
 
   ovOpen:{ id:"Lapisan aktif", en:"Active layer" },
+
+  /* ---- Landing: the front door (DESIGN.md §2) ---- */
+  introBtn:{ id:"Pengantar", en:"Intro" },
+  landSkip:{ id:"Langsung ke peta", en:"Skip to the map" },
+  landCue:{ id:"Gulir", en:"Scroll" },
+  landKicker:{ id:"300 M – Sekarang", en:"300 CE – Present" },
+  landTitle:{ id:"Kekuasaan di sini dijelaskan oleh posisi.", en:"Power here is explained by position." },
+  landLede:{
+    id:"Peta sejarah Nusantara, dari kerajaan tercatat pertama sampai hari ini. Tiga hal sebelum Anda masuk.",
+    en:"A historical map of the archipelago, from the first recorded kingdom to today. Three things before you go in."
+  },
+  land1Kicker:{ id:"01 · Posisi", en:"01 · Position" },
+  land1Title:{ id:"Selat, bukan wilayah", en:"Straits, not territory" },
+  land1Body:{
+    id:"Palembang terletak di hulu Sungai Musi, cukup dekat ke mulut Selat Malaka untuk mengawasinya dan cukup jauh ke hulu untuk dipertahankan. Siapa yang memegang selat memungut pajak dari hampir seluruh lalu lintas India ke Tiongkok.",
+    en:"Palembang sits up the Musi river, close enough to the mouth of the Malacca Strait to police it and far enough inland to be defensible. Whoever holds the strait taxes nearly everything moving between India and China."
+  },
+  land2Kicker:{ id:"02 · Ketidakpastian", en:"02 · Uncertainty" },
+  land2Title:{ id:"Pengaruh membaur, bukan berbatas", en:"Influence blooms, it does not border" },
+  land2Body:{
+    id:"Sriwijaya tidak punya garis batas. Ia punya pelabuhan yang mengirim upeti dan armada yang sanggup menghancurkan pelabuhan pembangkang. Karena itu ia digambar sebagai pigmen yang memudar dari pusatnya: makin lemah buktinya, makin baur washnya.",
+    en:"Srivijaya had no boundary. It had ports that sent tribute and a fleet that could ruin any port that defected. So it is drawn as pigment fading from its centre: the weaker the evidence, the more diffuse the wash."
+  },
+  land3Kicker:{ id:"03 · Garis", en:"03 · The line" },
+  land3Title:{ id:"Lalu seseorang mengukurnya", en:"Then someone surveyed it" },
+  land3Body:{
+    id:"VOC tiba pada 1602 dan menggambar tepi yang keras, karena kali ini memang ada surveyor yang menggambarnya. Peralihan dari wash ke garis inilah argumen peta ini. Tinta hanya untuk yang pernah diukur; selebihnya tetap pigmen.",
+    en:"The VOC arrived in 1602 and drew a hard edge, because this time a surveyor actually drew one. That shift, from wash to line, is this map's argument. Ink is reserved for what was surveyed; everything else stays pigment."
+  },
+  landEnterKicker:{ id:"Peta", en:"The map" },
+  landEnterTitle:{ id:"Sekarang geser waktunya sendiri", en:"Now move the time yourself" },
+  landEnterBody:{
+    id:"Tarik penggeser era melintasi tahun 1600 dan lihat pengaruh yang baur berganti menjadi garis terukur. Dua bahasa, dua tema, dan setiap warna adalah entri legenda.",
+    en:"Drag the era scrubber across 1600 and watch diffuse influence give way to a surveyed line. Two languages, two themes, and every colour is a legend entry."
+  },
+  landEnter:{ id:"Buka peta", en:"Open the map" },
+
 
   /* ---- Study layer labels ---- */
   loreWhy:{ id:"Mengapa di sini", en:"Why here" },
@@ -2648,8 +2957,15 @@ mapWrap.addEventListener('wheel', function(ev){
 }, { passive:false });
 
 /* Drag to pan, two fingers to pinch. A drag that travelled is not a click,
-   so aiming at Sumatra and missing never selects the wrong region. */
-var pts = {}, nPts = 0, lastPt = null, pinchDist = 0, travelled = 0;
+   so aiming at Sumatra and missing never selects the wrong region.
+
+   A lone finger at the fitted frame belongs to the page's own vertical
+   scroll: we still record it (so a second finger can be recognised as a
+   pinch pair) but don't let it move the map. touchIdle tracks that case;
+   it is recomputed whenever the finger count changes, so a pinch that
+   zooms in and then drops to one finger hands off straight into panning,
+   the way a normal map app does. */
+var pts = {}, nPts = 0, lastPt = null, pinchDist = 0, travelled = 0, touchIdle = false;
 
 function livePts(){
   var out = [];
@@ -2659,12 +2975,16 @@ function livePts(){
 
 svg.addEventListener('pointerdown', function(ev){
   if (ev.pointerType === 'mouse' && ev.button !== 0) return;
-  /* At the default frame a touch belongs to the page, not to the map. */
-  if (ev.pointerType !== 'mouse' && nPts === 0 && zNow() <= 1.001) return;
   pts[ev.pointerId] = { x:ev.clientX, y:ev.clientY };
   nPts++;
-  if (nPts === 1){ lastPt = { x:ev.clientX, y:ev.clientY }; travelled = 0; }
-  else if (nPts === 2){ var p = livePts(); pinchDist = Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2)); }
+  if (nPts === 1){
+    lastPt = { x:ev.clientX, y:ev.clientY }; travelled = 0;
+    touchIdle = (ev.pointerType !== 'mouse' && zNow() <= 1.001);
+  } else if (nPts === 2){
+    touchIdle = false; /* two fingers is always a deliberate pinch */
+    var p = livePts();
+    pinchDist = Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2));
+  }
   stopTween();
 });
 
@@ -2684,7 +3004,7 @@ svg.addEventListener('pointermove', function(ev){
     return;
   }
 
-  if (!lastPt || zNow() <= 1.001) return;
+  if (!lastPt || touchIdle) return;
   var m = svg.getScreenCTM();
   if (!m || !m.a) return;
   var dx = ev.clientX - lastPt.x, dy = ev.clientY - lastPt.y;
@@ -2698,6 +3018,13 @@ svg.addEventListener('pointermove', function(ev){
 function endPointer(ev){
   if (pts[ev.pointerId]){ delete pts[ev.pointerId]; nPts = Math.max(0, nPts - 1); }
   if (nPts < 2) pinchDist = 0;
+  if (nPts === 1){
+    /* One finger remains after a pinch, or after a second touch lifted.
+       Re-arm panning from wherever the zoom level actually landed. */
+    var rem = livePts()[0];
+    if (rem) lastPt = { x:rem.x, y:rem.y };
+    touchIdle = zNow() <= 1.001;
+  }
   if (nPts === 0){ lastPt = null; svg.classList.remove('grabbing'); }
 }
 svg.addEventListener('pointerup', endPointer);
@@ -2744,6 +3071,197 @@ routesBtn.setAttribute('aria-pressed', S.routes ? 'true' : 'false');
 range.value = Math.round(posFromYear(S.year));
 applyChrome();
 render();
+
+/* ==================================================================
+   THE LANDING — the front door (DESIGN.md §2)
+
+   Scroll drives this sequence, and it drives ONLY this overlay. The
+   landing is fixed above the plate with its own scroll container, so
+   the instrument underneath keeps every gesture it already claimed and
+   its viewBox is never touched from here. "Don't move the frame on the
+   reader's behalf" survives intact.
+
+   The imagery is the chart drawing itself: no photograph, because
+   heritage decoration is a stated anti-reference and the marks ARE the
+   argument. Sriwijaya's bloom (real record, high confidence, reach 6.4)
+   gives way to the VOC's surveyed edge, which is the same contrast the
+   scrubber shows at 1600. Both are read from MAPX, not redrawn, so the
+   front door cannot drift from the map behind it.
+   ================================================================== */
+(function(){
+  var LKEY = 'nusantara-map-seen-landing';
+  var landing = document.getElementById('landing');
+  if (!landing) return;
+
+  /* The door is built either way and stays in the document, because the
+     header offers a way back to it. The saved flag decides only whether it
+     OPENS on load: the author opens this nightly, and the front door must
+     not become friction. */
+  var seen = LS.get(LKEY, '0') === '1';
+
+  /* ---- stage: the same geometry the map uses ---- */
+  var lsvg = document.getElementById('lmap');
+  lsvg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  /* meet, not slice: the archipelago is never cropped out of reach. */
+  lsvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+  var lGrat = el('g', { class:'graticule' });
+  for (var lo = 95; lo <= 140; lo += 5) lGrat.appendChild(el('line', { x1:px(lo), y1:0, x2:px(lo), y2:H }));
+  for (var la = 5; la >= -10; la -= 5) lGrat.appendChild(el('line', { x1:0, y1:py(la), x2:W, y2:py(la) }));
+  lsvg.appendChild(lGrat);
+
+  var lLand = el('g');
+  LAND_PTS.forEach(function(p){ lLand.appendChild(el('polygon', { class:'land', points:p })); });
+  lsvg.appendChild(lLand);
+
+  /* Sriwijaya's bloom. Same tier gradients as the plate (ids resolve
+     document-wide), so the wash is literally the same mark. */
+  var SRI = MAPX['Sriwijaya'];
+  var gInfL = el('g', { class:'influence' });
+  var lBloom = el('g', { class:'bloom', opacity:0 });
+  SRI.nodes.forEach(function(n){
+    var mult = n.kind === 'capital' ? 1 : (n.kind === 'port' ? 0.72 : 0.55);
+    var r = SRI.reach * TIER_SCALE.high * mult * VIEW.k;
+    lBloom.appendChild(el('circle', {
+      cx: px(n.lon).toFixed(1), cy: py(n.lat).toFixed(1), r: r.toFixed(1),
+      fill: 'url(#bloom-high)'
+    }));
+  });
+  gInfL.appendChild(lBloom);
+  lsvg.appendChild(gInfL);
+
+  /* The VOC's surveyed edge: the only thing on this stage allowed a hard
+     stroke, by the Surveyed Edge Rule. Same ring-within-reach test the
+     map runs, so the shape agrees with the plate. */
+  var VOC = MAPX['VOC (Kongsi Dagang Hindia Timur Belanda)'];
+  var lHard = el('g', { class:'hard', opacity:0 });
+  LAND.forEach(function(ring, ri){
+    var pts = ring.split(' '), within = false;
+    for (var q = 0; q < pts.length && !within; q += 2){
+      var c = pts[q].split(','), rlo = +c[0], rla = +c[1];
+      within = VOC.nodes.some(function(n){
+        var dx = rlo - n.lon, dy = rla - n.lat;
+        return Math.sqrt(dx * dx + dy * dy) <= VOC.reach;
+      });
+    }
+    if (within) lHard.appendChild(el('polygon', { class:'hp', points: LAND_PTS[ri] }));
+  });
+  lsvg.appendChild(lHard);
+
+  /* Node dots and their captions. Bilingual like everything else. */
+  var lNodes = el('g', { opacity:0 });
+  var lCaps = [];
+  SRI.nodes.forEach(function(n){
+    lNodes.appendChild(el('circle', { class:'lnode', cx:px(n.lon).toFixed(1), cy:py(n.lat).toFixed(1), r:3 }));
+    var t = el('text', { class:'lncap', x:px(n.lon).toFixed(1), y:(py(n.lat) - 9).toFixed(1) });
+    lCaps.push({ el:t, label:n.label });
+    lNodes.appendChild(t);
+  });
+  lsvg.appendChild(lNodes);
+
+  function fillCaps(){ lCaps.forEach(function(c){ c.el.textContent = c.label[S.lang]; }); }
+
+  /* The door carries its own language pair, because the header's is behind
+     it. setLang is the map's own, so the two surfaces cannot drift: it
+     rewrites every data-i18n node in the document, this one included. */
+  var lId = document.getElementById('l-id'), lEn = document.getElementById('l-en');
+  function markLang(){
+    lId.classList.toggle('active', S.lang === 'id');
+    lEn.classList.toggle('active', S.lang === 'en');
+    fillCaps();
+  }
+  lId.addEventListener('click', function(){ setLang('id'); markLang(); });
+  lEn.addEventListener('click', function(){ setLang('en'); markLang(); });
+  document.getElementById('btn-id').addEventListener('click', markLang);
+  document.getElementById('btn-en').addEventListener('click', markLang);
+  markLang();
+
+  /* ---- scroll drives the sequence ---- */
+  var panels = Array.prototype.slice.call(landing.querySelectorAll('.lpanel'));
+  function clamp01(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
+
+  function stageAt(s){
+    var b = clamp01((s - 0.55) / 0.85);          /* the wash arrives on panel 1 */
+    var fade = clamp01((s - 2.35) / 0.85);       /* and recedes as the line lands */
+    lBloom.setAttribute('opacity', (b * (1 - 0.72 * fade)).toFixed(3));
+    lNodes.setAttribute('opacity', clamp01((s - 0.15) / 0.65).toFixed(3));
+    lHard.setAttribute('opacity', clamp01((s - 2.15) / 0.75).toFixed(3));
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      ticking = false;
+      var max = landing.scrollHeight - landing.clientHeight;
+      stageAt((max > 0 ? landing.scrollTop / max : 0) * (panels.length - 1));
+    });
+  }
+
+  if (REDUCED){
+    /* No scroll dependency: the composed state is present from the start
+       and every panel reads as a static page. */
+    lBloom.setAttribute('opacity', 0.7);
+    lNodes.setAttribute('opacity', 1);
+    lHard.setAttribute('opacity', 1);
+    panels.forEach(function(p){ p.classList.add('in'); });
+  } else {
+    landing.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
+    if ('IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){ if (en.isIntersecting) en.target.classList.add('in'); });
+      }, { root: landing, threshold: 0.3 });
+      panels.forEach(function(p){ io.observe(p); });
+    } else {
+      panels.forEach(function(p){ p.classList.add('in'); });
+    }
+  }
+
+  /* ---- crossing into the map ---- */
+  var closing = null;
+  function openDoor(){
+    clearTimeout(closing);
+    landing.hidden = false;
+    void landing.offsetHeight;              /* so a reopen fades rather than jumps */
+    landing.classList.remove('dismissing');
+    document.body.classList.add('landing-open');
+    landing.scrollTop = 0;
+    if (!REDUCED){
+      /* Replay the sequence from the top rather than showing it spent. */
+      panels.forEach(function(p){ p.classList.remove('in'); });
+      panels[0].classList.add('in');
+      stageAt(0);
+    }
+    document.getElementById('l-skip').focus({ preventScroll:true });
+  }
+
+  function closeDoor(){
+    if (landing.hidden) return;
+    LS.set(LKEY, '1');
+    document.body.classList.remove('landing-open');
+    landing.classList.add('dismissing');
+    var done = function(){
+      landing.hidden = true;
+      var er = document.getElementById('era-range');
+      if (er) er.focus();
+    };
+    if (REDUCED) done(); else closing = setTimeout(done, 520);
+  }
+
+  document.getElementById('l-enter').addEventListener('click', closeDoor);
+  document.getElementById('l-skip').addEventListener('click', closeDoor);
+  landing.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') closeDoor(); });
+
+  /* The way back, in the header where the other controls live. */
+  var introBtn = document.getElementById('intro-btn');
+  if (introBtn) introBtn.addEventListener('click', openDoor);
+
+  /* Keyboard-first, as the rail promises: focus starts inside the door. */
+  if (!seen) openDoor();
+})();
+
 
 })();
 </script>
