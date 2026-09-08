@@ -506,6 +506,52 @@
     border-top:1px solid var(--line);
     padding: 12px 22px 15px;
   }
+  /* The scrubber rises into place as the door clears, so the reader lands
+     on the control the last panel just told them to use. Clipped for the
+     duration so the rise cannot hand the page a scrollbar. */
+  .app.arriving{ overflow:hidden; }
+  .app.arriving .scrub{ animation: scrubRise .62s var(--ease-out) both; }
+  @keyframes scrubRise{
+    from{ transform: translateY(100%); opacity:0 }
+    to{ transform:none; opacity:1 }
+  }
+
+  /* The rail slides out and the map takes the room. */
+  .stage{ position:relative; transition: grid-template-columns .42s var(--ease-out); overflow:hidden; }
+
+  /* The panel's control rides the panel's own edge, so it is where the
+     thing it operates is rather than buried in the header. Ink and
+     hairline, like every other control on the plate. */
+  .rail-tab{
+    position:absolute; top:50%; right:336px; z-index:4;
+    transform: translateY(-50%);
+    width:22px; height:56px; padding:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--ink-2);
+    background: var(--panel-bg);
+    border:1px solid var(--line); border-right:none;
+    border-radius:6px 0 0 6px;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    transition: right .42s var(--ease-out), color .14s var(--ease-out), border-color .14s var(--ease-out);
+  }
+  .rail-tab:hover{ color: var(--ink-1); border-color: var(--ink-3); }
+  .rail-tab:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
+  .rail-tab svg{
+    width:8px; height:14px; fill:none; stroke:currentColor;
+    stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+    transform: rotate(180deg);
+    transition: transform .42s var(--ease-out);
+  }
+  .app.rail-off .rail-tab{ right:0; }
+  .app.rail-off .rail-tab svg{ transform:none; }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+  .rail{ transition: transform .42s var(--ease-out), opacity .26s var(--ease-out); }
+  .app.rail-off .stage{ grid-template-columns: minmax(0,1fr) 0px; }
+  .app.rail-off .rail{ transform: translateX(100%); opacity:0; }
   .scrub-head{
     display:flex; justify-content:space-between; align-items:baseline;
     gap:16px; margin-bottom:7px; flex-wrap:wrap;
@@ -878,11 +924,15 @@
 
   /* Landing map marks. Fixed sizes here: the landing never zooms, so --mz
      does not apply and the furniture cannot inflate. */
+  /* --lz carries the landing camera's zoom, exactly as --mz does on the
+     plate, so the furniture holds its size while the geography scales. */
   .lnode{ fill: var(--gold-warm); }
   .lncap{
-    font-family:'IBM Plex Mono', ui-monospace, monospace; font-size:9px;
-    letter-spacing:0.12em; text-transform:uppercase; fill: var(--ink-2); text-anchor:middle;
-    paint-order: stroke; stroke: var(--halo); stroke-width:2.6px; stroke-linejoin:round;
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-size: calc(9px / var(--lz, 1)); letter-spacing:0.12em;
+    text-transform:uppercase; fill: var(--ink-2); text-anchor:middle;
+    paint-order: stroke; stroke: var(--halo);
+    stroke-width: calc(2.6px / var(--lz, 1)); stroke-linejoin:round;
   }
 
   @media (max-width: 900px){
@@ -891,6 +941,12 @@
     .lveil{ background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--ground) 46%); opacity:0.94; }
     .lcard h2{ font-size: clamp(1.25rem, 6.4vw, 1.7rem); }
     .lhero h2{ font-size: clamp(2.1rem, 11.5vw, 3.4rem); max-width:12ch; }
+    /* Stacked, so a horizontal slide means nothing: just take it away,
+       and let the header pill carry the toggle instead of an edge tab
+       that would have no edge to sit on. */
+    .rail-tab{ display:none; }
+    .app.rail-off .stage{ grid-template-columns: minmax(0,1fr); }
+    .app.rail-off .rail{ display:none; }
     .lhero p{ font-size:0.95rem; }
     .ltop{ top:12px; right:12px; left:12px; }
     .lseg button{ padding:7px 11px; font-size:0.66rem; }
@@ -900,6 +956,8 @@
     /* No scroll dependency at all: everything is present and readable. */
     .lreveal{ opacity:1; transform:none; }
     .lcue i{ animation:none; transform:none; opacity:.8; }
+    .app.arriving .scrub{ animation:none; }
+    .stage, .rail, .rail-tab, .rail-tab svg{ transition:none; }
   }
 
   /* ============================ Responsive ============================ */
@@ -1024,6 +1082,9 @@
         <button type="button" class="pill" id="routes-btn" aria-pressed="true">
           <span class="knob"></span><span data-i18n="routesToggle"></span>
         </button>
+        <button type="button" class="pill" id="rail-btn" aria-pressed="true">
+          <span class="knob"></span><span data-i18n="railToggle"></span>
+        </button>
         <button type="button" class="ghost" id="intro-btn" data-i18n="introBtn"></button>
       </div>
     </div>
@@ -1057,6 +1118,11 @@
     </div>
 
     <aside class="rail" id="rail" aria-live="polite"></aside>
+
+    <button type="button" class="rail-tab" id="rail-tab" aria-controls="rail" aria-expanded="true">
+      <svg viewBox="0 0 8 14" aria-hidden="true"><path d="M6 1 L1 7 L6 13"/></svg>
+      <span class="sr-only" data-i18n="railToggle"></span>
+    </button>
   </div>
 
   <div class="scrub">
@@ -1186,6 +1252,7 @@ var CHROME = {
 
   /* ---- Landing: the front door (DESIGN.md §2) ---- */
   introBtn:{ id:"Pengantar", en:"Intro" },
+  railToggle:{ id:"Panel keterangan", en:"Detail panel" },
   landSkip:{ id:"Langsung ke peta", en:"Skip to the map" },
   landCue:{ id:"Gulir", en:"Scroll" },
   landKicker:{ id:"300 M – Sekarang", en:"300 CE – Present" },
@@ -1194,23 +1261,23 @@ var CHROME = {
     id:"Peta sejarah Nusantara, dari kerajaan tercatat pertama sampai hari ini. Tiga hal sebelum Anda masuk.",
     en:"A historical map of the archipelago, from the first recorded kingdom to today. Three things before you go in."
   },
-  land1Kicker:{ id:"01 · Posisi", en:"01 · Position" },
+  land1Kicker:{ id:"01 · Sumatra", en:"01 · Sumatra" },
   land1Title:{ id:"Selat, bukan wilayah", en:"Straits, not territory" },
   land1Body:{
     id:"Palembang terletak di hulu Sungai Musi, cukup dekat ke mulut Selat Malaka untuk mengawasinya dan cukup jauh ke hulu untuk dipertahankan. Siapa yang memegang selat memungut pajak dari hampir seluruh lalu lintas India ke Tiongkok.",
     en:"Palembang sits up the Musi river, close enough to the mouth of the Malacca Strait to police it and far enough inland to be defensible. Whoever holds the strait taxes nearly everything moving between India and China."
   },
-  land2Kicker:{ id:"02 · Ketidakpastian", en:"02 · Uncertainty" },
+  land2Kicker:{ id:"02 · Jawa", en:"02 · Java" },
   land2Title:{ id:"Pengaruh membaur, bukan berbatas", en:"Influence blooms, it does not border" },
   land2Body:{
-    id:"Sriwijaya tidak punya garis batas. Ia punya pelabuhan yang mengirim upeti dan armada yang sanggup menghancurkan pelabuhan pembangkang. Karena itu ia digambar sebagai pigmen yang memudar dari pusatnya: makin lemah buktinya, makin baur washnya.",
-    en:"Srivijaya had no boundary. It had ports that sent tribute and a fleet that could ruin any port that defected. So it is drawn as pigment fading from its centre: the weaker the evidence, the more diffuse the wash."
+    id:"Majapahit memerintah dari Trowulan, di pedalaman delta Brantas. Nagarakertagama tahun 1365 mendaftar puluhan tempat pengirim upeti: itu daftar hubungan, bukan survei batas wilayah. Karena catatannya sendiri lebih tidak pasti daripada Sriwijaya, washnya digambar lebih baur.",
+    en:"Majapahit ruled from Trowulan, inland on the Brantas delta. The Nagarakertagama of 1365 lists dozens of tribute-sending places: a list of relationships, not a boundary survey. Because its own record is less certain than Srivijaya's, its wash is drawn more diffuse."
   },
-  land3Kicker:{ id:"03 · Garis", en:"03 · The line" },
+  land3Kicker:{ id:"03 · Kalimantan", en:"03 · Borneo" },
   land3Title:{ id:"Lalu seseorang mengukurnya", en:"Then someone surveyed it" },
   land3Body:{
-    id:"VOC tiba pada 1602 dan menggambar tepi yang keras, karena kali ini memang ada surveyor yang menggambarnya. Peralihan dari wash ke garis inilah argumen peta ini. Tinta hanya untuk yang pernah diukur; selebihnya tetap pigmen.",
-    en:"The VOC arrived in 1602 and drew a hard edge, because this time a surveyor actually drew one. That shift, from wash to line, is this map's argument. Ink is reserved for what was surveyed; everything else stays pigment."
+    id:"Hindia Belanda menggambar tepi administratif yang keras, karena kali ini memang ada surveyor yang mengukurnya. Di Kalimantan bedanya paling terlihat: pesisir yang tadinya hanya diwarnai wash kini bergaris ukur. Peralihan dari wash ke garis inilah argumen peta ini.",
+    en:"The Dutch East Indies drew a hard administrative edge, because this time surveyors actually measured one. Borneo shows the difference plainly: a coast that carried nothing but a fading wash now carries a surveyed line. That shift, from wash to line, is this map's argument."
   },
   landEnterKicker:{ id:"Peta", en:"The map" },
   landEnterTitle:{ id:"Sekarang geser waktunya sendiri", en:"Now move the time yourself" },
@@ -2484,11 +2551,17 @@ range.addEventListener('input', function(){
   S.year = yearFromPos(+range.value);
   render();
 });
-range.addEventListener('change', function(){
-  var idx = nearestEraIndex(S.year);
-  setYear(ERAS[idx].y);
-});
+/* The handle used to settle on the nearest era when released, which meant
+   the only reachable years were the 17 in ERAS. Across the 371-year gap
+   between 671 and 1042 that discarded everything in between, and five
+   polities became unreachable outright: Tarumanagara, the Sailendra
+   dynasty, Ancient Mataram, Singhasari and Pajang. Borobudur and
+   Prambanan had no year you could stand on. The dots below are still one
+   jump each, and the arrow keys still step era to era, so the nameable
+   states are not lost; the scrubber simply keeps the year you chose. */
 range.addEventListener('keydown', function(ev){
+  /* Shift steps year by year, for a reader aiming at a specific date. */
+  if (ev.shiftKey) return;
   var idx = nearestEraIndex(S.year), next = null;
   if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp'){
     next = Math.min(ERAS.length - 1, S.year >= ERAS[idx].y && idx < ERAS.length-1 ? idx + 1 : idx);
@@ -2827,6 +2900,26 @@ studyBtn.addEventListener('click', function(){
   renderRail();
 });
 
+/* Two ways to reach one state: the pill sits with the other toggles and is
+   the only one a phone gets, the tab rides the panel's edge where it is
+   actually visible. */
+var railBtn = document.getElementById('rail-btn');
+var railTab = document.getElementById('rail-tab');
+function toggleRail(){
+  S.rail = !S.rail;
+  applyRail();
+  LS.set('nusantara-map-rail', S.rail ? '1' : '0');
+}
+railBtn.addEventListener('click', toggleRail);
+railTab.addEventListener('click', toggleRail);
+function applyRail(){
+  app.classList.toggle('rail-off', !S.rail);
+  railBtn.classList.toggle('on', S.rail);
+  railBtn.setAttribute('aria-pressed', S.rail ? 'true' : 'false');
+  railTab.setAttribute('aria-expanded', S.rail ? 'true' : 'false');
+  railTab.title = T('railToggle');
+}
+
 var routesBtn = document.getElementById('routes-btn');
 routesBtn.addEventListener('click', function(){
   S.routes = !S.routes;
@@ -3058,6 +3151,7 @@ var savedTheme = LS.get('nusantara-map-theme', '');
 S.theme = (savedTheme === 'light' || savedTheme === 'dark') ? savedTheme : '';
 S.study = LS.get('nusantara-map-study', '0') === '1';
 S.routes = LS.get('nusantara-map-routes', '1') === '1';
+S.rail = LS.get('nusantara-map-rail', '1') === '1';
 try { S.revealed = JSON.parse(LS.get('nusantara-map-revealed', '{}')) || {}; } catch(e){ S.revealed = {}; }
 var savedYear = parseInt(LS.get('nusantara-map-year', '1365'), 10);
 S.year = isNaN(savedYear) ? 1365 : savedYear;
@@ -3067,6 +3161,7 @@ studyBtn.classList.toggle('on', S.study);
 studyBtn.setAttribute('aria-pressed', S.study ? 'true' : 'false');
 routesBtn.classList.toggle('on', S.routes);
 routesBtn.setAttribute('aria-pressed', S.routes ? 'true' : 'false');
+applyRail();
 
 range.value = Math.round(posFromYear(S.year));
 applyChrome();
@@ -3075,36 +3170,91 @@ render();
 /* ==================================================================
    THE LANDING — the front door (DESIGN.md §2)
 
-   Scroll drives this sequence, and it drives ONLY this overlay. The
-   landing is fixed above the plate with its own scroll container, so
-   the instrument underneath keeps every gesture it already claimed and
-   its viewBox is never touched from here. "Don't move the frame on the
-   reader's behalf" survives intact.
+   Scroll drives a camera over three islands, one per beat of the
+   argument: Sumatra for position, Java for uncertainty, Borneo for the
+   surveyed line. Each beat draws the entity it is actually about, read
+   out of DATA rather than redrawn, so the door cannot drift from the
+   plate behind it.
 
-   The imagery is the chart drawing itself: no photograph, because
-   heritage decoration is a stated anti-reference and the marks ARE the
-   argument. Sriwijaya's bloom (real record, high confidence, reach 6.4)
-   gives way to the VOC's surveyed edge, which is the same contrast the
-   scrubber shows at 1600. Both are read from MAPX, not redrawn, so the
-   front door cannot drift from the map behind it.
+   This moves a frame, which the plate forbids. It is allowed here for
+   two reasons: it is not the instrument's frame (the map's own viewBox
+   is never touched from this module, and the landing is a separate SVG
+   on a separate surface), and the reader drives it by scrolling rather
+   than having it moved under an aim. The only camera move the reader
+   does not drive is the closing zoom out, and that one answers a click.
+
+   The imagery is the chart drawing itself. No photograph: heritage
+   decoration is a stated anti-reference, and the marks are the
+   argument.
    ================================================================== */
 (function(){
-  var LKEY = 'nusantara-map-seen-landing';
   var landing = document.getElementById('landing');
   if (!landing) return;
 
-  /* The door is built either way and stays in the document, because the
-     header offers a way back to it. The saved flag decides only whether it
-     OPENS on load: the author opens this nightly, and the front door must
-     not become friction. */
-  var seen = LS.get(LKEY, '0') === '1';
-
-  /* ---- stage: the same geometry the map uses ---- */
   var lsvg = document.getElementById('lmap');
-  lsvg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-  /* meet, not slice: the archipelago is never cropped out of reach. */
   lsvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
+  /* ---- the camera ---------------------------------------------- */
+  var ASPECT = W / H;
+
+  /* Frame an island whole. The box is grown, never cropped, to reach
+     the plate's aspect, because "do not crop the archipelago to fill a
+     box" governs the geography on this surface too. */
+  function shot(west, east, south, north){
+    var x0 = px(west), x1 = px(east), y0 = py(north), y1 = py(south);
+    var w = x1 - x0, h = y1 - y0, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    if (w / h < ASPECT) w = h * ASPECT; else h = w / ASPECT;
+    return { x: cx - w / 2, y: cy - h / 2, w: w, h: h };
+  }
+
+  var FULL    = { x:0, y:0, w:W, h:H };
+  var SUMATRA = shot( 94.4, 107.6, -6.6,  6.4);
+  var JAVA    = shot(104.6, 118.6, -9.4, -4.8);
+  var BORNEO  = shot(108.5, 119.5, -1.0,  7.4);
+
+  /* Pull a frame back toward the plate without reaching it. */
+  function eased(base, factor){
+    var w = base.w / factor, h = base.h / factor;
+    return { x: base.x + (base.w - w) / 2, y: base.y + (base.h - h) / 2, w:w, h:h };
+  }
+
+  /* One keyframe per panel. The last card pulls back to the archipelago
+     but stops just short of the plate, so the closing click still has
+     somewhere to travel. At 1.25x the whole chain stays in frame, Aceh
+     and Timor included, and the click is a settle rather than a reveal. */
+  var ARCHIPELAGO = eased(FULL, 1.25);
+  var SHOTS = [FULL, SUMATRA, JAVA, BORNEO, ARCHIPELAGO];
+
+  var marks = [];              /* node dots and captions, counter-scaled */
+
+  function applyCam(vb){
+    lsvg.setAttribute('viewBox',
+      vb.x.toFixed(1) + ' ' + vb.y.toFixed(1) + ' ' + vb.w.toFixed(1) + ' ' + vb.h.toFixed(1));
+    /* The Furniture Holds Rule: zoom scales the geography, never the
+       chart's furniture. Blooms are the deliberate exception, because
+       their extent is a claim about the world. */
+    var z = W / vb.w;
+    lsvg.style.setProperty('--lz', z.toFixed(3));
+    var r = 3 / z, dy = 9 / z;
+    for (var i = 0; i < marks.length; i++){
+      marks[i].c.setAttribute('r', r.toFixed(2));
+      marks[i].t.setAttribute('y', (marks[i].y - dy).toFixed(2));
+    }
+  }
+
+  function lerpBox(a, b, t){
+    return { x:a.x + (b.x-a.x)*t, y:a.y + (b.y-a.y)*t,
+             w:a.w + (b.w-a.w)*t, h:a.h + (b.h-a.h)*t };
+  }
+  function clamp01(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
+
+  function camAt(s){
+    var i = Math.max(0, Math.min(SHOTS.length - 2, Math.floor(s)));
+    var t = clamp01(s - i);
+    return lerpBox(SHOTS[i], SHOTS[i+1], 1 - Math.pow(1 - t, 3));
+  }
+
+  /* ---- stage: the same geometry and the same marks as the plate ---- */
   var lGrat = el('g', { class:'graticule' });
   for (var lo = 95; lo <= 140; lo += 5) lGrat.appendChild(el('line', { x1:px(lo), y1:0, x2:px(lo), y2:H }));
   for (var la = 5; la >= -10; la -= 5) lGrat.appendChild(el('line', { x1:0, y1:py(la), x2:W, y2:py(la) }));
@@ -3114,56 +3264,175 @@ render();
   LAND_PTS.forEach(function(p){ lLand.appendChild(el('polygon', { class:'land', points:p })); });
   lsvg.appendChild(lLand);
 
-  /* Sriwijaya's bloom. Same tier gradients as the plate (ids resolve
-     document-wide), so the wash is literally the same mark. */
-  var SRI = MAPX['Sriwijaya'];
-  var gInfL = el('g', { class:'influence' });
-  var lBloom = el('g', { class:'bloom', opacity:0 });
-  SRI.nodes.forEach(function(n){
-    var mult = n.kind === 'capital' ? 1 : (n.kind === 'port' ? 0.72 : 0.55);
-    var r = SRI.reach * TIER_SCALE.high * mult * VIEW.k;
-    lBloom.appendChild(el('circle', {
-      cx: px(n.lon).toFixed(1), cy: py(n.lat).toFixed(1), r: r.toFixed(1),
-      fill: 'url(#bloom-high)'
-    }));
-  });
-  gInfL.appendChild(lBloom);
+  function entity(idName){
+    for (var i = 0; i < DATA.length; i++) if (DATA[i].name.id === idName) return DATA[i];
+    return null;
+  }
+
+  /* Same construction as the plate's blooms, including the tier scale,
+     so a medium-confidence power reads as visibly more diffuse. */
+  function bloomFor(e){
+    var g = el('g', { class:'bloom', opacity:0 });
+    e.nodes.forEach(function(n){
+      var mult = n.kind === 'capital' ? 1 : (n.kind === 'port' ? 0.72 : 0.55);
+      var r = e.reach * TIER_SCALE[e.conf] * mult * VIEW.k;
+      g.appendChild(el('circle', {
+        cx: px(n.lon).toFixed(1), cy: py(n.lat).toFixed(1), r: r.toFixed(1),
+        fill: 'url(#bloom-' + e.conf + ')'
+      }));
+    });
+    return g;
+  }
+
+  function nodesFor(e){
+    var g = el('g', { opacity:0 });
+    e.nodes.forEach(function(n){
+      var cy = py(n.lat);
+      var c = el('circle', { class:'lnode', cx:px(n.lon).toFixed(1), cy:cy.toFixed(1), r:3 });
+      var t = el('text', { class:'lncap', x:px(n.lon).toFixed(1), y:(cy - 9).toFixed(1) });
+      marks.push({ c:c, t:t, y:cy, label:n.label });
+      g.appendChild(c); g.appendChild(t);
+    });
+    return g;
+  }
+
+  var SRI = entity('Sriwijaya');          /* Sumatra, high confidence */
+  var MAJ = entity('Majapahit');          /* Java, medium confidence  */
+  var NEI = entity('Hindia Belanda');     /* the surveyed edge        */
+
+  var gInfL    = el('g', { class:'influence' });
+  var sriBloom = bloomFor(SRI); gInfL.appendChild(sriBloom);
+  var majBloom = bloomFor(MAJ); gInfL.appendChild(majBloom);
   lsvg.appendChild(gInfL);
 
-  /* The VOC's surveyed edge: the only thing on this stage allowed a hard
-     stroke, by the Surveyed Edge Rule. Same ring-within-reach test the
-     map runs, so the shape agrees with the plate. */
-  var VOC = MAPX['VOC (Kongsi Dagang Hindia Timur Belanda)'];
+  /* The only hard stroke permitted on this stage, by the Surveyed Edge
+     Rule. Same ring-within-reach test the plate runs. */
   var lHard = el('g', { class:'hard', opacity:0 });
   LAND.forEach(function(ring, ri){
     var pts = ring.split(' '), within = false;
     for (var q = 0; q < pts.length && !within; q += 2){
       var c = pts[q].split(','), rlo = +c[0], rla = +c[1];
-      within = VOC.nodes.some(function(n){
+      within = NEI.nodes.some(function(n){
         var dx = rlo - n.lon, dy = rla - n.lat;
-        return Math.sqrt(dx * dx + dy * dy) <= VOC.reach;
+        return Math.sqrt(dx * dx + dy * dy) <= NEI.reach;
       });
     }
     if (within) lHard.appendChild(el('polygon', { class:'hp', points: LAND_PTS[ri] }));
   });
   lsvg.appendChild(lHard);
 
-  /* Node dots and their captions. Bilingual like everything else. */
-  var lNodes = el('g', { opacity:0 });
-  var lCaps = [];
-  SRI.nodes.forEach(function(n){
-    lNodes.appendChild(el('circle', { class:'lnode', cx:px(n.lon).toFixed(1), cy:py(n.lat).toFixed(1), r:3 }));
-    var t = el('text', { class:'lncap', x:px(n.lon).toFixed(1), y:(py(n.lat) - 9).toFixed(1) });
-    lCaps.push({ el:t, label:n.label });
-    lNodes.appendChild(t);
-  });
-  lsvg.appendChild(lNodes);
+  var sriNodes = nodesFor(SRI); lsvg.appendChild(sriNodes);
+  var majNodes = nodesFor(MAJ); lsvg.appendChild(majNodes);
 
-  function fillCaps(){ lCaps.forEach(function(c){ c.el.textContent = c.label[S.lang]; }); }
+  function fillCaps(){
+    for (var i = 0; i < marks.length; i++) marks[i].t.textContent = marks[i].label[S.lang];
+  }
 
-  /* The door carries its own language pair, because the header's is behind
-     it. setLang is the map's own, so the two surfaces cannot drift: it
-     rewrites every data-i18n node in the document, this one included. */
+  /* ---- what is drawn at each point in the scroll ---- */
+  var panels = Array.prototype.slice.call(landing.querySelectorAll('.lpanel'));
+  function inAt(s, at){ return clamp01((s - at) / 0.7); }
+
+  function stageAt(s){
+    var sri = inAt(s, 0.45) * (1 - inAt(s, 1.50));
+    var maj = inAt(s, 1.50) * (1 - inAt(s, 2.50));
+    sriBloom.setAttribute('opacity', sri.toFixed(3));
+    sriNodes.setAttribute('opacity', sri.toFixed(3));
+    majBloom.setAttribute('opacity', maj.toFixed(3));
+    majNodes.setAttribute('opacity', maj.toFixed(3));
+    lHard.setAttribute('opacity', inAt(s, 2.40).toFixed(3));
+    applyCam(camAt(s));
+  }
+
+  var curS = 0, ticking = false, flying = false;
+  function onScroll(){
+    if (flying || ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      ticking = false;
+      var max = landing.scrollHeight - landing.clientHeight;
+      curS = (max > 0 ? landing.scrollTop / max : 0) * (panels.length - 1);
+      stageAt(curS);
+    });
+  }
+
+  /* ---- crossing in and back out ---- */
+  var closing = null;
+
+  function openDoor(){
+    clearTimeout(closing);
+    flying = false;
+    landing.hidden = false;
+    void landing.offsetHeight;               /* so a reopen fades rather than jumps */
+    landing.classList.remove('dismissing');
+    document.body.classList.add('landing-open');
+    landing.scrollTop = 0;
+    curS = 0;
+    fillCaps();
+    if (REDUCED){
+      /* No scroll dependency: the whole argument is present at rest. */
+      sriBloom.setAttribute('opacity', 0.7); sriNodes.setAttribute('opacity', 1);
+      majBloom.setAttribute('opacity', 0.7); majNodes.setAttribute('opacity', 1);
+      lHard.setAttribute('opacity', 1);
+      applyCam(FULL);
+      panels.forEach(function(p){ p.classList.add('in'); });
+    } else {
+      panels.forEach(function(p){ p.classList.remove('in'); });
+      panels[0].classList.add('in');
+      stageAt(0);
+    }
+    document.getElementById('l-skip').focus({ preventScroll:true });
+  }
+
+  function closeDoor(){
+    if (landing.hidden) return;
+    document.body.classList.remove('landing-open');
+    landing.classList.add('dismissing');
+    /* The scrubber rises into place as the door clears, so the reader
+       arrives at the control the last panel just told them to use. */
+    app.classList.remove('arriving');
+    void app.offsetHeight;
+    app.classList.add('arriving');
+    var done = function(){
+      landing.hidden = true;
+      flying = false;
+      var er = document.getElementById('era-range');
+      if (er) er.focus();
+    };
+    if (REDUCED) done(); else closing = setTimeout(done, 520);
+  }
+
+  /* The last camera move, and the only one the reader does not drive:
+     Borneo pulls back to the whole archipelago before the door clears,
+     so the instrument is already framed when it arrives. */
+  function zoomOutAndEnter(){
+    if (REDUCED || flying){ closeDoor(); return; }
+    flying = true;
+    var from = camAt(curS), t0 = null, D = 900;
+    var step = function(ts){
+      if (t0 === null) t0 = ts;
+      var t = clamp01((ts - t0) / D);
+      applyCam(lerpBox(from, FULL, 1 - Math.pow(1 - t, 4)));
+      if (t < 1) requestAnimationFrame(step); else closeDoor();
+    };
+    requestAnimationFrame(step);
+  }
+
+  landing.addEventListener('scroll', onScroll, { passive:true });
+  document.getElementById('l-enter').addEventListener('click', zoomOutAndEnter);
+  document.getElementById('l-skip').addEventListener('click', closeDoor);
+  landing.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') closeDoor(); });
+
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting) en.target.classList.add('in'); });
+    }, { root: landing, threshold: 0.3 });
+    panels.forEach(function(p){ io.observe(p); });
+  } else {
+    panels.forEach(function(p){ p.classList.add('in'); });
+  }
+
+  /* The door carries its own language pair, because the header's sits
+     behind it. setLang is the map's own, so the two cannot drift. */
   var lId = document.getElementById('l-id'), lEn = document.getElementById('l-en');
   function markLang(){
     lId.classList.toggle('active', S.lang === 'id');
@@ -3176,90 +3445,12 @@ render();
   document.getElementById('btn-en').addEventListener('click', markLang);
   markLang();
 
-  /* ---- scroll drives the sequence ---- */
-  var panels = Array.prototype.slice.call(landing.querySelectorAll('.lpanel'));
-  function clamp01(v){ return v < 0 ? 0 : (v > 1 ? 1 : v); }
-
-  function stageAt(s){
-    var b = clamp01((s - 0.55) / 0.85);          /* the wash arrives on panel 1 */
-    var fade = clamp01((s - 2.35) / 0.85);       /* and recedes as the line lands */
-    lBloom.setAttribute('opacity', (b * (1 - 0.72 * fade)).toFixed(3));
-    lNodes.setAttribute('opacity', clamp01((s - 0.15) / 0.65).toFixed(3));
-    lHard.setAttribute('opacity', clamp01((s - 2.15) / 0.75).toFixed(3));
-  }
-
-  var ticking = false;
-  function onScroll(){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){
-      ticking = false;
-      var max = landing.scrollHeight - landing.clientHeight;
-      stageAt((max > 0 ? landing.scrollTop / max : 0) * (panels.length - 1));
-    });
-  }
-
-  if (REDUCED){
-    /* No scroll dependency: the composed state is present from the start
-       and every panel reads as a static page. */
-    lBloom.setAttribute('opacity', 0.7);
-    lNodes.setAttribute('opacity', 1);
-    lHard.setAttribute('opacity', 1);
-    panels.forEach(function(p){ p.classList.add('in'); });
-  } else {
-    landing.addEventListener('scroll', onScroll, { passive:true });
-    onScroll();
-    if ('IntersectionObserver' in window){
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(en){ if (en.isIntersecting) en.target.classList.add('in'); });
-      }, { root: landing, threshold: 0.3 });
-      panels.forEach(function(p){ io.observe(p); });
-    } else {
-      panels.forEach(function(p){ p.classList.add('in'); });
-    }
-  }
-
-  /* ---- crossing into the map ---- */
-  var closing = null;
-  function openDoor(){
-    clearTimeout(closing);
-    landing.hidden = false;
-    void landing.offsetHeight;              /* so a reopen fades rather than jumps */
-    landing.classList.remove('dismissing');
-    document.body.classList.add('landing-open');
-    landing.scrollTop = 0;
-    if (!REDUCED){
-      /* Replay the sequence from the top rather than showing it spent. */
-      panels.forEach(function(p){ p.classList.remove('in'); });
-      panels[0].classList.add('in');
-      stageAt(0);
-    }
-    document.getElementById('l-skip').focus({ preventScroll:true });
-  }
-
-  function closeDoor(){
-    if (landing.hidden) return;
-    LS.set(LKEY, '1');
-    document.body.classList.remove('landing-open');
-    landing.classList.add('dismissing');
-    var done = function(){
-      landing.hidden = true;
-      var er = document.getElementById('era-range');
-      if (er) er.focus();
-    };
-    if (REDUCED) done(); else closing = setTimeout(done, 520);
-  }
-
-  document.getElementById('l-enter').addEventListener('click', closeDoor);
-  document.getElementById('l-skip').addEventListener('click', closeDoor);
-  landing.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') closeDoor(); });
-
   /* The way back, in the header where the other controls live. */
   var introBtn = document.getElementById('intro-btn');
   if (introBtn) introBtn.addEventListener('click', openDoor);
 
-  /* Keyboard-first, as the rail promises: focus starts inside the door. */
-  if (!seen) openDoor();
+  /* The door opens on every visit, by request. */
+  openDoor();
 })();
 
 
