@@ -448,6 +448,20 @@
     background: var(--cat); margin-right:8px; vertical-align:1px;
   }
   .ent .ey{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color: var(--ink-2); margin-top:3px; }
+  /* Where this power sits in its own arc at the scrubbed year, with the
+     plateau years spelled out so the reading is checkable rather than felt. */
+  .ent .phase{
+    font-family:'IBM Plex Mono', monospace; font-size:0.63rem; letter-spacing:0.09em;
+    text-transform:uppercase; color: var(--ink-3); margin-top:5px;
+  }
+  .ent .phase::before{
+    content:''; display:inline-block; width:14px; height:2px; border-radius:1px;
+    background: currentColor; margin-right:6px; vertical-align:3px;
+    transform-origin:left center;
+  }
+  .ent .phase.p-peak{ color: var(--gold); }
+  .ent .phase.p-rise::before{ transform: scaleX(0.55); }
+  .ent .phase.p-fall::before{ transform: scaleX(0.55); opacity:0.6; }
   .ent .ed{ font-size:0.82rem; color: var(--ink-2); line-height:1.55; margin-top:7px; display:none; }
   .ent.sel .ed{ display:block; }
   .ent .tag{
@@ -487,10 +501,10 @@
   }
 
   /* Study mode blurs names until revealed (FR-7). */
-  .app.study .ent .en, .app.study .ent .ey{ filter: blur(5px); transition: filter .13s; }
-  .app.study .ent:hover .en, .app.study .ent:hover .ey,
-  .app.study .ent.sel .en, .app.study .ent.sel .ey,
-  .app.study .ent.rv .en, .app.study .ent.rv .ey{ filter:none; }
+  .app.study .ent .en, .app.study .ent .ey, .app.study .ent .phase{ filter: blur(5px); transition: filter .13s; }
+  .app.study .ent:hover .en, .app.study .ent:hover .ey, .app.study .ent:hover .phase,
+  .app.study .ent.sel .en, .app.study .ent.sel .ey, .app.study .ent.sel .phase,
+  .app.study .ent.rv .en, .app.study .ent.rv .ey, .app.study .ent.rv .phase{ filter:none; }
   .app.study .rlabel text{ filter: blur(calc(4px / var(--mz))); transition: filter .13s; }
   .app.study .rlabel.rv text, .app.study .rlabel:hover text{ filter:none; }
 
@@ -872,12 +886,19 @@
   /* screen on dark (adds light), multiply on paper (adds pigment) */
   .influence{ mix-blend-mode: var(--blend); pointer-events:none; }
   .bloom{ transition: opacity .3s var(--ease-out); }
+  /* Reach eases as the power rises and falls; the reduced-motion block above
+     collapses this along with everything else. */
+  .bloom circle{ transition: r .35s var(--ease-out); }
 
   .hard{ pointer-events:none; }
+  /* The surveyed edge carries its own weight now: --ew is set per power per
+     year from vitality(), so the line is heaviest at the height of control
+     and thins as grip is lost. It stays solid and hard-edged throughout —
+     a declining survey is still a survey (DESIGN, The Surveyed Edge Rule). */
   .hard .hp{
     fill: var(--colonial-fill); stroke: var(--colonial);
-    stroke-width:0.9; stroke-linejoin:round; vector-effect: non-scaling-stroke;
-    transition: opacity .3s var(--ease-out);
+    stroke-width: var(--ew, 1.7); stroke-linejoin:round; vector-effect: non-scaling-stroke;
+    transition: opacity .3s var(--ease-out), stroke-width .3s var(--ease-out);
   }
 
   .route{
@@ -1583,6 +1604,11 @@ var CHROME = {
     colonial:{ id:"Kekuatan Kolonial", en:"Colonial Power" },
     modern:{ id:"Republik Indonesia", en:"Republic of Indonesia" }
   },
+  phaseLabel:{
+    rise:{ id:"Sedang menanjak", en:"Rising" },
+    peak:{ id:"Di puncak kekuasaan", en:"At its height" },
+    fall:{ id:"Sedang surut", en:"Declining" }
+  },
   confLabel:{
     high:{ id:"Keyakinan tinggi pada tahun ini", en:"High confidence on these dates" },
     medium:{ id:"Keyakinan sedang — sejarawan berbeda pendapat", en:"Medium confidence — historians differ" },
@@ -1804,6 +1830,50 @@ var MAPX = {
     N(106.83,-6.18,'capital','Jakarta','Jakarta') ]}
 };
 
+/* ------------------------------------------------------------------
+   PEAKS — the years a power actually held its height, keyed by name.id
+   as [from, to]. A span alone says a polity existed; it says nothing
+   about whether 1400 found Majapahit climbing or already coming apart.
+   Everything outside the plateau is read as rise or decline, so the
+   bloom contracts and the surveyed edge thins as grip is lost.
+
+   These are editorial calls anchored to the reigns named in each desc
+   (Iskandar Muda, Hayam Wuruk, Sultan Agung, Baabullah, Hasanuddin);
+   where no reign is attested the plateau is drawn wide on purpose,
+   because a narrow peak would be a claim the sources do not support.
+   ------------------------------------------------------------------ */
+var PEAKS = {
+  'Sriwijaya':                                   [800, 1000],
+  'Kesultanan Samudera Pasai':                   [1290, 1400],
+  'Kesultanan Aceh':                             [1607, 1636],
+  'Tarumanagara':                                [400, 460],
+  'Kalingga (Holing)':                           [655, 690],
+  'Dinasti Sailendra':                           [780, 830],
+  'Kerajaan Mataram Kuno (Medang)':              [850, 930],
+  'Kediri':                                      [1135, 1157],
+  'Singhasari':                                  [1268, 1292],
+  'Majapahit':                                   [1350, 1389],
+  'Kesultanan Demak':                            [1518, 1546],
+  'Kerajaan Pajang':                             [1570, 1582],
+  'Kesultanan Mataram (Islam)':                  [1613, 1645],
+  'Kesultanan Yogyakarta':                       [1755, 1810],
+  'Kasunanan Surakarta':                         [1755, 1810],
+  'Kutai Martadipura (Kalimantan)':              [400, 500],
+  'Kesultanan Kutai Kartanegara (Kalimantan)':   [1880, 1940],
+  'Kesultanan Gowa (Makassar, Sulawesi)':        [1600, 1667],
+  'Kesultanan Ternate (Maluku)':                 [1570, 1606],
+  'Kesultanan Tidore (Maluku)':                  [1560, 1620],
+  'Portugis di Maluku':                          [1520, 1570],
+  'VOC (Kongsi Dagang Hindia Timur Belanda)':    [1670, 1740],
+  'Hindia Belanda':                              [1900, 1940],
+  'Pendudukan Jepang':                           [1942, 1944],
+  'Proklamasi & Revolusi Nasional':              [1947, 1949],
+  'Demokrasi Liberal':                           [1955, 1956],
+  'Demokrasi Terpimpin (Soekarno)':              [1960, 1964],
+  'Orde Baru (Soeharto)':                        [1975, 1996],
+  'Era Reformasi':                               [2004, NOW]
+};
+
 /* Phase 0 gate: every entity must carry at least one node. */
 (function integrityCheck(){
   var missing = [];
@@ -1821,6 +1891,14 @@ DATA.forEach(function(e){
   var m = MAPX[e.name.id] || { reach:1.5, routes:[], nodes:[] };
   e.nodes = m.nodes; e.reach = m.reach; e.routes = m.routes || [];
   e.wide = !!m.wide; e.hardEdge = !!m.hard;
+  /* Fall back to the middle half of the span rather than to a point, so a
+     power with no attested peak reads as broadly steady, not as a spike. */
+  var pk = PEAKS[e.name.id];
+  if (!pk){
+    var d = e.end - e.start;
+    pk = [e.start + d * 0.25, e.end - d * 0.25];
+  }
+  e.peak = [Math.max(e.start, pk[0]), Math.min(e.end, pk[1])];
 });
 
 /* ==================================================================
@@ -2557,6 +2635,31 @@ function nameOf(e){ return e.name[S.lang]; }
 function endLabel(e){ return e.end === NOW ? T('present') : e.end; }
 function activeAt(e, y){ return y >= e.start && y <= e.end; }
 
+/* --- rise, peak, decline ---------------------------------------------
+   Returns 0.45–1: how firmly a power held in year y. On the plateau it is
+   1; either side it eases toward a floor, never to zero, because a polity
+   in decline is still on the map. This drives the bloom's radius and the
+   surveyed edge's weight — extent and grip, which is what those two marks
+   already mean. It deliberately does NOT touch bloom opacity: opacity is
+   spoken for by the confidence tier, and a fading Majapahit must not be
+   mistaken for a poorly attested one.                                  */
+var VIT_FLOOR = 0.45;
+function smooth(t){ t = t < 0 ? 0 : (t > 1 ? 1 : t); return t * t * (3 - 2 * t); }
+function vitality(e, y){
+  var p0 = e.peak[0], p1 = e.peak[1];
+  if (y >= p0 && y <= p1) return 1;
+  var span = y < p0 ? (p0 - e.start) : (e.end - p1);
+  if (span <= 0) return 1;
+  var t = y < p0 ? (y - e.start) / span : (e.end - y) / span;
+  return VIT_FLOOR + (1 - VIT_FLOOR) * smooth(t);
+}
+/* 'rise' | 'peak' | 'fall' — the same reading, in words, for the panel. */
+function phaseAt(e, y){
+  if (y < e.peak[0]) return 'rise';
+  if (y > e.peak[1]) return 'fall';
+  return 'peak';
+}
+
 function pointInPoly(lon, lat, poly){
   var inside = false;
   for (var i=0, j=poly.length-1; i<poly.length; j=i++){
@@ -2696,7 +2799,7 @@ DATA.forEach(function(e, i){
     var r = e.reach * TIER_SCALE[e.conf] * mult * VIEW.k;
     grp.appendChild(el('circle', {
       cx:px(n.lon).toFixed(1), cy:py(n.lat).toFixed(1), r:r.toFixed(1),
-      fill:'url(#bloom-' + e.conf + ')'
+      'data-r':r.toFixed(2), fill:'url(#bloom-' + e.conf + ')'
     }));
   });
   gInf.appendChild(grp);
@@ -3239,6 +3342,17 @@ var badgeYear = document.getElementById('badge-year');
 var badgeEra = document.getElementById('badge-era');
 var badgeCount = document.getElementById('badge-count');
 
+/* Rescale one power's bloom circles about their own centres. Cached per
+   group so a scrub that does not move a power's phase costs nothing. */
+function setBloomScale(grp, k){
+  if (grp.__bk === k) return;
+  grp.__bk = k;
+  var cs = grp.childNodes;
+  for (var q = 0; q < cs.length; q++){
+    cs[q].setAttribute('r', (+cs[q].getAttribute('data-r') * k).toFixed(1));
+  }
+}
+
 function render(){
   var y = S.year;
   var ov = activeOverlay(y);
@@ -3252,11 +3366,20 @@ function render(){
       activeCount++;
       e.routes.forEach(function(r){ activeRouteIds[r] = true; });
     }
-    if (bloomNodes[i]) bloomNodes[i].setAttribute('opacity', on ? 1 : 0);
+    var vit = on ? vitality(e, y) : 1;
+    if (bloomNodes[i]){
+      bloomNodes[i].setAttribute('opacity', on ? 1 : 0);
+      /* Reach contracts either side of the peak. Radius, not opacity — see
+         vitality(). Only recompute while the bloom is actually on screen. */
+      if (on) setBloomScale(bloomNodes[i], 0.58 + 0.42 * vit);
+    }
     /* While a faction overlay owns the map, the generic colonial hard edge
        would draw violet over every landmass and fight it. The overlay is the
        more precise statement for these years, so it wins. */
-    if (hardNodes[i]) hardNodes[i].setAttribute('opacity', (on && !ov) ? 1 : 0);
+    if (hardNodes[i]){
+      hardNodes[i].setAttribute('opacity', (on && !ov) ? 1 : 0);
+      if (on) hardNodes[i].style.setProperty('--ew', (1.0 + 1.7 * vit).toFixed(2));
+    }
     if (entNodeEls[i]) entNodeEls[i].setAttribute('opacity', on ? 0.9 : 0);
   });
 
@@ -3462,6 +3585,9 @@ function renderRail(){
             (e.wide ? '<span class="tag">' + esc(T('wide')) + '</span>' : '') + '</div>' +
           '<div class="ey">' + e.start + '–' + esc(String(endLabel(e))) +
             ' · ' + esc(CHROME.catNames[e.cat][S.lang]) + '</div>' +
+          '<div class="phase p-' + phaseAt(e, S.year) + '">' +
+            esc(CHROME.phaseLabel[phaseAt(e, S.year)][S.lang]) +
+            ' · ' + Math.round(e.peak[0]) + '–' + Math.round(e.peak[1]) + '</div>' +
           '<div class="ed">' + esc(e.desc[S.lang]) + '</div>' +
           loreHtml(e) +
           '<div class="conf">' + esc(CHROME.confLabel[e.conf][S.lang]) + '</div>' +

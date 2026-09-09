@@ -197,6 +197,8 @@ The map is the instrument; the landing page is its front door, and it is deliber
 
 **The Surveyed Edge Rule.** A hard stroke is permitted only on Survey Violet, the Van Mook Line and the Republic's negotiated zones. Every pre-colonial entity is a radial bloom whose diffusion is set by confidence tier: high (.62/.36/.13/0), medium (.46/.28/.10/0), low (.32/.21/.08/0).
 
+**The Peak-and-Decline Rule.** Every power carries a peak plateau (`PEAKS`, keyed by name id) alongside its span, and `vitality()` returns 0.45–1 for the scrubbed year: 1 across the plateau, easing to the floor at either end. Vitality drives two things and only two: the bloom's **radius** (×0.58–1.00) and the surveyed edge's **stroke width** (1.0–2.7px). It must never drive bloom opacity — opacity is spoken for by the confidence tier, and a Majapahit in decline must not read as a Majapahit poorly attested. The rail states the same reading in words (Rising / At its height / Declining) with the plateau years, so the claim is checkable rather than only felt.
+
 **The Not-Red Rule.** Red is the Republic's. The PKI is plum; the killings are umber; the modern category is charcoal.
 
 ## 3. Typography
@@ -276,7 +278,7 @@ The six sub-themes below the plate. A stack of hairline-separated sections, neve
 Bottom-right of the plate, three stacked 30px keys on the legend panel treatment (translucent Paper Surface, 1px Paper Line, 6px radius): a plus, a minus, and a mono readout of the current factor that doubles as the way back to the whole map. Ink, never gold, under the Ink Controls Rule. Disabled at the ends of the range at 38% opacity. The map answers wheel, drag and pinch as well, and holds `touch-action: pan-y` at the default frame so a phone still scrolls the page, taking the gesture only once zoomed.
 
 ### The Influence Bloom
-The signature mark. A radial gradient from each capital or port node, radius set by reach, confidence tier and view scale, filled with Sienna Wash on paper (multiply) or Tribute Gold on night (screen). Three gradient definitions, one per tier, differ only in stop opacities so that lower confidence is visibly more diffuse. Nodes are 3px Tribute Gold Warm dots with haloed mono captions. Blooms fade in and out over 300ms; region hover shows a dashed 0.8px gold outline at 7% fill, selection a solid one at 10%.
+The signature mark. A radial gradient from each capital or port node, radius set by reach, confidence tier and view scale, filled with Sienna Wash on paper (multiply) or Tribute Gold on night (screen). Three gradient definitions, one per tier, differ only in stop opacities so that lower confidence is visibly more diffuse. Nodes are 3px Tribute Gold Warm dots with haloed mono captions. Radius is additionally scaled by vitality, so reach visibly contracts either side of a power's peak (see The Peak-and-Decline Rule). Blooms fade in and out over 300ms, radius eases over 350ms; region hover shows a dashed 0.8px gold outline at 7% fill, selection a solid one at 10%.
 
 ### Faction Overlays
 1945-49 and 1955 zones: 1.1px stroke, 15% fill, in the channel colour; diffuse control uses a 5 4 dash and 9% fill. The Van Mook Line: 1.6px in near-black ink (#2a2116, #e8dcc0 on night) with a 9 3 2 3 dash, the hardest edge on the map. 1965-66: 1px Violence Umber stroke over a hatch pattern, never a bloom. Point events are 1.3px hollow circles with haloed captions.
@@ -285,6 +287,7 @@ The signature mark. A radial gradient from each capital or port node, radius set
 
 ### Do:
 - **Do** render every pre-colonial entity as a radial bloom whose diffusion follows its confidence tier. Low confidence must look blurrier.
+- **Do** give every new power a `PEAKS` entry. Without one it falls back to the middle half of its span, which reads as "steady throughout" — true for some polities, lazy for the rest.
 - **Do** keep the "approximate spheres of influence" caveat visible in both languages on every era view.
 - **Do** keep controls in Control Ink and let only the Sea Lanes toggle borrow its layer's teal.
 - **Do** pair every coloured channel with a label, dash pattern, hatch or legend row.
@@ -297,6 +300,7 @@ The signature mark. A radial gradient from each capital or port node, radius set
 ### Don't:
 - **Don't** let the chapters become a browsable card grid of portraits or tiles. They are a table of contents for the scrubber; every row must drive the map.
 - **Don't** build dashboard chrome on the map plate: no SaaS panels, card grids, KPI tiles, glass blur, or accent stripes. (The landing surface may use frosted glass on its hero card — see §2.)
+- **Don't** encode rise and decline as opacity, colour or a dashed edge. Opacity means confidence, colour means legend, and a dash means diffuse control; phase is radius and stroke weight.
 - **Don't** assert territory: no filled polygon with a hard border for any pre-colonial polity, no faction colour claiming land, no Majapahit shape drawn as fact.
 - **Don't** add heritage decoration: no batik, wayang silhouettes, or flag red-and-white as ornament.
 - **Don't** use `border-left` or `border-right` wider than 1px as a coloured accent. Selection is a full hairline plus a wash; category is a leading dot.
