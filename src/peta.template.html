@@ -247,6 +247,13 @@
   .rl-minor{ stroke: var(--rl-minor); stroke-width:.8; }
   .rl-break{ stroke: var(--rl-break); stroke-width:1; stroke-dasharray:2 3; }
   .rl-lab{ fill: var(--rl-lab); font-size:9px; font-family:'IBM Plex Mono', monospace; }
+  /* Year labels live in HTML, not the stretched SVG, so their glyphs keep
+     their aspect ratio however wide the scrubber is drawn. */
+  .rl-labs{ position:absolute; left:0; right:0; bottom:2px; height:11px; pointer-events:none; }
+  .rl-labs span{ position:absolute; bottom:0; transform:translateX(-50%);
+    color: var(--rl-lab); font:9px/1 'IBM Plex Mono', monospace; white-space:nowrap; }
+  .rl-labs span[data-a="start"]{ transform:none; }
+  .rl-labs span[data-a="end"]{ transform:translateX(-100%); }
   #thr{ stroke: var(--thr); stroke-width:1; stroke-opacity:.55; }
   .dutch-dot{ fill: var(--colonial); fill-opacity:.30; stroke: var(--colonial); stroke-width:1.1; vector-effect: non-scaling-stroke; r: calc(4.5px / var(--mz)); }
 
@@ -467,6 +474,18 @@
      is keyed by a hanging monospace label so the three read as a set. */
   .ent .lore{ display:none; margin-top:11px; }
   .ent.sel .lore{ display:grid; gap:9px; }
+  /* Historical image for the selected entity. Rendered only for the open
+     card and set just beneath it, so the credit link lives outside the
+     card's own button rather than nesting interactive elements. */
+  .ent-fig{ display:block; margin:-3px 0 2px; padding:0 2px; }
+  .ent-fig img{ display:block; width:100%; height:auto; max-height:220px;
+    object-fit:cover; border:1px solid var(--line); border-radius:3px;
+    background: var(--surface-3); }
+  .ent-cap{ font-size:0.68rem; color: var(--ink-3); line-height:1.5; margin-top:5px;
+    font-family:'IBM Plex Mono', monospace; }
+  .ent-cap a{ color: var(--ink-2); text-decoration:underline; text-underline-offset:2px; }
+  .ent-cap a:hover{ color: var(--ink-1); }
+  .ent-cap .unv{ color: var(--rl-break); }
   .lore .lr{ font-size:0.82rem; color: var(--ink-2); line-height:1.6; }
   .lore .lk{
     display:block; font-family:'IBM Plex Mono', monospace; font-size:0.6rem;
@@ -1372,6 +1391,7 @@
     </div>
     <div class="track">
       <svg class="ruler" id="ruler" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="rl-labs" id="rl-labs" aria-hidden="true"></div>
       <input type="range" class="era" id="era-range" min="0" max="1520" step="1" value="0">
     </div>
     <div class="era-names" id="era-names"></div>
@@ -1520,35 +1540,35 @@ var CHROME = {
   railToggle:{ id:"Panel keterangan", en:"Detail panel" },
   landSkip:{ id:"Langsung ke peta", en:"Skip to the map" },
   landCue:{ id:"Gulir", en:"Scroll" },
-  landKicker:{ id:"300 M – Sekarang", en:"300 CE – Present" },
-  landTitle:{ id:"Kekuasaan di sini dijelaskan oleh posisi.", en:"Power here is explained by position." },
+  landKicker:{ id:"Peta Nusantara", en:"Peta Nusantara" },
+  landTitle:{ id:"Sejarah Kerajaan Indonesia dalam Peta & Garis Waktu", en:"The History of Indonesia's Kingdoms in Map & Timeline" },
   landLede:{
-    id:"Peta sejarah Nusantara, dari kerajaan tercatat pertama sampai hari ini. Tiga hal sebelum Anda masuk.",
-    en:"A historical map of the archipelago, from the first recorded kingdom to today. Three things before you go in."
+    id:"Jelajahi sejarah Nusantara lewat peta interaktif: dari migrasi Austronesia hingga Modern Indonesia.",
+    en:"Explore the history of the Indonesian archipelago on an interactive map: from Austronesian migration to modern Indonesia."
   },
-  land1Kicker:{ id:"01 · Sumatra", en:"01 · Sumatra" },
-  land1Title:{ id:"Selat, bukan wilayah", en:"Straits, not territory" },
+  land1Kicker:{ id:"01 · Lebih dari seribu tahun", en:"01 · More than a thousand years" },
+  land1Title:{ id:"Kisah yang dimulai jauh sebelum “Indonesia”", en:"A story that began long before “Indonesia”" },
   land1Body:{
-    id:"Palembang terletak di hulu Sungai Musi, cukup dekat ke mulut Selat Malaka untuk mengawasinya dan cukup jauh ke hulu untuk dipertahankan. Siapa yang memegang selat memungut pajak dari hampir seluruh lalu lintas India ke Tiongkok.",
-    en:"Palembang sits up the Musi river, close enough to the mouth of the Malacca Strait to police it and far enough inland to be defensible. Whoever holds the strait taxes nearly everything moving between India and China."
+    id:"Jauh sebelum ada negara bernama Indonesia, kepulauan ini sudah menjadi panggung kerajaan, pelabuhan, dan pelaut yang menghubungkan dunia. Sejarahnya membentang lebih dari seribu tahun.",
+    en:"Long before there was a country called Indonesia, this archipelago was a stage for kingdoms, ports, and seafarers who linked the world. Its history reaches back more than a thousand years."
   },
-  land2Kicker:{ id:"02 · Jawa", en:"02 · Java" },
-  land2Title:{ id:"Pengaruh membaur, bukan berbatas", en:"Influence blooms, it does not border" },
+  land2Kicker:{ id:"02 · Kekuasaan", en:"02 · Power" },
+  land2Title:{ id:"Kerajaan yang bangkit, berkuasa, lalu runtuh", en:"Kingdoms that rose, ruled, then fell" },
   land2Body:{
-    id:"Majapahit memerintah dari Trowulan, di pedalaman delta Brantas. Nagarakertagama tahun 1365 mendaftar puluhan tempat pengirim upeti: itu daftar hubungan, bukan survei batas wilayah. Karena catatannya sendiri lebih tidak pasti daripada Sriwijaya, washnya digambar lebih baur.",
-    en:"Majapahit ruled from Trowulan, inland on the Brantas delta. The Nagarakertagama of 1365 lists dozens of tribute-sending places: a list of relationships, not a boundary survey. Because its own record is less certain than Srivijaya's, its wash is drawn more diffuse."
+    id:"Dinasti demi dinasti menguasai jalur dagang, mengumpulkan kekayaan, lalu memudar. Setiap peralihan kekuasaan meninggalkan jejak dalam bahasa, kepercayaan, dan batas yang kita warisi hari ini.",
+    en:"Dynasty after dynasty seized the trade routes, amassed wealth, then faded. Every shift of power left a mark in the language, belief, and borders we inherit today."
   },
-  land3Kicker:{ id:"03 · Kalimantan", en:"03 · Borneo" },
-  land3Title:{ id:"Lalu seseorang mengukurnya", en:"Then someone surveyed it" },
+  land3Kicker:{ id:"03 · Warisan", en:"03 · Legacy" },
+  land3Title:{ id:"Dan semuanya masih membentuk hari ini", en:"And it all still shapes today" },
   land3Body:{
-    id:"Hindia Belanda menggambar tepi administratif yang keras, karena kali ini memang ada surveyor yang mengukurnya. Di Kalimantan bedanya paling terlihat: pesisir yang tadinya hanya diwarnai wash kini bergaris ukur. Peralihan dari wash ke garis inilah argumen peta ini.",
-    en:"The Dutch East Indies drew a hard administrative edge, because this time surveyors actually measured one. Borneo shows the difference plainly: a coast that carried nothing but a fading wash now carries a surveyed line. That shift, from wash to line, is this map's argument."
+    id:"Memahami masa lalu Nusantara berarti memahami bagaimana Indonesia modern terbentuk. Peta ini mengajak Anda menelusurinya sendiri, satu abad demi satu abad.",
+    en:"To understand the archipelago's past is to understand how modern Indonesia was formed. This map invites you to trace it yourself, one century at a time."
   },
   landEnterKicker:{ id:"Peta", en:"The map" },
-  landEnterTitle:{ id:"Sekarang geser waktunya sendiri", en:"Now move the time yourself" },
+  landEnterTitle:{ id:"Sekarang geser waktunya sendiri", en:"Now move through time yourself" },
   landEnterBody:{
-    id:"Tarik penggeser era melintasi tahun 1600 dan lihat pengaruh yang baur berganti menjadi garis terukur. Dua bahasa, dua tema, dan setiap warna adalah entri legenda.",
-    en:"Drag the era scrubber across 1600 and watch diffuse influence give way to a surveyed line. Two languages, two themes, and every colour is a legend entry."
+    id:"Tarik penggeser era dan saksikan kerajaan bermunculan, meluas, dan menyusut sepanjang berabad-abad. Klik wilayah mana pun untuk membaca kisahnya.",
+    en:"Drag the era scrubber and watch kingdoms emerge, expand, and contract across the centuries. Click any region to read its story."
   },
   landEnter:{ id:"Buka peta", en:"Open the map" },
 
@@ -1720,6 +1740,40 @@ var DATA = [
     'Periode demokratisasi setelah jatuhnya Soeharto: kebebasan pers, otonomi daerah, dan pemilu presiden langsung sejak 2004; berlanjut hingga sekarang.',
     'The democratization period after Suharto’s fall: press freedom, regional autonomy, and direct presidential elections since 2004; continues to the present.')
 ];
+
+/* ==================================================================
+   ENTITY IMAGERY — one historical image per entity, shown on the
+   selected card. Keyed by name.id. Every file is a Wikimedia Commons
+   image tracked in `source images/`; `p` is its Commons page and `lic`
+   is its licence status. Most are `unv` (unverified) and must be
+   confirmed on the Commons page before this ships publicly — CC-BY-SA
+   files carry a credit requirement (see source images/SOURCES.md).
+   ================================================================== */
+var IMG_DIR = 'source images/';
+var IMG = {
+  'Sriwijaya':                                   { f:'KedukanBukit001.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:KedukanBukit001.jpg' },
+  'Kesultanan Aceh':                             { f:'Letter_to_James_I_from_Sultan_Iskandar_Muda_of_Aceh_in_1615.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Letter_to_James_I_from_Sultan_Iskandar_Muda_of_Aceh_in_1615.jpg' },
+  'Tarumanagara':                                { f:'Prasasti_Ciaruteun.jpg', lic:'ccbysa', p:'https://commons.wikimedia.org/wiki/File:Prasasti_Ciaruteun.JPG' },
+  'Dinasti Sailendra':                           { f:'Sailendra_King_and_Queen,_Borobudur.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Sailendra_King_and_Queen,_Borobudur.jpg' },
+  'Kerajaan Mataram Kuno (Medang)':              { f:'Shiva_Temple_of_Prambanan_in_Java_Indonesia.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Shiva_Temple_of_Prambanan_in_Java_Indonesia.jpg' },
+  'Singhasari':                                  { f:'Prajnaparamita_Java.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Prajnaparamita_Java.jpg' },
+  'Majapahit':                                   { f:'Nagarakertagama.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Nagarakertagama.jpg' },
+  'Kesultanan Demak':                            { f:'Masjid_Agung_Demak.jpg', lic:'ccbysa', p:'https://commons.wikimedia.org/wiki/File:Masjid_Agung_Demak.jpg' },
+  'Kesultanan Mataram (Islam)':                  { f:'Anyakrakusuma.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Anyakrakusuma.jpg' },
+  'Kasunanan Surakarta':                         { f:'Keraton_Kasunanan_Surakarta_Hadiningrat.jpg', lic:'ccbysa', by:'Jo Chryst', p:'https://commons.wikimedia.org/wiki/File:Keraton_Kasunanan_Surakarta_Hadiningrat.jpg' },
+  'Kutai Martadipura (Kalimantan)':              { f:'Kutai_Prasasti_of_Mulawarman.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Kutai_Prasasti_of_Mulawarman.JPG' },
+  'Kesultanan Kutai Kartanegara (Kalimantan)':   { f:'Singgasana_Kesultanan_Kutai.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Singgasana_Kesultanan_Kutai.jpg' },
+  'Kesultanan Gowa (Makassar, Sulawesi)':        { f:'The_capture_of_Makassar_from_Gowa_rule_by_the_VOC_and_Bone_forces,_1669.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:The_capture_of_Makassar_from_Gowa_rule_by_the_VOC_and_Bone_forces,_1669.jpg' },
+  'Kesultanan Ternate (Maluku)':                 { f:'Ternate,_Keraton.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/Category:Palace_of_the_Sultan_of_Ternate' },
+  'Kesultanan Tidore (Maluku)':                  { f:'Saifuddin_of_Tidore.JPG', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Saifuddin_of_Tidore.JPG' },
+  'Portugis di Maluku':                          { f:'Ruins_of_Kastella,_Ternate.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Ruins_of_Kastella,_Ternate.jpg' },
+  'VOC (Kongsi Dagang Hindia Timur Belanda)':    { f:'Andries_Beeckman_-_The_Castle_of_Batavia.jpg', lic:'pd', p:'https://commons.wikimedia.org/wiki/File:Andries_Beeckman_-_The_Castle_of_Batavia.jpg' },
+  'Proklamasi & Revolusi Nasional':              { f:'Indonesia_declaration_of_independence_17_August_1945.jpg', lic:'pd', p:'https://commons.wikimedia.org/wiki/File:Indonesia_declaration_of_independence_17_August_1945.jpg' },
+  'Demokrasi Liberal':                           { f:'1955_Indonesian_Election_Posters.png', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:1955_Indonesian_Election_Posters.png' },
+  'Demokrasi Terpimpin (Soekarno)':              { f:"1959_Sukarno's_Presidential_Decree.jpg", lic:'unv', p:'https://commons.wikimedia.org/wiki/File:1959_Sukarno%27s_Presidential_Decree.jpg' },
+  'Orde Baru (Soeharto)':                        { f:'Suhartoappointedpresident.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Suhartoappointedpresident.jpg' },
+  'Era Reformasi':                               { f:'Suharto_resigns.jpg', lic:'unv', p:'https://commons.wikimedia.org/wiki/File:Suharto_resigns.jpg' }
+};
 
 /* ==================================================================
    MAP EXTENSION — nodes (lon/lat), reach in degrees, sea lanes.
@@ -2969,17 +3023,18 @@ function rx(pos){ return (pos / PMAX) * RW; }
   ruler.appendChild(gh);
   ruler._thr = thr;
 
-  /* year labels under the majors, one per segment boundary + a few anchors */
-  var gl = el('g');
+  /* Year labels under the majors, one per segment boundary + a few anchors.
+     Drawn as HTML positioned by percent (like the era dots) so the stretched
+     ruler never distorts their glyphs. */
+  var labs = document.getElementById('rl-labs');
   [300, 1000, 1500, 1800, 1945, NOW].forEach(function(y){
-    var X = rx(posFromYear(y));
-    var anchor = y === 300 ? 'start' : (y === NOW ? 'end' : 'middle');
-    var t = el('text', { x:X.toFixed(2), y:57, 'text-anchor':anchor,
-      class:'rl-lab' });
-    t.textContent = y === NOW ? String(NOW) : String(y);
-    gl.appendChild(t);
+    var pct = (posFromYear(y) / PMAX) * 100;
+    var s = document.createElement('span');
+    s.dataset.a = y === 300 ? 'start' : (y === NOW ? 'end' : 'middle');
+    s.style.left = pct.toFixed(3) + '%';
+    s.textContent = y === NOW ? String(NOW) : String(y);
+    labs.appendChild(s);
   });
-  ruler.appendChild(gl);
 })();
 
 
@@ -3409,6 +3464,26 @@ function loreHtml(e){
     '</div>';
 }
 
+/* The selected entity's historical image, with an honest credit line.
+   Only built for the open card, so a single image loads at a time. */
+function imgFigureHtml(e){
+  var im = IMG[e.name.id];
+  if (!im) return '';
+  var src = encodeURI(IMG_DIR + im.f);
+  var lic;
+  if (im.lic === 'pd')       lic = S.lang === 'id' ? 'Domain publik' : 'Public domain';
+  else if (im.lic === 'ccbysa') lic = 'CC BY-SA' + (im.by ? ' · ' + im.by : '');
+  else lic = '<span class="unv">' + (S.lang === 'id' ? 'lisensi belum diverifikasi' : 'licence not yet verified') + '</span>';
+  var via = S.lang === 'id' ? 'Sumber: Wikimedia Commons' : 'Source: Wikimedia Commons';
+  return '<figure class="ent-fig">' +
+    '<img src="' + src + '" alt="' + esc(nameOf(e)) + '" loading="lazy" decoding="async">' +
+    '<figcaption class="ent-cap">' +
+      '<a href="' + esc(im.p) + '" target="_blank" rel="noopener noreferrer">' + esc(via) + ' ↗</a>' +
+      ' · ' + lic +
+    '</figcaption>' +
+  '</figure>';
+}
+
 /* The deep-time prologue. Shown before the first recorded kingdom, because
    "the beginning" of this map is 350 CE and that is not the beginning. */
 function prologueBlockHtml(){
@@ -3466,7 +3541,8 @@ function renderRail(){
           '<div class="ed">' + esc(e.desc[S.lang]) + '</div>' +
           loreHtml(e) +
           '<div class="conf">' + esc(CHROME.confLabel[e.conf][S.lang]) + '</div>' +
-        '</button>';
+        '</button>' +
+        (S.entity === i ? imgFigureHtml(e) : '');
     });
     html += '</div>';
   }
@@ -3960,7 +4036,7 @@ render();
      somewhere to travel. At 1.25x the whole chain stays in frame, Aceh
      and Timor included, and the click is a settle rather than a reveal. */
   var ARCHIPELAGO = eased(FULL, 1.25);
-  var SHOTS = [FULL, SUMATRA, JAVA, BORNEO, ARCHIPELAGO];
+  var SHOTS = [FULL, SUMATRA, eased(JAVA, 0.82), BORNEO, ARCHIPELAGO];
 
   var marks = [];              /* node dots and captions, counter-scaled */
 
@@ -4132,6 +4208,10 @@ render();
     var done = function(){
       landing.hidden = true;
       flying = false;
+      /* Arrive with the detail panel already open, so the map is never
+         handed over with its right column looking empty or hidden. */
+      if (!S.rail){ S.rail = true; applyRail(); LS.set('nusantara-map-rail', '1'); }
+      render();
       var er = document.getElementById('era-range');
       if (er) er.focus();
     };
