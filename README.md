@@ -62,6 +62,15 @@ Beberapa keputusan tampilannya sengaja menyimpang dari papan analitik biasa:
 Warna pulau dan jenis peristiwa hidup di `ui/Palette.java` karena bergantung pada
 data; token netral ada di `ui/nusantara.css`.
 
+## Pratinjau rancangan
+
+`design/garis-waktu-mockup.html` adalah maket rancangan yang disetujui: buka
+langsung di peramban, tanpa server.
+
+Maket itu **bukan** aplikasinya. Datanya disalin ke dalam literal JavaScript,
+jadi ia tidak ikut berubah ketika berkas data Java diperbarui. Anggap sebagai
+acuan tampilan; sumber kebenaran tetap `data/` dan `events/`.
+
 ## Menjalankan
 
 Antarmuka membutuhkan JavaFX. Cara termudah adalah Azul Zulu FX, yaitu JDK yang
