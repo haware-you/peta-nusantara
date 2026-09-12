@@ -1,0 +1,11 @@
+# Hasil kompilasi
+out/
+*.class
+
+# Perkakas
+.idea/
+*.iml
+.vscode/
+.gradle/
+build/
+target/
