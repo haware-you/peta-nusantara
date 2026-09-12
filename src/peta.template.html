@@ -579,8 +579,13 @@
 
   .track{ position: relative; height: 62px; }
 
-  /* density histogram + engraved ruler live in one SVG behind the input */
-  svg.ruler{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  /* Density histogram + engraved ruler live in one SVG behind the input.
+     Anchored to the bottom 62px rather than stretched over the whole
+     track: the lanes already reserve exactly that strip, and stretching
+     the drawing vertically magnified the engraving and its year labels
+     to several times their size once the lanes opened. Horizontal
+     stretch remains, which is why no type is drawn into the bars. */
+  svg.ruler{ position:absolute; left:0; right:0; bottom:0; width:100%; height:62px; pointer-events:none; }
 
   input[type=range].era{
     -webkit-appearance:none; appearance:none;
@@ -857,6 +862,64 @@
     background: var(--gold); opacity:.55;
     pointer-events:none; transform: translateX(-0.5px);
   }
+
+  /* ======================= The window =========================
+     SEGMENTS makes the whole range readable; it cannot make a decade
+     legible. At full extent 1350-1400 is about 27px wide, so a single
+     year is unreadable however far the lanes stretch. The window narrows
+     the axis the lanes, the engraved ruler and the gold thumb already
+     share, so it stays the same instrument rather than becoming a new one.
+
+     Stretched only. Collapsed, the full range IS the view, and a locator
+     would be chrome with nothing to locate. */
+  .scrub-head-r{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .win{ display:none; align-items:center; gap:8px; }
+  .scrub.windowed .win{ display:inline-flex; }
+  .win-lab{
+    font-family:'IBM Plex Mono', monospace; font-size:0.55rem; letter-spacing:0.12em;
+    text-transform:uppercase; color: var(--ink-3); font-weight:600;
+  }
+  .win-read{
+    font-family:'IBM Plex Mono', monospace; font-size:0.62rem; letter-spacing:0.06em;
+    color: var(--ink-2); font-variant-numeric: tabular-nums;
+  }
+
+  /* The locator carries the full range: hairlines, the two scale breaks
+     the ruler already marks, and the gold window. No histogram and no
+     second colour — it locates, it does not report. */
+  .ctx{ display:none; position:relative; height:20px; margin-bottom:6px; cursor:crosshair; }
+  .scrub.windowed .ctx{ display:block; }
+  .ctx-base{ position:absolute; left:0; right:0; top:9px; height:1px; background: var(--line); }
+  .ctx-tick{ position:absolute; top:6px; width:1px; height:7px; background: var(--rl-minor); transform: translateX(-.5px); }
+  .ctx-break{ position:absolute; top:2px; width:1px; height:15px; background: var(--rl-break); transform: translateX(-.5px); }
+  .ctx-win{
+    position:absolute; top:0; bottom:0;
+    background: var(--sel-wash); border:1px solid var(--gold);
+    border-radius:2px; cursor:grab;
+  }
+  .ctx-win:active{ cursor:grabbing; }
+  .ctx-h{
+    position:absolute; top:1px; width:7px; height:18px; margin-left:-3.5px;
+    padding:0; border:none; border-radius:2px;
+    background: var(--gold-warm); cursor:ew-resize;
+  }
+  .ctx-h:focus-visible{ outline:2px solid var(--ui-ring); outline-offset:2px; }
+
+  /* A clipped edge is not a feathered edge. The feather says the date is
+     uncertain; a clip says only that the window stops here. Squaring the
+     clipped side and dropping its fade keeps the window from manufacturing
+     doubt the record does not carry. */
+  .bar.clip-s{
+    border-top-left-radius:0; border-bottom-left-radius:0;
+    -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--f)), transparent 100%);
+            mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - var(--f)), transparent 100%);
+  }
+  .bar.clip-e{
+    border-top-right-radius:0; border-bottom-right-radius:0;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--f), #000 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 var(--f), #000 100%);
+  }
+  .bar.clip-s.clip-e{ -webkit-mask-image:none; mask-image:none; }
 
   @media (prefers-reduced-motion: reduce){
     .track, .lanes{ transition:none; }
@@ -1386,9 +1449,24 @@
         <div class="scrub-title" data-i18n="scrubTitle"></div>
         <div class="scrub-hint" data-i18n="scrubHint"></div>
       </div>
-      <button type="button" class="pill" id="lane-btn" aria-pressed="false" aria-controls="era-range">
-        <span class="knob"></span><span data-i18n="laneToggle"></span>
-      </button>
+      <div class="scrub-head-r">
+        <div class="win" role="group" aria-labelledby="win-lab">
+          <span class="win-lab" id="win-lab" data-i18n="winLabel"></span>
+          <span class="seg" id="zoom-seg"></span>
+          <span class="win-read" id="win-read"></span>
+        </div>
+        <button type="button" class="pill" id="lane-btn" aria-pressed="false" aria-controls="era-range">
+          <span class="knob"></span><span data-i18n="laneToggle"></span>
+        </button>
+      </div>
+    </div>
+    <div class="ctx" id="ctx">
+      <div class="ctx-base" aria-hidden="true"></div>
+      <div class="ctx-win" id="ctx-win" aria-hidden="true"></div>
+      <button type="button" class="ctx-h" id="ctx-h0" role="slider"
+              aria-valuemin="300" aria-valuemax="2026" aria-valuenow="300"></button>
+      <button type="button" class="ctx-h" id="ctx-h1" role="slider"
+              aria-valuemin="300" aria-valuemax="2026" aria-valuenow="2026"></button>
     </div>
     <div class="track">
       <svg class="ruler" id="ruler" preserveAspectRatio="none" aria-hidden="true"></svg>
@@ -1451,6 +1529,11 @@ var CHROME = {
     en:"Drag freely — the handle settles on era boundaries. Left/right arrows step between eras."
   },
   laneToggle:{ id:"Rentangkan", en:"Stretch" },
+  winLabel:{ id:"Jendela", en:"Window" },
+  winFull:{ id:"Penuh", en:"Full" },
+  winSpan:{ id:"Jendela sepanjang tahun:", en:"Window spanning years:" },
+  winFrom:{ id:"Awal jendela:", en:"Window start:" },
+  winTo:{ id:"Akhir jendela:", en:"Window end:" },
   chapKicker:{ id:"Enam Sub-Tema", en:"Six Sub-Themes" },
   chapTitle:{ id:"Membaca peta ini menurut babnya", en:"Reading this map by its chapters" },
   chapLede:{
@@ -3015,48 +3098,71 @@ var range = document.getElementById('era-range');
 var eraNames = document.getElementById('era-names');
 var RW = 1000, RH = 62;                 /* ruler is drawn in its own units and stretched */
 ruler.setAttribute('viewBox', '0 0 ' + RW + ' ' + RH);
-function rx(pos){ return (pos / PMAX) * RW; }
 
-(function buildRuler(){
-  /* density: how many entities are active at each sample. Sparse centuries
-     then read as "little recorded here" rather than broken UI (FR-8c). */
-  var SAMPLES = 200, counts = [], max = 0;
-  for (var i=0;i<SAMPLES;i++){
-    var y = yearFromPos((i + 0.5) / SAMPLES * PMAX);
+/* The visible slice of the axis, in the chart's position units. Full
+   extent by default, so nothing about the collapsed view changes. */
+var V = { p0:0, p1:PMAX };
+function rx(pos){ return ((pos - V.p0) / (V.p1 - V.p0)) * RW; }
+function vpct(pos){ return ((pos - V.p0) / (V.p1 - V.p0)) * 100; }
+
+/* Density is sampled once over the whole axis and resampled per window.
+   Sampling it again on every drag would walk DATA 200 times a frame. */
+var DSAMP = 760, DENS = [], DMAX = 0;
+(function measureDensity(){
+  for (var i=0;i<DSAMP;i++){
+    var y = yearFromPos((i + 0.5) / DSAMP * PMAX);
     var c = 0;
     DATA.forEach(function(e){ if (activeAt(e, y)) c++; });
-    counts.push(c); if (c > max) max = c;
+    DENS.push(c); if (c > DMAX) DMAX = c;
   }
-  var gd = el('g');
-  var bw = RW / SAMPLES;
-  counts.forEach(function(c, i){
-    var h = max ? (c / max) * 20 : 0;
+})();
+
+/* A step that yields at most ten majors across the window, so a zoomed
+   ruler is engraved in decades and the full view still in centuries. */
+var STEPS = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500];
+function niceStep(years){
+  for (var i=0;i<STEPS.length;i++) if (years / STEPS[i] <= 10) return STEPS[i];
+  return 500;
+}
+
+function drawRuler(){
+  while (ruler.firstChild) ruler.removeChild(ruler.firstChild);
+
+  /* density: how many entities are active at each sample. Sparse centuries
+     then read as "little recorded here" rather than broken UI (FR-8c). */
+  var SAMPLES = 200, gd = el('g'), bw = RW / SAMPLES, span = V.p1 - V.p0;
+  for (var i=0;i<SAMPLES;i++){
+    var p = V.p0 + ((i + 0.5) / SAMPLES) * span;
+    var c = DENS[Math.max(0, Math.min(DSAMP - 1, Math.floor((p / PMAX) * DSAMP)))] || 0;
+    var h = DMAX ? (c / DMAX) * 20 : 0;
     gd.appendChild(el('rect', {
       x:(i*bw).toFixed(2), y:(20 - h).toFixed(2), width:(bw + 0.35).toFixed(2), height:h.toFixed(2),
       class:'dens'
     }));
-  });
+  }
   ruler.appendChild(gd);
 
   /* engraved ruler: dense hairline minors, sparse taller majors */
+  var y0 = yearFromPos(V.p0), y1 = yearFromPos(V.p1);
+  var step = niceStep(Math.max(1, y1 - y0)), minor = step / 2;
   var gt = el('g');
   gt.appendChild(el('line', { x1:0, y1:33, x2:RW, y2:33, class:'rl-base' }));
-  SEGMENTS.forEach(function(s){
-    var minor = s.step / 2;
-    for (var y = s.yStart; y <= s.yEnd; y += minor){
-      var isMajor = (y % s.step === 0);
-      var X = rx(posFromYear(y));
-      gt.appendChild(el('line', {
-        x1:X.toFixed(2), y1:33, x2:X.toFixed(2), y2:(isMajor ? 41 : 37).toFixed(2),
-        class: isMajor ? 'rl-major' : 'rl-minor'
-      }));
-    }
-  });
+  var first = Math.ceil(y0 / minor) * minor;
+  for (var y = first; y <= y1; y += minor){
+    var isMajor = (y % step === 0);
+    var X = rx(posFromYear(y));
+    gt.appendChild(el('line', {
+      x1:X.toFixed(2), y1:33, x2:X.toFixed(2), y2:(isMajor ? 41 : 37).toFixed(2),
+      class: isMajor ? 'rl-major' : 'rl-minor'
+    }));
+  }
   ruler.appendChild(gt);
 
-  /* scale-break marks: the scale changes, so the UI says so (FR-8a) */
+  /* scale-break marks: the scale changes, so the UI says so (FR-8a).
+     Drawn only while the break is inside the window. */
   var gb = el('g');
   [SEGMENTS[1].pStart, SEGMENTS[2].pStart].forEach(function(p){
+    if (p < V.p0 || p > V.p1) return;
     var X = rx(p);
     gb.appendChild(el('line', { x1:X.toFixed(2), y1:8, x2:X.toFixed(2), y2:47,
       class:'rl-break' }));
@@ -3071,18 +3177,23 @@ function rx(pos){ return (pos / PMAX) * RW; }
   ruler.appendChild(gh);
   ruler._thr = thr;
 
-  /* year labels under the majors, one per segment boundary + a few anchors */
+  /* year labels on the majors the window can fit, thinned until they no
+     longer collide, and always anchored inside the plate at both ends. */
   var gl = el('g');
-  [300, 1000, 1500, 1800, 1945, NOW].forEach(function(y){
-    var X = rx(posFromYear(y));
-    var anchor = y === 300 ? 'start' : (y === NOW ? 'end' : 'middle');
-    var t = el('text', { x:X.toFixed(2), y:57, 'text-anchor':anchor,
-      class:'rl-lab' });
-    t.textContent = y === NOW ? String(NOW) : String(y);
+  var lstep = step, labels = [];
+  while ((y1 - y0) / lstep > 7) lstep *= 2;
+  for (var ly = Math.ceil(y0 / lstep) * lstep; ly <= y1; ly += lstep) labels.push(ly);
+  if (!labels.length) labels = [y0, y1];
+  labels.forEach(function(ly, k){
+    var X = rx(posFromYear(ly));
+    var anchor = k === 0 && X < 12 ? 'start' : (k === labels.length - 1 && X > RW - 12 ? 'end' : 'middle');
+    var t = el('text', { x:X.toFixed(2), y:57, 'text-anchor':anchor, class:'rl-lab' });
+    t.textContent = ly >= NOW ? String(NOW) : String(ly);
     gl.appendChild(t);
   });
   ruler.appendChild(gl);
-})();
+}
+drawRuler();
 
 
 /* ==================================================================
@@ -3140,10 +3251,14 @@ function buildLanes(){
     DATA.forEach(function(e, i){
       if (e.lane !== lane.id) return;
       var end = Math.min(e.end, NOW);
+      var q0 = posFromYear(e.start), q1 = posFromYear(end);
       items.push({
-        i:i, e:e,
-        p0:(posFromYear(e.start) / PMAX) * 100,
-        p1:(posFromYear(end) / PMAX) * 100
+        i:i, e:e, q0:q0, q1:q1,
+        /* Packing stays in percent of the WHOLE axis so rows never
+           reshuffle as the window narrows: a reader who zooms in is
+           looking closer at the same arrangement, not at a new one. */
+        p0:(q0 / PMAX) * 100,
+        p1:(q1 / PMAX) * 100
       });
     });
     if (!items.length) return;
@@ -3163,9 +3278,9 @@ function buildLanes(){
         var b = document.createElement('button');
         b.type = 'button';
         b.className = 'bar c-' + it.e.cat + ' t-' + it.e.conf;
-        b.style.left = it.p0.toFixed(3) + '%';
-        b.style.width = Math.max(0.25, it.p1 - it.p0).toFixed(3) + '%';
         b.dataset.i = it.i;
+        b.dataset.q0 = it.q0;
+        b.dataset.q1 = it.q1;
         var s = document.createElement('span');
         s.textContent = it.e.name[L];
         b.appendChild(s);
@@ -3228,8 +3343,32 @@ function applyLanes(){
 
 /* Cursor and selection follow the map, so the stretched view is never a
    second source of truth about where we are. */
+/* Bars are placed through the window, so a narrowed axis widens the bars
+   that survive it rather than rebuilding the packing. A bar that runs off
+   an edge is clamped and marked, never quietly feathered (see .clip-s). */
+function layoutBars(){
+  var span = V.p1 - V.p0;
+  Array.prototype.forEach.call(lanesEl.querySelectorAll('.bar'), function(b){
+    var q0 = +b.dataset.q0, q1 = +b.dataset.q1;
+    if (q1 < V.p0 || q0 > V.p1){ b.style.display = 'none'; return; }
+    b.style.display = '';
+    var a = ((q0 - V.p0) / span) * 100, z = ((q1 - V.p0) / span) * 100;
+    b.classList.toggle('clip-s', a < -0.01);
+    b.classList.toggle('clip-e', z > 100.01);
+    a = Math.max(0, a); z = Math.min(100, z);
+    b.style.left = a.toFixed(3) + '%';
+    b.style.width = Math.max(0.25, z - a).toFixed(3) + '%';
+  });
+}
+
 function paintLanes(){
-  if (laneThr) laneThr.style.left = ((posFromYear(S.year) / PMAX) * 100).toFixed(3) + '%';
+  layoutBars();
+  if (laneThr){
+    var tp = posFromYear(S.year);
+    var inside = tp >= V.p0 && tp <= V.p1;
+    laneThr.style.display = inside ? '' : 'none';
+    if (inside) laneThr.style.left = vpct(tp).toFixed(3) + '%';
+  }
   Array.prototype.forEach.call(lanesEl.querySelectorAll('.bar'), function(b){
     b.classList.toggle('sel', S.entity === +b.dataset.i);
     /* A label wider than its own bar is dropped rather than clipped. */
@@ -3237,17 +3376,213 @@ function paintLanes(){
   });
 }
 
-window.addEventListener('resize', function(){ if (S.lanes) applyLanes(); });
+window.addEventListener('resize', function(){
+  if (S.lanes) applyLanes();
+  /* A ruler unit is a pixel, so a resized plate needs the engraving
+     redrawn at the new width, and the thumb put back on it. */
+  drawRuler();
+  render();
+});
 
 var laneBtn = document.getElementById('lane-btn');
 if (laneBtn){
   laneBtn.addEventListener('click', function(){
     S.lanes = !S.lanes;
     LS.set('nusantara-map-lanes', S.lanes ? '1' : '0');
+    /* Collapsing returns the axis to full extent: the engraved ruler is
+       the whole range by definition, and a hidden window would leave the
+       reader scrubbing a slice they can no longer see. */
+    if (!S.lanes) setWindow(0, PMAX);
     applyLanes();
+    applyWindowChrome();
     if (S.lanes) paintLanes();
   });
 }
+
+/* ==================================================================
+   THE WINDOW — a narrower slice of the same axis
+
+   The scrubber's three-segment scale (SEGMENTS) buys readability across
+   1,700 years, but a segment is not a magnifier: at full extent one year
+   in the classical stretch is about half a pixel, so the lanes can show
+   that Majapahit and Sunda overlapped and never that Bubat fell in 1357.
+
+   The window narrows what the ruler engraves, what the lanes lay out and
+   what the range input addresses — one slice, applied to all three, so
+   the instrument stays single. The locator above keeps the full range
+   visible so the reader always knows which slice they are holding.
+   ================================================================== */
+var scrubEl = document.querySelector('.scrub');
+var ctxEl = document.getElementById('ctx');
+var ctxWin = document.getElementById('ctx-win');
+var ctxH0 = document.getElementById('ctx-h0');
+var ctxH1 = document.getElementById('ctx-h1');
+var zoomSeg = document.getElementById('zoom-seg');
+var winRead = document.getElementById('win-read');
+
+/* Presets are spans in years, not positions: "a century" means the same
+   thing to a reader at 1400 and at 1950, though the two occupy very
+   different widths on a piecewise scale. */
+var ZOOMS = [0, 500, 200, 100, 50];
+var MINP = 18;   /* floor on the slice, in position units */
+
+function winYears(){ return [yearFromPos(V.p0), yearFromPos(V.p1)]; }
+
+function setWindow(p0, p1){
+  p0 = Math.max(0, Math.min(PMAX - MINP, p0));
+  p1 = Math.min(PMAX, Math.max(p0 + MINP, p1));
+  V.p0 = p0; V.p1 = p1;
+
+  /* The range input addresses the slice, so the thumb keeps landing on
+     the year under the pointer rather than on a position it no longer
+     shares with the ruler. */
+  range.min = String(Math.round(p0));
+  range.max = String(Math.round(p1));
+
+  var yy = winYears();
+  /* A year outside the slice would leave the map showing one period and
+     the lanes another. The chosen year is kept wherever it can be. */
+  if (S.year < yy[0]) { setYear(yy[0]); }
+  else if (S.year > yy[1]) { setYear(yy[1]); }
+  else {
+    range.value = String(Math.round(posFromYear(S.year)));
+    drawRuler();
+    paintWindow();
+    render();
+  }
+}
+
+function zoomToYears(years){
+  if (!years){ setWindow(0, PMAX); return; }
+  var c = S.year, half = years / 2;
+  var y1 = Math.min(NOW, c + half), y0 = Math.max(300, y1 - years);
+  y1 = Math.min(NOW, y0 + years);
+  setWindow(posFromYear(y0), posFromYear(y1));
+}
+
+/* Locator: full-range hairline, the eras as ticks, the two scale breaks. */
+(function buildCtx(){
+  if (!ctxEl) return;
+  ERAS.forEach(function(e){
+    var t = document.createElement('div');
+    t.className = 'ctx-tick';
+    t.style.left = ((posFromYear(e.y) / PMAX) * 100).toFixed(3) + '%';
+    t.setAttribute('aria-hidden', 'true');
+    ctxEl.insertBefore(t, ctxWin);
+  });
+  [SEGMENTS[1].pStart, SEGMENTS[2].pStart].forEach(function(p){
+    var t = document.createElement('div');
+    t.className = 'ctx-break';
+    t.style.left = ((p / PMAX) * 100).toFixed(3) + '%';
+    t.setAttribute('aria-hidden', 'true');
+    ctxEl.insertBefore(t, ctxWin);
+  });
+})();
+
+function paintWindow(){
+  if (!ctxEl) return;
+  var a = (V.p0 / PMAX) * 100, z = (V.p1 / PMAX) * 100;
+  ctxWin.style.left = a.toFixed(3) + '%';
+  ctxWin.style.width = Math.max(0.4, z - a).toFixed(3) + '%';
+  ctxH0.style.left = a.toFixed(3) + '%';
+  ctxH1.style.left = z.toFixed(3) + '%';
+
+  var yy = winYears();
+  ctxH0.setAttribute('aria-valuenow', String(yy[0]));
+  ctxH1.setAttribute('aria-valuenow', String(yy[1]));
+  ctxH0.setAttribute('aria-label', T('winFrom') + ' ' + yy[0]);
+  ctxH1.setAttribute('aria-label', T('winTo') + ' ' + yy[1]);
+  if (winRead) winRead.textContent = yy[0] + '–' + (yy[1] >= NOW ? NOW : yy[1]);
+
+  var full = V.p0 <= 0 && V.p1 >= PMAX;
+  var shown = yy[1] - yy[0];
+  Array.prototype.forEach.call(zoomSeg ? zoomSeg.children : [], function(b){
+    var z2 = +b.dataset.z;
+    var on = z2 === 0 ? full : (!full && Math.abs(shown - z2) <= Math.max(2, z2 * 0.12));
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+/* The locator is only meaningful while the lanes are open. */
+function applyWindowChrome(){
+  if (scrubEl) scrubEl.classList.toggle('windowed', !!S.lanes);
+}
+
+function buildZoomSeg(){
+  if (!zoomSeg) return;
+  zoomSeg.innerHTML = '';
+  ZOOMS.forEach(function(z){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.z = String(z);
+    b.textContent = z ? String(z) : T('winFull');
+    b.setAttribute('aria-label', z ? T('winSpan') + ' ' + z : T('winFull'));
+    b.addEventListener('click', function(){ zoomToYears(z); });
+    zoomSeg.appendChild(b);
+  });
+  paintWindow();
+}
+
+/* --- brush --- */
+(function wireCtx(){
+  if (!ctxEl) return;
+  var drag = null;
+
+  function pAt(clientX){
+    var r = ctxEl.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (clientX - r.left) / Math.max(1, r.width))) * PMAX;
+  }
+  function begin(mode, ev){
+    drag = { mode:mode, anchor:pAt(ev.clientX), p0:V.p0, p1:V.p1 };
+    ctxEl.setPointerCapture(ev.pointerId);
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+
+  ctxH0.addEventListener('pointerdown', function(ev){ begin('s', ev); });
+  ctxH1.addEventListener('pointerdown', function(ev){ begin('e', ev); });
+  ctxWin.addEventListener('pointerdown', function(ev){ begin('pan', ev); });
+
+  /* A click on bare locator centres the slice there, the same gesture the
+     chapters use: point at a period, land in it. */
+  ctxEl.addEventListener('pointerdown', function(ev){
+    if (drag) return;
+    var p = pAt(ev.clientX), half = (V.p1 - V.p0) / 2;
+    setWindow(p - half, p + half);
+  });
+
+  ctxEl.addEventListener('pointermove', function(ev){
+    if (!drag) return;
+    var p = pAt(ev.clientX);
+    if (drag.mode === 's') setWindow(Math.min(p, drag.p1 - MINP), drag.p1);
+    else if (drag.mode === 'e') setWindow(drag.p0, Math.max(p, drag.p0 + MINP));
+    else {
+      var d = p - drag.anchor, w = drag.p1 - drag.p0;
+      var s = Math.max(0, Math.min(PMAX - w, drag.p0 + d));
+      setWindow(s, s + w);
+    }
+  });
+  function end(ev){
+    if (drag && ctxEl.hasPointerCapture(ev.pointerId)) ctxEl.releasePointerCapture(ev.pointerId);
+    drag = null;
+  }
+  ctxEl.addEventListener('pointerup', end);
+  ctxEl.addEventListener('pointercancel', end);
+
+  /* Keyboard, because the rail promises the whole plate is reachable. */
+  [[ctxH0, 's'], [ctxH1, 'e']].forEach(function(pair){
+    pair[0].addEventListener('keydown', function(ev){
+      var step = ev.shiftKey ? 40 : 10;
+      var d = (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') ? -step
+            : (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') ? step : 0;
+      if (!d) return;
+      ev.preventDefault();
+      if (pair[1] === 's') setWindow(Math.min(V.p0 + d, V.p1 - MINP), V.p1);
+      else setWindow(V.p0, Math.max(V.p1 + d, V.p0 + MINP));
+    });
+  });
+})();
 
 /* Era ticks: clickable dots, with only the active era named beneath. */
 var eraCur = document.createElement('div');
@@ -3256,7 +3591,7 @@ ERAS.forEach(function(era, i){
   var b = document.createElement('button');
   b.type = 'button';
   b.className = 'era-dot';
-  b.style.left = ((posFromYear(era.y) / PMAX) * 100).toFixed(3) + '%';
+  b.dataset.q = posFromYear(era.y);
   b.dataset.i = i;
   b.addEventListener('click', function(){ setYear(ERAS[i].y); });
   eraNames.appendChild(b);
@@ -3413,10 +3748,22 @@ function render(){
     b.classList.toggle('on', i === curIdx);
     b.setAttribute('aria-label', ERAS[i][S.lang] + ' · ' + ERAS[i].y);
     b.title = ERAS[i][S.lang];
+    /* The dots sit on the axis, so they follow the window: an era outside
+       the slice is hidden rather than left pointing at the wrong year.
+       Every era stays reachable by keyboard from the range input. */
+    var q = +b.dataset.q;
+    var inside = q >= V.p0 && q <= V.p1;
+    b.style.display = inside ? '' : 'none';
+    if (inside) b.style.left = vpct(q).toFixed(3) + '%';
   });
   eraCur.textContent = era[S.lang];
-  var curPct = (posFromYear(era.y) / PMAX) * 100;
-  eraCur.style.left = Math.min(93, Math.max(7, curPct)).toFixed(2) + '%';
+  var curQ = posFromYear(era.y);
+  if (curQ < V.p0 || curQ > V.p1){
+    eraCur.style.display = 'none';
+  } else {
+    eraCur.style.display = '';
+    eraCur.style.left = Math.min(93, Math.max(7, vpct(curQ))).toFixed(2) + '%';
+  }
 
   /* --- faction overlays --- */
   buildOverlay(ov);
@@ -3739,6 +4086,10 @@ function applyChrome(){
   document.documentElement.lang = S.lang;
   renderChapters();
   buildLanes();
+  /* The presets carry a word ("Penuh" / "Full"), so they are rebuilt with
+     the rest of the chrome rather than translated in place. */
+  buildZoomSeg();
+  applyWindowChrome();
   applyTheme();
 }
 
