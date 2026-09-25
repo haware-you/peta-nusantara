@@ -1,7 +1,10 @@
 // Inlines data/land.js into src/peta.template.html -> peta-nusantara.html
 //
-// One self-contained HTML file is the delivery format: the artifact CSP
-// forbids runtime fetches, so there is nothing to serve alongside it.
+// One HTML file is the delivery format: the artifact CSP forbids runtime
+// fetches, so all code and data are inlined. The one exception is the entity
+// images in `source images/`, which are served beside the page on Vercel
+// (see .vercelignore). A copy delivered on its own drops them at runtime and
+// keeps the credit line, rather than inlining ~8 MB of photographs.
 
 const fs = require('fs');
 const path = require('path');

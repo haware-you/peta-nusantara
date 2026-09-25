@@ -3,3 +3,10 @@
 *
 !peta-nusantara.html
 !vercel.json
+
+# Historical images shown on the entity cards ship alongside the page.
+# SOURCES.md stays out — it is a working document, not a served asset.
+!source images
+!source images/*.jpg
+!source images/*.JPG
+!source images/*.png
