@@ -1,0 +1,1653 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Garis Waktu Nusantara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --ground: #E9E7DB;
+  --surface: #F3F1E7;
+  --surface-2: #DEDBCB;
+  --ink: #22241F;
+  --ink-2: #55574C;
+  --ink-3: #83857A;
+  --rule: #C9C6B4;
+  --rule-soft: #D8D5C5;
+  --accent: #8A6212;
+  --accent-soft: #C8A24B;
+  --contested: #A33223;
+  --scrub: #2E4A63;
+
+  --i-jawa: #A8761F;
+  --i-sumatra: #2C7263;
+  --i-kalimantan: #6E609B;
+  --i-sulawesi: #9C4A38;
+  --i-bali: #3F6E96;
+  --i-maluku: #777C28;
+  --i-papua: #8D5279;
+
+  --t-pendirian: #2C7263;
+  --t-perang: #A33223;
+  --t-pemberontakan: #A65A22;
+  --t-perjanjian: #3F6E96;
+  --t-ekspedisi: #6E609B;
+  --t-penaklukan: #8D3055;
+  --t-diplomasi: #8A6212;
+  --t-lain: #5A5F63;
+
+  --lane-label: 132px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #15171A;
+    --surface: #1C1F23;
+    --surface-2: #262A2F;
+    --ink: #E6E4DA;
+    --ink-2: #A9AAA1;
+    --ink-3: #7C7E77;
+    --rule: #32363B;
+    --rule-soft: #272B30;
+    --accent: #D6AB4E;
+    --accent-soft: #8A6C29;
+    --contested: #E07A63;
+    --scrub: #8FBEE4;
+
+    --i-jawa: #C4933F;
+    --i-sumatra: #459885;
+    --i-kalimantan: #9A8CCB;
+    --i-sulawesi: #C4705A;
+    --i-bali: #6CA0CC;
+    --i-maluku: #9BA146;
+    --i-papua: #B87BA3;
+
+    --t-pendirian: #4FA893;
+    --t-perang: #E07A63;
+    --t-pemberontakan: #DC9153;
+    --t-perjanjian: #6CA0CC;
+    --t-ekspedisi: #9A8CCB;
+    --t-penaklukan: #CB6D96;
+    --t-diplomasi: #D6AB4E;
+    --t-lain: #8B9096;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #15171A;
+  --surface: #1C1F23;
+  --surface-2: #262A2F;
+  --ink: #E6E4DA;
+  --ink-2: #A9AAA1;
+  --ink-3: #7C7E77;
+  --rule: #32363B;
+  --rule-soft: #272B30;
+  --accent: #D6AB4E;
+  --accent-soft: #8A6C29;
+  --contested: #E07A63;
+  --scrub: #8FBEE4;
+
+  --i-jawa: #C4933F;
+  --i-sumatra: #459885;
+  --i-kalimantan: #9A8CCB;
+  --i-sulawesi: #C4705A;
+  --i-bali: #6CA0CC;
+  --i-maluku: #9BA146;
+  --i-papua: #B87BA3;
+
+  --t-pendirian: #4FA893;
+  --t-perang: #E07A63;
+  --t-pemberontakan: #DC9153;
+  --t-perjanjian: #6CA0CC;
+  --t-ekspedisi: #9A8CCB;
+  --t-penaklukan: #CB6D96;
+  --t-diplomasi: #D6AB4E;
+  --t-lain: #8B9096;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.num { font-family: "IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.masthead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.masthead h1 {
+  font-family: Marcellus, "Times New Roman", serif;
+  font-size: 32px;
+  line-height: 1.1;
+  margin: 4px 0 0;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.masthead p {
+  margin: 6px 0 0;
+  color: var(--ink-2);
+  max-width: 56ch;
+  font-size: 13px;
+}
+.range-stat {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.range-stat .val {
+  font-family: Marcellus, serif;
+  font-size: 26px;
+  letter-spacing: 0.02em;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rule-soft);
+  flex-wrap: wrap;
+}
+
+.overview-body { padding: 12px 14px 10px; }
+
+.era-ribbon {
+  position: relative;
+  height: 20px;
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+.era-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  border-left: 1px solid var(--rule);
+}
+.era-band.alt { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+
+.mini {
+  position: relative;
+  height: 94px;
+  background: color-mix(in srgb, var(--surface-2) 40%, transparent);
+  border: 1px solid var(--rule-soft);
+  border-radius: 2px;
+  cursor: crosshair;
+  touch-action: none;
+}
+.mini-bar {
+  position: absolute;
+  height: 4px;
+  border-radius: 2px;
+  opacity: 0.62;
+}
+.mini-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule);
+}
+.mini-tick span {
+  position: absolute;
+  bottom: 2px;
+  left: 4px;
+  font-size: 9.5px;
+  color: var(--ink-3);
+}
+.brush {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  cursor: grab;
+}
+.brush:active { cursor: grabbing; }
+.brush-handle {
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 30px;
+  margin-top: -15px;
+  background: var(--accent);
+  border-radius: 2px;
+  cursor: ew-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.brush-handle::before,
+.brush-handle::after {
+  content: "";
+  width: 1px;
+  height: 12px;
+  background: var(--surface);
+  opacity: 0.75;
+}
+.brush-handle.left { left: -5px; }
+.brush-handle.right { right: -5px; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.zoom-set {
+  display: flex;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.zoom-set button {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  padding: 5px 11px;
+  background: transparent;
+  color: var(--ink-2);
+  border: 0;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+}
+.zoom-set button:last-child { border-right: 0; }
+.zoom-set button:hover { background: var(--surface-2); color: var(--ink); }
+.zoom-set button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 500;
+}
+.ghost-btn {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 11px;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.ghost-btn:hover { background: var(--surface-2); color: var(--ink); }
+button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.window-readout {
+  margin-left: auto;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.window-readout .years {
+  font-family: Marcellus, serif;
+  font-size: 19px;
+  letter-spacing: 0.02em;
+}
+
+.stage-wrap { position: relative; }
+.axis {
+  position: relative;
+  height: 26px;
+  border-bottom: 1px solid var(--rule-soft);
+  margin-left: var(--lane-label);
+}
+.axis-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--rule-soft);
+  padding-left: 5px;
+  font-size: 10.5px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+}
+.lanes { position: relative; }
+.lane {
+  display: flex;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.lane:last-child { border-bottom: 0; }
+.lane-label {
+  width: var(--lane-label);
+  flex: 0 0 var(--lane-label);
+  padding: 8px 10px 8px 14px;
+  border-right: 1px solid var(--rule-soft);
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.lane-label .swatch {
+  width: 3px;
+  align-self: stretch;
+  border-radius: 2px;
+  margin-top: 2px;
+}
+.lane-label .name {
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.lane-label .count {
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.lane-track {
+  position: relative;
+  flex: 1;
+  padding: 7px 0;
+  min-width: 0;
+}
+.lane.alt .lane-track { background: color-mix(in srgb, var(--surface-2) 26%, transparent); }
+
+.span-row { position: relative; height: 22px; }
+.span {
+  position: absolute;
+  top: 3px;
+  height: 16px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+  font-size: 10.5px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  border: 0;
+  font-family: inherit;
+  text-align: left;
+}
+.span.circa {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 11px, #000 calc(100% - 11px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 11px, #000 calc(100% - 11px), transparent 100%);
+}
+.span.clip-start { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.span.clip-end { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.span:hover { filter: brightness(1.12); }
+.span[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--ink);
+}
+.span .span-label {
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.32);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dot-strip { position: relative; height: 15px; }
+.ev-dot {
+  position: absolute;
+  top: 3px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--surface);
+  cursor: pointer;
+  padding: 0;
+}
+.ev-dot:hover { transform: scale(1.35); }
+.ev-dot.contested::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px dashed currentColor;
+}
+.ev-dot[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--ink);
+}
+
+.scrub-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--scrub);
+  pointer-events: none;
+  z-index: 4;
+}
+.scrub-line.pinned { background: transparent; border-left: 1px dashed var(--scrub); }
+.scrub-flag {
+  position: absolute;
+  top: -22px;
+  transform: translateX(-50%);
+  background: var(--scrub);
+  color: var(--ground);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.legend {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 9px 14px;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 11.5px;
+  color: var(--ink-2);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend .sep { width: 1px; height: 14px; background: var(--rule); }
+.hint-circa {
+  width: 26px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--ink-3);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7px, #000 19px, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7px, #000 19px, transparent);
+}
+.hint-ring {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px dashed var(--contested);
+}
+
+.snapshot-note {
+  font-size: 12px;
+  color: var(--ink-2);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  min-height: 20px;
+}
+.snapshot-note strong { color: var(--ink); font-weight: 500; }
+
+.lower {
+  display: grid;
+  grid-template-columns: minmax(0, 330px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+@media (max-width: 880px) {
+  .lower { grid-template-columns: 1fr; }
+}
+
+.ev-list { max-height: 440px; overflow-y: auto; }
+.ev-row {
+  display: grid;
+  grid-template-columns: 54px 10px 1fr;
+  gap: 9px;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  padding: 9px 14px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.ev-row:hover { background: var(--surface-2); }
+.ev-row[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.ev-row .yr {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.ev-row .pip { width: 8px; height: 8px; border-radius: 50%; align-self: center; }
+.ev-row .nm { font-size: 12.5px; line-height: 1.35; }
+.ev-row .sub { display: block; font-size: 10.5px; color: var(--ink-3); }
+.empty-note { padding: 20px 14px; color: var(--ink-3); font-size: 12.5px; margin: 0; }
+
+.detail-body {
+  padding: 16px 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.detail-title {
+  font-family: Marcellus, serif;
+  font-size: 23px;
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+.chip-row { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+.chip {
+  font-size: 10.5px;
+  padding: 2.5px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--rule);
+  color: var(--ink-2);
+  letter-spacing: 0.03em;
+}
+.chip.solid { color: #fff; border-color: transparent; }
+.chip.contested {
+  color: var(--contested);
+  border-color: color-mix(in srgb, var(--contested) 45%, transparent);
+  background: color-mix(in srgb, var(--contested) 10%, transparent);
+  font-weight: 500;
+}
+.detail-body p { margin: 0; color: var(--ink-2); max-width: 66ch; font-size: 13px; }
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+  padding: 13px 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.fact dt {
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.fact dd { margin: 2px 0 0; font-size: 12.5px; }
+
+.src-tabs { display: flex; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+.src-tab {
+  font-family: inherit;
+  font-size: 11.5px;
+  padding: 7px 12px;
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: -1px;
+}
+.src-tab:hover { color: var(--ink); }
+.src-tab[aria-selected="true"] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+  font-weight: 500;
+}
+.src-tab .origin-pip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+}
+.account { padding-top: 13px; display: flex; flex-direction: column; gap: 8px; }
+.account blockquote {
+  margin: 0;
+  padding-left: 13px;
+  border-left: 2px solid var(--accent-soft);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  max-width: 64ch;
+}
+.account .caveat {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  max-width: 64ch;
+  font-style: italic;
+}
+.ruler-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.ruler-list li {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 10px;
+  font-size: 12.5px;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--rule-soft);
+  color: var(--ink-2);
+}
+.ruler-list .reign {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11.5px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.ruler-list li.live { color: var(--ink); }
+.ruler-list li.live .reign { color: var(--accent); font-weight: 500; }
+
+.footnote {
+  font-size: 11.5px;
+  color: var(--ink-3);
+  max-width: 76ch;
+  line-height: 1.6;
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ev-dot { transition: transform 0.12s ease; }
+  .span { transition: filter 0.12s ease; }
+}
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Kerajaan &amp; peristiwa di Nusantara</div>
+      <h1>Garis Waktu Nusantara</h1>
+      <p>Polity ditata per pulau, bukan per periode — kerajaan menempati satu tempat, tetapi jarang muat dalam satu era. Geser rentang untuk membaca waktu.</p>
+    </div>
+    <div class="range-stat">
+      <span class="eyebrow">Cakupan data</span>
+      <span class="val num" id="stat-range">350 – 1914</span>
+      <span class="eyebrow" id="stat-count">13 polity · 6 peristiwa</span>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-head">
+      <span class="eyebrow">Rentang penuh &amp; pilihan</span>
+      <span class="eyebrow">Seret kotak untuk menggeser · seret pegangan untuk mengubah rentang</span>
+    </div>
+    <div class="overview-body">
+      <div class="era-ribbon" id="era-ribbon"></div>
+      <div class="mini" id="mini">
+        <div class="brush" id="brush">
+          <div class="brush-handle left" id="handle-left" role="slider" tabindex="0" aria-label="Awal rentang" aria-valuemin="350" aria-valuemax="1914" aria-valuenow="1200"></div>
+          <div class="brush-handle right" id="handle-right" role="slider" tabindex="0" aria-label="Akhir rentang" aria-valuemin="350" aria-valuemax="1914" aria-valuenow="1600"></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-head" style="border-bottom: 0; border-top: 1px solid var(--rule-soft);">
+      <div class="controls">
+        <span class="eyebrow">Rentang</span>
+        <div class="zoom-set" id="zoom-set" role="group" aria-label="Rentang tampilan"></div>
+        <button class="ghost-btn" id="btn-full" type="button">Seluruh rentang</button>
+      </div>
+      <div class="window-readout">
+        <span class="eyebrow">Tampak</span>
+        <span class="years num" id="readout-years">1200 – 1600</span>
+        <span class="eyebrow num" id="readout-span">400 tahun</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel stage-wrap">
+    <div class="axis" id="axis"></div>
+    <div class="lanes" id="lanes"></div>
+    <div class="scrub-line" id="scrub" hidden><div class="scrub-flag num" id="scrub-flag">1357</div></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <div class="snapshot-note" id="snapshot-note">Arahkan kursor ke garis waktu untuk menelusuri tahun; klik untuk mengunci.</div>
+
+  <div class="lower">
+    <section class="panel">
+      <div class="panel-head">
+        <span class="eyebrow">Peristiwa dalam rentang</span>
+        <span class="eyebrow" id="ev-count">6 peristiwa</span>
+      </div>
+      <div class="ev-list" id="ev-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <span class="eyebrow">Rincian</span>
+        <span class="eyebrow" id="detail-kind">Peristiwa</span>
+      </div>
+      <div class="detail-body" id="detail"></div>
+    </section>
+  </div>
+
+  <p class="footnote">
+    Rentang bertanda <em>c.</em> ditampilkan dengan tepi memudar: tanggalnya perkiraan, bukan catatan pasti.
+    Lingkaran putus-putus menandai peristiwa yang sumbernya berselisih — setiap versi ditampilkan terpisah
+    beserta sumbernya, tidak diringkas menjadi satu cerita. Kepadatan peristiwa di sini mencerminkan
+    sumber yang selamat, bukan seberapa banyak yang benar-benar terjadi.
+  </p>
+</div>
+
+<script>
+"use strict";
+
+var ISLANDS = [
+  { key: "JAWA", name: "Jawa", color: "var(--i-jawa)" },
+  { key: "SUMATRA", name: "Sumatra", color: "var(--i-sumatra)" },
+  { key: "KALIMANTAN", name: "Kalimantan", color: "var(--i-kalimantan)" },
+  { key: "SULAWESI", name: "Sulawesi", color: "var(--i-sulawesi)" },
+  { key: "BALI_NUSA", name: "Bali & Nusa Tenggara", color: "var(--i-bali)" },
+  { key: "MALUKU", name: "Maluku", color: "var(--i-maluku)" },
+  { key: "PAPUA", name: "Papua", color: "var(--i-papua)" }
+];
+
+var ERAS = [
+  { name: "Hindu-Buddha Awal", start: 1, end: 900 },
+  { name: "Hindu-Buddha Akhir", start: 901, end: 1300 },
+  { name: "Majapahit & Semasa", start: 1301, end: 1500 },
+  { name: "Kesultanan Islam", start: 1501, end: 1600 },
+  { name: "Kolonial Awal (VOC)", start: 1601, end: 1800 },
+  { name: "Kolonial Akhir", start: 1801, end: 1942 }
+];
+
+var TYPES = {
+  PENDIRIAN: { label: "Pendirian", color: "var(--t-pendirian)" },
+  PERANG: { label: "Perang", color: "var(--t-perang)" },
+  PEMBERONTAKAN: { label: "Pemberontakan", color: "var(--t-pemberontakan)" },
+  PERJANJIAN: { label: "Perjanjian", color: "var(--t-perjanjian)" },
+  EKSPEDISI: { label: "Ekspedisi", color: "var(--t-ekspedisi)" },
+  PENAKLUKAN: { label: "Penaklukan", color: "var(--t-penaklukan)" },
+  DIPLOMASI: { label: "Diplomasi", color: "var(--t-diplomasi)" }
+};
+
+var KINGDOMS = [
+  { id: "jawa.majapahit", name: "Majapahit", island: "JAWA", start: 1293, end: 1527, circa: false,
+    capital: "Trowulan, Jawa Timur", religion: "Hindu-Buddha (Siwa-Buddha)",
+    summary: "Kemaharajaan Jawa Timur yang pada puncaknya di bawah Hayam Wuruk dan Gajah Mada menuntut pengakuan dari sebagian besar Nusantara. Batas kekuasaan sesungguhnya masih diperdebatkan: Nagarakretagama mendaftar wilayah taklukan, tetapi sebagian mungkin sekadar mitra dagang.",
+    rulers: [
+      { name: "Raden Wijaya", title: "Kertarajasa Jayawardhana", from: 1293, to: 1309 },
+      { name: "Jayanegara", title: "Sri Maharaja", from: 1309, to: 1328 },
+      { name: "Tribhuwana Wijayatunggadewi", title: "Sri Maharani", from: 1328, to: 1350 },
+      { name: "Hayam Wuruk", title: "Sri Rajasanagara", from: 1350, to: 1389 },
+      { name: "Wikramawardhana", title: "Sri Maharaja", from: 1389, to: 1429 }
+    ],
+    sources: ["Nagarakretagama (Desawarnana)", "Pararaton", "Prasasti Kudadu"] },
+
+  { id: "jawa.sunda", name: "Sunda (Sunda-Galuh)", island: "JAWA", start: 669, end: 1579, circa: true,
+    capital: "Pakuan Pajajaran; sebelumnya Kawali", religion: "Hindu-Buddha, kemudian Sunda Wiwitan",
+    summary: "Kerajaan Jawa Barat yang bertahan berdampingan dengan Majapahit. Sumber Sunda dan sumber Jawa Timur memberi gambaran yang berbeda tentang hubungan keduanya, terutama sesudah Bubat.",
+    rulers: [
+      { name: "Prabu Maharaja Linggabuana", title: "Prabu", from: 1350, to: 1357 },
+      { name: "Hyang Bunisora", title: "Prabu", from: 1357, to: 1371 },
+      { name: "Niskala Wastu Kancana", title: "Prabu", from: 1371, to: 1475 },
+      { name: "Sri Baduga Maharaja", title: "Prabu Siliwangi", from: 1482, to: 1521 }
+    ],
+    sources: ["Carita Parahyangan", "Prasasti Batutulis"] },
+
+  { id: "jawa.singhasari", name: "Singhasari", island: "JAWA", start: 1222, end: 1292, circa: false,
+    capital: "Kutaraja / Singhasari", religion: "Hindu-Buddha",
+    summary: "Pendahulu langsung Majapahit; keruntuhannya di tangan Jayakatwang membuka jalan bagi Raden Wijaya.",
+    rulers: [
+      { name: "Ken Arok", title: "Sri Rajasa", from: 1222, to: 1227 },
+      { name: "Kertanegara", title: "Sri Maharaja", from: 1268, to: 1292 }
+    ],
+    sources: ["Pararaton"] },
+
+  { id: "jawa.kadiri", name: "Kadiri (Kediri)", island: "JAWA", start: 1042, end: 1222, circa: false,
+    capital: "Daha, Jawa Timur", religion: "Hindu",
+    summary: "Pusat kesusastraan Jawa Kuno; berakhir setelah kalah dari Ken Arok.",
+    rulers: [{ name: "Jayabaya", title: "Sri Maharaja", from: 1135, to: 1157 }],
+    sources: [] },
+
+  { id: "jawa.demak", name: "Kesultanan Demak", island: "JAWA", start: 1475, end: 1554, circa: false,
+    capital: "Demak, Jawa Tengah", religion: "Islam",
+    summary: "Kesultanan Islam pertama di Jawa; menandai peralihan dari tatanan Hindu-Buddha pesisir ke kesultanan.",
+    rulers: [
+      { name: "Raden Patah", title: "Sultan", from: 1475, to: 1518 },
+      { name: "Trenggana", title: "Sultan", from: 1521, to: 1546 }
+    ],
+    sources: [] },
+
+  { id: "sumatra.sriwijaya", name: "Sriwijaya", island: "SUMATRA", start: 671, end: 1288, circa: true,
+    capital: "Palembang (kemudian mungkin Jambi)", religion: "Buddha Mahayana",
+    summary: "Kekuatan maritim penguasa Selat Malaka dan pusat pembelajaran Buddha. Letak ibu kotanya masih diperdebatkan.",
+    rulers: [], sources: ["Prasasti Kedukan Bukit", "Catatan I-Tsing"] },
+
+  { id: "sumatra.melayu", name: "Melayu Dharmasraya", island: "SUMATRA", start: 1183, end: 1347, circa: true,
+    capital: "Dharmasraya, Batanghari", religion: "Buddha",
+    summary: "Sasaran ekspedisi Pamalayu Singhasari; kemudian terkait erat dengan wangsa Majapahit.",
+    rulers: [], sources: [] },
+
+  { id: "sumatra.aceh", name: "Kesultanan Aceh", island: "SUMATRA", start: 1496, end: 1903, circa: false,
+    capital: "Banda Aceh", religion: "Islam",
+    summary: "Kekuatan Islam terkuat di Sumatra; penantang utama Portugis di Malaka.",
+    rulers: [{ name: "Iskandar Muda", title: "Sultan", from: 1607, to: 1636 }],
+    sources: [] },
+
+  { id: "kalimantan.kutai", name: "Kutai Martadipura", island: "KALIMANTAN", start: 350, end: 1605, circa: true,
+    capital: "Muara Kaman, Kalimantan Timur", religion: "Hindu",
+    summary: "Kerajaan Hindu tertua yang diketahui di Nusantara, dikenal dari tujuh yupa berbahasa Sanskerta.",
+    rulers: [], sources: ["Prasasti Yupa Muara Kaman"] },
+
+  { id: "sulawesi.gowa", name: "Gowa-Tallo", island: "SULAWESI", start: 1300, end: 1667, circa: true,
+    capital: "Somba Opu, Makassar", religion: "Islam (sejak 1605)",
+    summary: "Kekuatan maritim Makassar; kekuasaannya dipatahkan Perjanjian Bongaya.",
+    rulers: [], sources: [] },
+
+  { id: "balinusa.gelgel", name: "Kerajaan Gelgel", island: "BALI_NUSA", start: 1380, end: 1686, circa: true,
+    capital: "Gelgel, Klungkung", religion: "Hindu Bali",
+    summary: "Pewaris tatanan Majapahit di Bali setelah keruntuhannya di Jawa.",
+    rulers: [], sources: [] },
+
+  { id: "maluku.ternate", name: "Kesultanan Ternate", island: "MALUKU", start: 1257, end: 1914, circa: true,
+    capital: "Ternate", religion: "Islam",
+    summary: "Pusat perdagangan cengkih; persaingannya dengan Tidore menarik masuk Portugis dan Belanda.",
+    rulers: [], sources: [] },
+
+  { id: "papua.waigeo", name: "Kerajaan Waigeo", island: "PAPUA", start: 1500, end: 1900, circa: true,
+    capital: "Waigeo, Raja Ampat", religion: "Islam dan kepercayaan setempat",
+    summary: "Salah satu dari kerajaan Raja Ampat, lama berada dalam orbit pengaruh Tidore.",
+    rulers: [], sources: [] }
+];
+
+var EVENTS = [
+  { id: "event.pendirian-majapahit", name: "Pendirian Majapahit", type: "PENDIRIAN",
+    start: 1293, end: 1293, islands: ["JAWA"],
+    participants: ["jawa.majapahit", "jawa.singhasari"],
+    location: "Tarik, tepi Sungai Brantas",
+    outcome: "Raden Wijaya dinobatkan sebagai Kertarajasa Jayawardhana.",
+    summary: "Setelah memanfaatkan pasukan Mongol untuk menjatuhkan Jayakatwang lalu memukul mundur pasukan itu sendiri, Raden Wijaya mendirikan Majapahit di atas reruntuhan Singhasari.",
+    contested: false,
+    accounts: [{ source: "Pararaton", kind: "Naskah", origin: "Jawa Timur",
+      narrative: "Menuturkan tipu muslihat Raden Wijaya terhadap pasukan Mongol.", note: null }] },
+
+  { id: "event.sumpah-palapa", name: "Sumpah Palapa", type: "DIPLOMASI",
+    start: 1336, end: 1336, islands: ["JAWA"],
+    participants: ["jawa.majapahit"],
+    location: "Balai istana Majapahit",
+    outcome: "Menjadi dasar program ekspansi Majapahit di bawah Gajah Mada.",
+    summary: "Gajah Mada bersumpah tidak akan menikmati palapa sebelum menyatukan Nusantara. Sumpah ini hanya dikenal dari Pararaton; bentuk dan cakupan aslinya masih diperdebatkan para sejarawan.",
+    contested: false,
+    accounts: [{ source: "Pararaton", kind: "Naskah", origin: "Jawa Timur",
+      narrative: "Satu-satunya sumber yang memuat naskah sumpah tersebut.", note: null }] },
+
+  { id: "event.bubat", name: "Perang Bubat (Pasunda Bubat)", type: "PERANG",
+    start: 1357, end: 1357, islands: ["JAWA"],
+    participants: ["jawa.majapahit", "jawa.sunda"],
+    location: "Lapangan Bubat, dekat ibu kota Majapahit",
+    outcome: "Rombongan Sunda tewas, termasuk Prabu Maharaja Linggabuana; Dyah Pitaloka mengakhiri hidupnya. Hubungan Sunda-Majapahit rusak untuk waktu yang lama.",
+    summary: "Rombongan Sunda datang ke Majapahit untuk pernikahan Dyah Pitaloka Citraresmi dengan Hayam Wuruk. Gajah Mada menuntut sang putri diserahkan sebagai tanda takluk, bukan sebagai mempelai setara. Penolakan pihak Sunda berakhir dengan pertempuran yang timpang di Lapangan Bubat.",
+    contested: true,
+    accounts: [
+      { source: "Pararaton", kind: "Naskah", origin: "Jawa Timur",
+        narrative: "Mencatat peristiwa Pasunda Bubat pada masa Hayam Wuruk tanpa menjelaskan panjang lebar sebab maupun tanggung jawabnya.",
+        note: "Menyinggung peristiwa secara singkat, tanpa uraian panjang." },
+      { source: "Kidung Sunda / Kidung Sundayana", kind: "Naskah", origin: "Bali / Jawa",
+        narrative: "Menggambarkan tuntutan Gajah Mada atas penyerahan putri sebagai upeti, penolakan rombongan Sunda, pertempuran di Bubat, dan bela pati Dyah Pitaloka.",
+        note: "Uraian paling rinci, tetapi disusun jauh sesudah peristiwa dan bersifat sastra, bukan catatan sezaman." },
+      { source: "Carita Parahyangan", kind: "Naskah", origin: "Sunda",
+        narrative: "Dari sisi Sunda: sang prabu berangkat ke Majapahit dan wafat di sana; penekanannya pada kehormatan dan kehilangan, bukan pada ambisi Majapahit.",
+        note: "Sumber Sunda; menyebut wafatnya sang prabu di Majapahit." }
+    ] },
+
+  { id: "event.paregreg", name: "Perang Paregreg", type: "PEMBERONTAKAN",
+    start: 1404, end: 1406, islands: ["JAWA"],
+    participants: ["jawa.majapahit"],
+    location: "Istana Barat dan Istana Timur Majapahit",
+    outcome: "Majapahit menang secara formal tetapi melemah secara permanen.",
+    summary: "Perang saudara antara Wikramawardhana dan Bhre Wirabhumi yang menguras kekuatan Majapahit dan mempercepat lepasnya daerah taklukan.",
+    contested: false, accounts: [] },
+
+  { id: "event.pamalayu", name: "Ekspedisi Pamalayu", type: "EKSPEDISI",
+    start: 1275, end: 1293, islands: ["JAWA", "SUMATRA"],
+    participants: ["jawa.singhasari", "sumatra.melayu"],
+    location: "Jawa Timur ke Batanghari, Sumatra",
+    outcome: "Melayu masuk ke dalam orbit pengaruh Jawa; ditandai arca Amoghapasa.",
+    summary: "Ekspedisi Kertanegara ke Sumatra, ditafsirkan beragam sebagai penaklukan atau sebagai persekutuan melawan ancaman Mongol.",
+    contested: true, accounts: [] },
+
+  { id: "event.portugis-malaka", name: "Jatuhnya Malaka ke tangan Portugis", type: "PENAKLUKAN",
+    start: 1511, end: 1511, islands: ["SUMATRA", "MALUKU"],
+    participants: ["sumatra.aceh", "maluku.ternate"],
+    location: "Malaka",
+    outcome: "Jalur rempah beralih; Aceh dan Ternate naik sebagai penantang.",
+    summary: "Penaklukan Malaka oleh Afonso de Albuquerque mengubah peta perdagangan Nusantara dan memicu perlawanan di beberapa kawasan sekaligus.",
+    contested: false, accounts: [] }
+];
+
+var MIN_YEAR = 350, MAX_YEAR = 1914, MIN_SPAN = 20;
+var ZOOMS = [500, 200, 100, 50, 20];
+
+var state = {
+  start: 1200,
+  end: 1600,
+  pinnedYear: 1357,
+  hoverYear: null,
+  selection: { kind: "event", id: "event.bubat" },
+  accountIndex: 0
+};
+
+function $(id) { return document.getElementById(id); }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function overlaps(aS, aE, bS, bE) { return aS <= bE && bS <= aE; }
+
+function islandOf(key) {
+  for (var i = 0; i < ISLANDS.length; i++) {
+    if (ISLANDS[i].key === key) { return ISLANDS[i]; }
+  }
+  return ISLANDS[0];
+}
+function kingdomById(id) {
+  for (var i = 0; i < KINGDOMS.length; i++) {
+    if (KINGDOMS[i].id === id) { return KINGDOMS[i]; }
+  }
+  return null;
+}
+function eventById(id) {
+  for (var i = 0; i < EVENTS.length; i++) {
+    if (EVENTS[i].id === id) { return EVENTS[i]; }
+  }
+  return null;
+}
+function typeOf(key) { return TYPES[key] || { label: key, color: "var(--t-lain)" }; }
+function fmtSpan(k) { return (k.circa ? "c. " : "") + k.start + "–" + k.end; }
+
+function pct(year) { return ((year - state.start) / (state.end - state.start)) * 100; }
+function miniPct(year) { return ((year - MIN_YEAR) / (MAX_YEAR - MIN_YEAR)) * 100; }
+
+function setWindow(s, e) {
+  s = Math.round(s);
+  e = Math.round(e);
+  if (e - s < MIN_SPAN) { e = s + MIN_SPAN; }
+  if (s < MIN_YEAR) { e += MIN_YEAR - s; s = MIN_YEAR; }
+  if (e > MAX_YEAR) { s -= e - MAX_YEAR; e = MAX_YEAR; }
+  state.start = clamp(s, MIN_YEAR, MAX_YEAR);
+  state.end = clamp(e, MIN_YEAR, MAX_YEAR);
+  render();
+}
+function zoomTo(span) {
+  var centre = Math.round((state.start + state.end) / 2);
+  setWindow(centre - span / 2, centre + span / 2);
+}
+
+function buildEraRibbon() {
+  var wrap = $("era-ribbon");
+  wrap.innerHTML = "";
+  ERAS.forEach(function (era, i) {
+    var s = Math.max(era.start, MIN_YEAR);
+    var e = Math.min(era.end, MAX_YEAR);
+    if (e <= s) { return; }
+    var band = document.createElement("div");
+    band.className = "era-band" + (i % 2 ? " alt" : "");
+    band.style.left = miniPct(s) + "%";
+    band.style.width = (miniPct(e) - miniPct(s)) + "%";
+    band.textContent = era.name;
+    band.title = era.name + " · " + era.start + "–" + era.end;
+    wrap.appendChild(band);
+  });
+}
+
+function buildMini() {
+  var mini = $("mini");
+  var brush = $("brush");
+
+  [500, 1000, 1500].forEach(function (y) {
+    var t = document.createElement("div");
+    t.className = "mini-tick";
+    t.style.left = miniPct(y) + "%";
+    var s = document.createElement("span");
+    s.className = "num";
+    s.textContent = y;
+    t.appendChild(s);
+    mini.insertBefore(t, brush);
+  });
+
+  var row = 0;
+  ISLANDS.forEach(function (isl) {
+    KINGDOMS.filter(function (k) { return k.island === isl.key; }).forEach(function (k) {
+      var bar = document.createElement("div");
+      bar.className = "mini-bar";
+      bar.style.left = miniPct(k.start) + "%";
+      bar.style.width = Math.max(0.5, miniPct(k.end) - miniPct(k.start)) + "%";
+      bar.style.top = (6 + row * 6) + "px";
+      bar.style.background = isl.color;
+      bar.title = k.name + " · " + fmtSpan(k);
+      mini.insertBefore(bar, brush);
+      row++;
+    });
+  });
+}
+
+function renderBrush() {
+  var brush = $("brush");
+  brush.style.left = miniPct(state.start) + "%";
+  brush.style.width = (miniPct(state.end) - miniPct(state.start)) + "%";
+  $("handle-left").setAttribute("aria-valuenow", String(state.start));
+  $("handle-right").setAttribute("aria-valuenow", String(state.end));
+}
+
+function niceStep(span) {
+  var candidates = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500];
+  for (var i = 0; i < candidates.length; i++) {
+    if (span / candidates[i] <= 9) { return candidates[i]; }
+  }
+  return 500;
+}
+
+function renderAxis() {
+  var axis = $("axis");
+  axis.innerHTML = "";
+  var step = niceStep(state.end - state.start);
+  var first = Math.ceil(state.start / step) * step;
+  for (var y = first; y <= state.end; y += step) {
+    var t = document.createElement("div");
+    t.className = "axis-tick num";
+    t.style.left = pct(y) + "%";
+    t.textContent = y;
+    axis.appendChild(t);
+  }
+}
+
+function renderLanes() {
+  var lanes = $("lanes");
+  lanes.innerHTML = "";
+  var index = 0;
+
+  ISLANDS.forEach(function (isl) {
+    var visible = KINGDOMS.filter(function (k) {
+      return k.island === isl.key && overlaps(k.start, k.end, state.start, state.end);
+    });
+    var dots = EVENTS.filter(function (ev) {
+      return ev.islands.indexOf(isl.key) !== -1 && overlaps(ev.start, ev.end, state.start, state.end);
+    });
+    if (!visible.length && !dots.length) { return; }
+
+    var lane = document.createElement("div");
+    lane.className = "lane" + (index % 2 ? " alt" : "");
+    index++;
+
+    var label = document.createElement("div");
+    label.className = "lane-label";
+    var sw = document.createElement("div");
+    sw.className = "swatch";
+    sw.style.background = isl.color;
+    var txt = document.createElement("div");
+    var nm = document.createElement("div");
+    nm.className = "name";
+    nm.textContent = isl.name;
+    var ct = document.createElement("div");
+    ct.className = "count num";
+    ct.textContent = visible.length + " polity";
+    txt.appendChild(nm);
+    txt.appendChild(ct);
+    label.appendChild(sw);
+    label.appendChild(txt);
+
+    var track = document.createElement("div");
+    track.className = "lane-track";
+
+    visible.forEach(function (k) {
+      var row = document.createElement("div");
+      row.className = "span-row";
+      var bar = document.createElement("button");
+      bar.type = "button";
+      var left = Math.max(0, pct(k.start));
+      var right = Math.min(100, pct(k.end));
+      bar.className = "span" + (k.circa ? " circa" : "") +
+        (k.start < state.start ? " clip-start" : "") +
+        (k.end > state.end ? " clip-end" : "");
+      bar.style.left = left + "%";
+      bar.style.width = Math.max(0.4, right - left) + "%";
+      bar.style.background = isl.color;
+      bar.title = k.name + " · " + fmtSpan(k);
+      bar.setAttribute("aria-pressed",
+        String(state.selection.kind === "kingdom" && state.selection.id === k.id));
+      var lbl = document.createElement("span");
+      lbl.className = "span-label";
+      lbl.textContent = k.name;
+      bar.appendChild(lbl);
+      bar.addEventListener("click", function (e) {
+        e.stopPropagation();
+        select("kingdom", k.id);
+      });
+      row.appendChild(bar);
+      track.appendChild(row);
+    });
+
+    if (dots.length) {
+      var strip = document.createElement("div");
+      strip.className = "dot-strip";
+      dots.forEach(function (ev) {
+        var d = document.createElement("button");
+        d.type = "button";
+        d.className = "ev-dot" + (ev.contested ? " contested" : "");
+        d.style.left = pct(ev.start) + "%";
+        var c = typeOf(ev.type).color;
+        d.style.background = c;
+        d.style.color = c;
+        d.title = ev.start + " · " + ev.name + (ev.contested ? " (sumber berselisih)" : "");
+        d.setAttribute("aria-label", ev.start + " " + ev.name);
+        d.setAttribute("aria-pressed",
+          String(state.selection.kind === "event" && state.selection.id === ev.id));
+        d.addEventListener("click", function (e) {
+          e.stopPropagation();
+          select("event", ev.id);
+        });
+        strip.appendChild(d);
+      });
+      track.appendChild(strip);
+    }
+
+    lane.appendChild(label);
+    lane.appendChild(track);
+    lanes.appendChild(lane);
+  });
+}
+
+function renderScrub() {
+  var year = state.hoverYear !== null ? state.hoverYear : state.pinnedYear;
+  var scrub = $("scrub");
+
+  if (year === null || year < state.start || year > state.end) {
+    scrub.hidden = true;
+  } else {
+    scrub.hidden = false;
+    var frac = (year - state.start) / (state.end - state.start);
+    scrub.style.left = "calc(var(--lane-label) + " + frac + " * (100% - var(--lane-label)))";
+    scrub.classList.toggle("pinned", state.hoverYear === null);
+    $("scrub-flag").textContent = year;
+  }
+
+  var note = $("snapshot-note");
+  note.innerHTML = "";
+  if (year === null) {
+    note.textContent = "Arahkan kursor ke garis waktu untuk menelusuri tahun; klik untuk mengunci.";
+    return;
+  }
+  var alive = KINGDOMS.filter(function (k) { return year >= k.start && year <= k.end; });
+  var head = document.createElement("span");
+  head.innerHTML = "Tahun <strong class=\"num\">" + year + "</strong> — <strong>" +
+    alive.length + "</strong> polity hidup berdampingan:";
+  var body = document.createElement("span");
+  body.textContent = alive.map(function (k) { return k.name; }).join(" · ");
+  note.appendChild(head);
+  note.appendChild(body);
+}
+
+function buildLegend() {
+  var legend = $("legend");
+  legend.innerHTML = "";
+  var used = {};
+  EVENTS.forEach(function (ev) { used[ev.type] = true; });
+
+  Object.keys(TYPES).forEach(function (t) {
+    if (!used[t]) { return; }
+    var item = document.createElement("span");
+    item.className = "legend-item";
+    var dot = document.createElement("span");
+    dot.className = "legend-dot";
+    dot.style.background = TYPES[t].color;
+    item.appendChild(dot);
+    item.appendChild(document.createTextNode(TYPES[t].label));
+    legend.appendChild(item);
+  });
+
+  var sep = document.createElement("span");
+  sep.className = "sep";
+  legend.appendChild(sep);
+
+  var circa = document.createElement("span");
+  circa.className = "legend-item";
+  var cbar = document.createElement("span");
+  cbar.className = "hint-circa";
+  circa.appendChild(cbar);
+  circa.appendChild(document.createTextNode("tanggal perkiraan"));
+  legend.appendChild(circa);
+
+  var cont = document.createElement("span");
+  cont.className = "legend-item";
+  var ring = document.createElement("span");
+  ring.className = "hint-ring";
+  cont.appendChild(ring);
+  cont.appendChild(document.createTextNode("sumber berselisih"));
+  legend.appendChild(cont);
+}
+
+function renderList() {
+  var list = $("ev-list");
+  list.innerHTML = "";
+  var inWindow = EVENTS.filter(function (ev) {
+    return overlaps(ev.start, ev.end, state.start, state.end);
+  }).sort(function (a, b) { return a.start - b.start; });
+
+  $("ev-count").textContent = inWindow.length + " peristiwa";
+
+  if (!inWindow.length) {
+    var p = document.createElement("p");
+    p.className = "empty-note";
+    p.textContent = "Tidak ada peristiwa dalam rentang ini. Lebarkan rentang di atas.";
+    list.appendChild(p);
+    return;
+  }
+
+  inWindow.forEach(function (ev) {
+    var row = document.createElement("button");
+    row.type = "button";
+    row.className = "ev-row";
+    row.setAttribute("aria-pressed",
+      String(state.selection.kind === "event" && state.selection.id === ev.id));
+
+    var yr = document.createElement("span");
+    yr.className = "yr";
+    yr.textContent = ev.start === ev.end ? String(ev.start) : ev.start + "–" + ev.end;
+
+    var pip = document.createElement("span");
+    pip.className = "pip";
+    pip.style.background = typeOf(ev.type).color;
+
+    var col = document.createElement("span");
+    var nm = document.createElement("span");
+    nm.className = "nm";
+    nm.textContent = ev.name;
+    var sub = document.createElement("span");
+    sub.className = "sub";
+    sub.textContent = typeOf(ev.type).label +
+      (ev.contested ? " · sumber berselisih" : "") +
+      (ev.islands.length > 1 ? " · lintas pulau" : "");
+    col.appendChild(nm);
+    col.appendChild(sub);
+
+    row.appendChild(yr);
+    row.appendChild(pip);
+    row.appendChild(col);
+    row.addEventListener("click", function () { select("event", ev.id); });
+    list.appendChild(row);
+  });
+}
+
+function select(kind, id) {
+  state.selection = { kind: kind, id: id };
+  state.accountIndex = 0;
+  if (kind === "event") {
+    var ev = eventById(id);
+    if (ev) {
+      state.pinnedYear = ev.start;
+      state.hoverYear = null;
+    }
+  }
+  render();
+}
+
+function chip(text, cls, color) {
+  var c = document.createElement("span");
+  c.className = "chip" + (cls ? " " + cls : "");
+  if (color) { c.style.background = color; }
+  c.textContent = text;
+  return c;
+}
+
+function factGrid(pairs) {
+  var dl = document.createElement("dl");
+  dl.className = "fact-grid";
+  pairs.forEach(function (pair) {
+    var d = document.createElement("div");
+    d.className = "fact";
+    var dt = document.createElement("dt");
+    dt.textContent = pair[0];
+    var dd = document.createElement("dd");
+    dd.textContent = pair[1];
+    d.appendChild(dt);
+    d.appendChild(dd);
+    dl.appendChild(d);
+  });
+  return dl;
+}
+
+function renderKingdomDetail(host, k) {
+  $("detail-kind").textContent = "Polity";
+  var isl = islandOf(k.island);
+
+  var h = document.createElement("h2");
+  h.className = "detail-title";
+  h.textContent = k.name;
+  host.appendChild(h);
+
+  var chips = document.createElement("div");
+  chips.className = "chip-row";
+  chips.appendChild(chip(isl.name, "solid", isl.color));
+  chips.appendChild(chip(fmtSpan(k)));
+  if (k.circa) { chips.appendChild(chip("tanggal perkiraan")); }
+  chips.appendChild(chip((k.end - k.start) + " tahun"));
+  host.appendChild(chips);
+
+  var p = document.createElement("p");
+  p.textContent = k.summary;
+  host.appendChild(p);
+
+  host.appendChild(factGrid([
+    ["Ibu kota", k.capital],
+    ["Kepercayaan", k.religion],
+    ["Sumber", k.sources.length ? k.sources.join(" · ") : "belum dicatat"]
+  ]));
+
+  if (k.rulers.length) {
+    var year = state.hoverYear !== null ? state.hoverYear : state.pinnedYear;
+    var lab = document.createElement("div");
+    lab.className = "eyebrow";
+    lab.textContent = year !== null
+      ? "Penguasa · yang memerintah pada " + year + " disorot"
+      : "Penguasa";
+    host.appendChild(lab);
+
+    var ul = document.createElement("ul");
+    ul.className = "ruler-list";
+    k.rulers.forEach(function (r) {
+      var li = document.createElement("li");
+      if (year !== null && year >= r.from && year <= r.to) { li.className = "live"; }
+      var rg = document.createElement("span");
+      rg.className = "reign";
+      rg.textContent = r.from + "–" + r.to;
+      var nm = document.createElement("span");
+      nm.textContent = r.title ? r.name + " · " + r.title : r.name;
+      li.appendChild(rg);
+      li.appendChild(nm);
+      ul.appendChild(li);
+    });
+    host.appendChild(ul);
+  }
+
+  var evs = EVENTS.filter(function (ev) { return ev.participants.indexOf(k.id) !== -1; });
+  if (evs.length) {
+    var el = document.createElement("div");
+    el.className = "eyebrow";
+    el.textContent = "Terlibat dalam";
+    host.appendChild(el);
+    var row = document.createElement("div");
+    row.className = "chip-row";
+    evs.forEach(function (ev) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "ghost-btn";
+      b.textContent = ev.start + " · " + ev.name;
+      b.addEventListener("click", function () { select("event", ev.id); });
+      row.appendChild(b);
+    });
+    host.appendChild(row);
+  }
+}
+
+function renderEventDetail(host, ev) {
+  $("detail-kind").textContent = "Peristiwa";
+  var ty = typeOf(ev.type);
+
+  var title = document.createElement("h2");
+  title.className = "detail-title";
+  title.textContent = ev.name;
+  host.appendChild(title);
+
+  var chips = document.createElement("div");
+  chips.className = "chip-row";
+  chips.appendChild(chip(ev.start === ev.end ? String(ev.start) : ev.start + "–" + ev.end));
+  chips.appendChild(chip(ty.label, "solid", ty.color));
+  ev.islands.forEach(function (key) {
+    var isl = islandOf(key);
+    chips.appendChild(chip(isl.name, "solid", isl.color));
+  });
+  if (ev.contested) { chips.appendChild(chip("sumber berselisih", "contested")); }
+  host.appendChild(chips);
+
+  var sm = document.createElement("p");
+  sm.textContent = ev.summary;
+  host.appendChild(sm);
+
+  var parts = ev.participants.map(function (id) {
+    var k = kingdomById(id);
+    return k ? k.name : id + " (belum dimodelkan)";
+  }).join(" · ");
+  host.appendChild(factGrid([
+    ["Tempat", ev.location],
+    ["Pihak terlibat", parts],
+    ["Akibat", ev.outcome]
+  ]));
+
+  if (!ev.accounts.length) {
+    var none = document.createElement("p");
+    none.className = "footnote";
+    none.textContent = "Belum ada kutipan sumber yang dicatat untuk peristiwa ini.";
+    host.appendChild(none);
+    return;
+  }
+
+  var lab = document.createElement("div");
+  lab.className = "eyebrow";
+  lab.textContent = ev.accounts.length > 1
+    ? "Versi sumber · " + ev.accounts.length + " catatan yang tidak sepakat"
+    : "Sumber";
+  host.appendChild(lab);
+
+  var tabs = document.createElement("div");
+  tabs.className = "src-tabs";
+  tabs.setAttribute("role", "tablist");
+  ev.accounts.forEach(function (acc, i) {
+    var t = document.createElement("button");
+    t.type = "button";
+    t.className = "src-tab";
+    t.setAttribute("role", "tab");
+    t.setAttribute("aria-selected", String(i === state.accountIndex));
+    var pip = document.createElement("span");
+    pip.className = "origin-pip";
+    t.appendChild(pip);
+    t.appendChild(document.createTextNode(acc.source));
+    t.addEventListener("click", function () {
+      state.accountIndex = i;
+      renderDetail();
+    });
+    tabs.appendChild(t);
+  });
+  host.appendChild(tabs);
+
+  var acc = ev.accounts[Math.min(state.accountIndex, ev.accounts.length - 1)];
+  var box = document.createElement("div");
+  box.className = "account";
+  var meta = document.createElement("div");
+  meta.className = "eyebrow";
+  meta.textContent = acc.kind + " · sudut pandang " + acc.origin;
+  var q = document.createElement("blockquote");
+  q.textContent = acc.narrative;
+  box.appendChild(meta);
+  box.appendChild(q);
+  if (acc.note) {
+    var cav = document.createElement("p");
+    cav.className = "caveat";
+    cav.textContent = acc.note;
+    box.appendChild(cav);
+  }
+  host.appendChild(box);
+}
+
+function renderDetail() {
+  var host = $("detail");
+  host.innerHTML = "";
+  if (state.selection.kind === "kingdom") {
+    var k = kingdomById(state.selection.id);
+    if (k) { renderKingdomDetail(host, k); }
+    return;
+  }
+  var ev = eventById(state.selection.id);
+  if (ev) { renderEventDetail(host, ev); }
+}
+
+function render() {
+  renderBrush();
+  renderAxis();
+  renderLanes();
+  renderScrub();
+  renderList();
+  renderDetail();
+  $("readout-years").textContent = state.start + " – " + state.end;
+  $("readout-span").textContent = (state.end - state.start) + " tahun";
+  var active = state.end - state.start;
+  Array.prototype.slice.call($("zoom-set").children).forEach(function (b) {
+    b.setAttribute("aria-pressed", String(Number(b.dataset.span) === active));
+  });
+}
+
+function buildZoom() {
+  var set = $("zoom-set");
+  ZOOMS.forEach(function (span) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.dataset.span = String(span);
+    b.textContent = span + "th";
+    b.title = "Tampilkan rentang " + span + " tahun";
+    b.addEventListener("click", function () { zoomTo(span); });
+    set.appendChild(b);
+  });
+}
+
+function miniYearFromEvent(e) {
+  var r = $("mini").getBoundingClientRect();
+  var frac = clamp((e.clientX - r.left) / r.width, 0, 1);
+  return Math.round(MIN_YEAR + frac * (MAX_YEAR - MIN_YEAR));
+}
+
+function wireBrush() {
+  var mini = $("mini");
+  var drag = null;
+
+  function down(mode, e) {
+    drag = { mode: mode, y0: miniYearFromEvent(e), s0: state.start, e0: state.end };
+    e.preventDefault();
+    e.stopPropagation();
+    mini.setPointerCapture(e.pointerId);
+  }
+
+  $("handle-left").addEventListener("pointerdown", function (e) { down("left", e); });
+  $("handle-right").addEventListener("pointerdown", function (e) { down("right", e); });
+  $("brush").addEventListener("pointerdown", function (e) { down("pan", e); });
+
+  mini.addEventListener("pointerdown", function (e) {
+    if (drag) { return; }
+    var y = miniYearFromEvent(e);
+    var span = state.end - state.start;
+    setWindow(y - span / 2, y + span / 2);
+  });
+
+  mini.addEventListener("pointermove", function (e) {
+    if (!drag) { return; }
+    var y = miniYearFromEvent(e);
+    if (drag.mode === "left") {
+      setWindow(Math.min(y, drag.e0 - MIN_SPAN), drag.e0);
+    } else if (drag.mode === "right") {
+      setWindow(drag.s0, Math.max(y, drag.s0 + MIN_SPAN));
+    } else {
+      var d = y - drag.y0;
+      setWindow(drag.s0 + d, drag.e0 + d);
+    }
+  });
+
+  function up(e) {
+    if (drag && mini.hasPointerCapture(e.pointerId)) {
+      mini.releasePointerCapture(e.pointerId);
+    }
+    drag = null;
+  }
+  mini.addEventListener("pointerup", up);
+  mini.addEventListener("pointercancel", up);
+
+  [["handle-left", "left"], ["handle-right", "right"]].forEach(function (pair) {
+    $(pair[0]).addEventListener("keydown", function (e) {
+      var step = e.shiftKey ? 50 : 10;
+      var d = e.key === "ArrowLeft" ? -step : e.key === "ArrowRight" ? step : 0;
+      if (!d) { return; }
+      e.preventDefault();
+      if (pair[1] === "left") {
+        setWindow(Math.min(state.start + d, state.end - MIN_SPAN), state.end);
+      } else {
+        setWindow(state.start, Math.max(state.end + d, state.start + MIN_SPAN));
+      }
+    });
+  });
+}
+
+function wireStage() {
+  var lanes = $("lanes");
+
+  function yearFrom(e) {
+    var r = lanes.getBoundingClientRect();
+    var labelW = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue("--lane-label"));
+    var x = e.clientX - r.left - labelW;
+    var w = r.width - labelW;
+    if (x < 0 || x > w) { return null; }
+    return Math.round(state.start + (x / w) * (state.end - state.start));
+  }
+
+  lanes.addEventListener("pointermove", function (e) {
+    var y = yearFrom(e);
+    if (y === state.hoverYear) { return; }
+    state.hoverYear = y;
+    renderScrub();
+    if (state.selection.kind === "kingdom") { renderDetail(); }
+  });
+  lanes.addEventListener("pointerleave", function () {
+    state.hoverYear = null;
+    renderScrub();
+    if (state.selection.kind === "kingdom") { renderDetail(); }
+  });
+  lanes.addEventListener("click", function (e) {
+    var y = yearFrom(e);
+    if (y !== null) {
+      state.pinnedYear = y;
+      state.hoverYear = null;
+      renderScrub();
+    }
+  });
+}
+
+$("btn-full").addEventListener("click", function () { setWindow(MIN_YEAR, MAX_YEAR); });
+$("stat-count").textContent = KINGDOMS.length + " polity · " + EVENTS.length + " peristiwa";
+$("stat-range").textContent = MIN_YEAR + " – " + MAX_YEAR;
+
+buildEraRibbon();
+buildMini();
+buildZoom();
+buildLegend();
+wireBrush();
+wireStage();
+render();
+</script>
+
+</body>
+</html>
