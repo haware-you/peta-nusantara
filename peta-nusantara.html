@@ -3642,6 +3642,9 @@ function renderChapters(){
      gets the same jump without the travel. */
   Array.prototype.forEach.call(chapList.querySelectorAll('.ms, .chap-open'), function(b){
     b.addEventListener('click', function(){
+      /* Every jump starts clean: one that names no place must not leave the
+         previous jump's region and card selected at the new year. */
+      S.region = null; S.entity = null;
       setYear(+b.dataset.y);
 
       var ent = b.dataset.ent || null;
