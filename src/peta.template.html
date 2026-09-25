@@ -3086,7 +3086,7 @@ function packLane(items){
 function buildLanes(){
   var L = S.lang;
   lanesEl.innerHTML = '';
-  var rowCount = 0;
+  var rowCount = 0, headCount = 0;
 
   LANES.forEach(function(lane){
     var items = [];
@@ -3108,6 +3108,7 @@ function buildLanes(){
     hs.textContent = lane.label[L];
     head.appendChild(hs);
     lanesEl.appendChild(head);
+    headCount++;
 
     packLane(items).forEach(function(row){
       var rEl = document.createElement('div');
@@ -3137,7 +3138,7 @@ function buildLanes(){
   laneThr.className = 'lane-thr';
   lanesEl.appendChild(laneThr);
 
-  lanesEl._h = rowCount * ROW_H + LANES.length * HEAD_H + 6;
+  lanesEl._h = rowCount * ROW_H + headCount * HEAD_H + 6;
   applyLanes();
   paintLanes();
 }
