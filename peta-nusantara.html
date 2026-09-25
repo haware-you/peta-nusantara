@@ -481,6 +481,7 @@
   .ent-fig img{ display:block; width:100%; height:auto; max-height:220px;
     object-fit:cover; border:1px solid var(--line); border-radius:3px;
     background: var(--surface-3); }
+  .ent-fig.no-img .ent-cap{ margin-top:0; }
   .ent-cap{ font-size:0.68rem; color: var(--ink-3); line-height:1.5; margin-top:5px;
     font-family:'IBM Plex Mono', monospace; }
   .ent-cap a{ color: var(--ink-2); text-decoration:underline; text-underline-offset:2px; }
@@ -3467,6 +3468,20 @@ function loreHtml(e){
 
 /* The selected entity's historical image, with an honest credit line.
    Only built for the open card, so a single image loads at a time. */
+/* The images are the one thing that does not travel inside this file: on
+   Vercel they are served beside it, but a copy opened on its own or
+   published as an artifact has no folder next to it. A picture that fails
+   to load is dropped, and the credit line stays, so the card still points
+   at the source instead of showing a broken frame. `error` does not bubble,
+   hence the capture phase. */
+document.addEventListener('error', function(ev){
+  var t = ev.target;
+  if (t && t.tagName === 'IMG' && t.parentNode && t.parentNode.classList.contains('ent-fig')){
+    t.parentNode.classList.add('no-img');
+    t.remove();
+  }
+}, true);
+
 function imgFigureHtml(e){
   var im = IMG[e.name.id];
   if (!im) return '';
