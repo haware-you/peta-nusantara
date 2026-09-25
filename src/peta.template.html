@@ -945,13 +945,17 @@
 
   .region-hit{ fill: transparent; cursor:pointer; outline:none; }
   .region-hit:hover + .region-glow, .region-hit:focus-visible + .region-glow{ opacity:1; }
-  .region-glow{
+  /* The highlight is the region's own land, clipped to it and traced along
+     the coast, never the hit polygon: that box is a click target, and drawn
+     it read as a boundary nobody surveyed. */
+  .region-glow{ opacity:0; pointer-events:none; transition: opacity .16s; }
+  .region-glow polygon{
     fill: var(--glow-fill); stroke: var(--glow-stroke);
-    stroke-width:0.8; stroke-dasharray:4 4; opacity:0; pointer-events:none; vector-effect: non-scaling-stroke;
-    transition: opacity .16s;
+    stroke-width:0.9; stroke-linejoin:round; vector-effect: non-scaling-stroke;
   }
-  .region-glow.sel{ opacity:1; fill: var(--glow-fill-sel); stroke: var(--glow-stroke-sel); stroke-dasharray:none; }
-  .region-hit:focus-visible + .region-glow{ stroke: var(--ui-ring); stroke-width:1.4; stroke-dasharray:none; }
+  .region-glow.sel{ opacity:1; }
+  .region-glow.sel polygon{ fill: var(--glow-fill-sel); stroke: var(--glow-stroke-sel); stroke-width:1.4; }
+  .region-hit:focus-visible + .region-glow polygon{ stroke: var(--ui-ring); stroke-width:1.4; }
 
   .rlabel text{
     font-family:'IBM Plex Mono', monospace; font-size: calc(8.5px / var(--mz)); letter-spacing:0.11em;
@@ -3093,12 +3097,31 @@ function buildMarks(y){
 
 /* --- region hit + highlight layer. Hit areas are their own layer so
        Ternate and Tidore stay tappable at true scale (NFR-5). --- */
+function bounds(pts){
+  var b = [Infinity, Infinity, -Infinity, -Infinity];
+  pts.forEach(function(p){
+    if (p[0] < b[0]) b[0] = p[0]; if (p[1] < b[1]) b[1] = p[1];
+    if (p[0] > b[2]) b[2] = p[0]; if (p[1] > b[3]) b[3] = p[1];
+  });
+  return b;
+}
 var gRegions = el('g');
 var regionNodes = {};
 REGIONS.forEach(function(r, ri){
   var pts = r.poly.map(function(p){ return px(p[0]).toFixed(1) + ',' + py(p[1]).toFixed(1); }).join(' ');
   var hit = el('polygon', { class:'region-hit', points:pts, tabindex:'0', role:'button' });
-  var glow = el('polygon', { class:'region-glow', points:pts });
+  /* Land rings whose bounds meet the region are clipped to it; the rest
+     are skipped so each highlight carries only its own coastline. */
+  var clip = el('clipPath', { id:'rclip-' + ri });
+  clip.appendChild(el('polygon', { points:pts }));
+  defs.appendChild(clip);
+  var glow = el('g', { class:'region-glow', 'clip-path':'url(#rclip-' + ri + ')' });
+  var rb = bounds(r.poly);
+  LAND.forEach(function(ring, li){
+    var lb = bounds(ring.split(' ').map(function(p){ return p.split(',').map(Number); }));
+    if (lb[0] > rb[2] || lb[2] < rb[0] || lb[1] > rb[3] || lb[3] < rb[1]) return;
+    glow.appendChild(el('polygon', { points:LAND_PTS[li] }));
+  });
   hit.addEventListener('click', function(){ selectRegion(r.id); });
   hit.addEventListener('keydown', function(ev){
     if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); selectRegion(r.id); }
